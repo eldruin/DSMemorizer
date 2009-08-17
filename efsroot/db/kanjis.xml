@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<package name="Kanjis" records="3" format="DSMemorizer-kanji-1.0" license="Creative Commons Reconocimiento-No comercial-Compartir bajo la misma licencia 3.0 Unported"/>
+  <card symbol="山" reading="やま" reading2="サン" translation="Montaña" example_symbol="富士山" example_reading="ふじさん" example_translation="Monte Fuji"/>
+  <card symbol="日" reading="ひ" reading2="び, か" translation="Día, Sol" example_symbol="あの日は月曜日でした" example_reading="あのひはげつようびでした" example_translation="Aquel día fue lunes"/>
+  <card symbol="木" reading="き" reading2="もと" translation="Árbol" example_symbol="この木はとても大きいです" example_reading="このきはとてもおおきいです" example_translation="Este árbol es muy grande"/>
+</package>
