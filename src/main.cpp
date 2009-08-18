@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with DSMemorizer.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 
 #include <nds.h>
 #include <stdio.h>
@@ -30,6 +30,8 @@
 #include "types.h"
 #include "text.h"
 #include "kanjimodescreen.h"
+#include "card.h"
+#include "xmlparser.h"
 
 using namespace std;
 int main (void)
@@ -63,8 +65,27 @@ using namespace std;
     BG_PALETTE[Types::Color::GREY]= RGB15(15,15,15);
     BG_PALETTE[Types::Color::WHITE]= RGB15(31,31,31);
     BG_PALETTE[255]= RGB15(0,0,0);
-    
-    KanjiModeScreen kms(bg3);
+
+
+    XMLParser xmlparser;
+    xmlparser.Init("/db/kanjis.xml");
+    Card c = xmlparser.card(2);
+    iprintf("Card symbol: %s\n", c.symbol().c_str());
+    iprintf("Card reading: %s\n", c.reading().c_str());
+    iprintf("Card reading2: %s\n", c.reading2().c_str());
+    iprintf("Card translation: %s\n", c.translation().c_str());
+    iprintf("Card example_symbol: %s\n", c.example_symbol().c_str());
+    iprintf("Card example_reading: %s\n", c.example_reading().c_str());
+    iprintf("Card example_translation: %s\n", c.example_translation().c_str());
+
+    KanjiModeScreen kms;
+    kms.Init(bg3);
+    kms.Print(c);
+
+#if 0
+    // Manually fill
+    KanjiModeScreen kms;
+    kms.Init(bg3);
     kms.kanji("日");
     kms.first_reading("び、か");
     kms.second_reading("ひ");
@@ -72,6 +93,8 @@ using namespace std;
     kms.example_kanji("今日");
     kms.example_reading("きょう");
     kms.example_translation ("Today");
+#endif
+
   }
   else
   {

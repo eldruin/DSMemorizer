@@ -85,14 +85,13 @@ void Text::Print(const string& str, int& x, int& y)
     else
     {
       glyph_index = FT_Get_Char_Index (face_, utf8character);
-      //iprintf ("u8c: %i, glyph_index: %i\n", utf8character, glyph_index);
       // Renders in 256 level gray
       FT_Load_Glyph (face_,	glyph_index, FT_LOAD_RENDER);
-      
+
       // Added lots of local variables trying to speed up the rendering.
 			int width = face_->glyph->bitmap.width;
   		int rows = face_->glyph->bitmap.rows;
-  		int ycoord= pen.y - rows;
+  		int ycoord = pen.y - rows;
   		int penx = pen.x;
   		u8* buffer = face_->glyph->bitmap.buffer;
 

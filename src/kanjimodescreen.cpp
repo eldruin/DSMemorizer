@@ -16,73 +16,50 @@
  * You should have received a copy of the GNU General Public License
  * along with DSMemorizer.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include <string>
 
 #include "nds.h"
 #include "types.h"
 #include "text.h"
+#include "card.h"
 #include "kanjimodescreen.h"
 
-KanjiModeScreen::KanjiModeScreen(int bgid)
+void KanjiModeScreen::Init(int bgid)
 {
 	video_buffer_ = bgGetGfxPtr(bgid);
+
+	// Init all the text
 	kanji_.Init(bgid);
 	kanji_.LoadFace(Types::MONA_FONT, 30);
 	first_reading_.Init(bgid);
-	first_reading_.LoadFace(Types::MONA_FONT, 16);
+	first_reading_.LoadFace(Types::MONA_FONT, 10);
 	second_reading_.Init(bgid);
-	second_reading_.LoadFace(Types::MONA_FONT, 16);
+	second_reading_.LoadFace(Types::MONA_FONT, 10);
 	translation_.Init(bgid);
-	translation_.LoadFace(Types::MONA_FONT, 16);
+	translation_.LoadFace(Types::MONA_FONT, 10);
 	example_kanji_.Init(bgid);
-	example_kanji_.LoadFace(Types::MONA_FONT, 16);
+	example_kanji_.LoadFace(Types::MONA_FONT, 10);
 	example_reading_.Init(bgid);
-	example_reading_.LoadFace(Types::MONA_FONT, 16);
+	example_reading_.LoadFace(Types::MONA_FONT, 10);
 	example_translation_.Init(bgid);
-	example_translation_.LoadFace(Types::MONA_FONT, 16);
+	example_translation_.LoadFace(Types::MONA_FONT, 10);
 }
 
-void KanjiModeScreen::kanji (const std::string& str)
+void KanjiModeScreen::Print (const Card& card)
 {
   int x = 10, y = 50;
-	kanji_.Print(str, x, y);
+	kanji_.Print(card.symbol(), x, y);
+	x = 50, y = 30;
+	first_reading_.Print(card.reading(), x, y);
+	x = 50, y = 60;
+	second_reading_.Print(card.reading2(), x, y);
+	x = 10, y = 90;
+	translation_.Print(card.translation(), x, y);
+	x = 10, y = 120;
+	example_kanji_.Print(card.example_symbol(), x, y);
+	x = 10, y = 150;
+	example_reading_.Print(card.example_reading(), x, y);
+	x = 10, y = 180;
+	example_translation_.Print(card.example_translation(), x, y);
 }
-
-void KanjiModeScreen::first_reading (const std::string& str)
-{
-	int x = 50, y = 30;
-	first_reading_.Print(str, x, y);
-}
-
-void KanjiModeScreen::second_reading (const std::string& str)
-{
-	int x = 50, y = 60;
-	second_reading_.Print(str, x, y);
-}
-
-void KanjiModeScreen::translation (const std::string& str)
-{
-	int x = 10, y = 90;
-	translation_.Print(str, x, y);
-}
-
-void KanjiModeScreen::example_kanji (const std::string& str)
-{
-	int x = 10, y = 120;
-	example_kanji_.Print(str, x, y);
-}
-
-void KanjiModeScreen::example_reading (const std::string& str)
-{
-	int x = 10, y = 150;
-	example_reading_.Print(str, x, y);
-}
-
-void KanjiModeScreen::example_translation (const std::string& str)
-{
-	int x = 10, y = 180;
-	example_translation_.Print(str, x, y);
-}
-
-

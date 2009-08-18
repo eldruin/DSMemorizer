@@ -28,10 +28,17 @@
 class Text
 {
 public:
-	/// Constructor
+	/// Default constructor
 	Text() {}
+	/// Initializer
+	/// \param bgid background id
 	void Init(int bgid);
+
+	/// Load a font with a size
+	/// \param f Font name
+	/// \param size Font size
 	void LoadFace(Types::Font f, int size);
+
 	/// Prints a string in a position (no line changing support).
 	/// \param string UTF-8 string.
 	/// \param x X coordinate where to print, it's updated when returns.
@@ -39,12 +46,17 @@ public:
 	/// this function prints from left to right and don't support
 	/// changing the line.
 	void Print(const std::string& str, int& x, int& y);
+
 	void UnloadFace(Types::Font f, int size);
 private:
 	// Needs cache system
+	/// Font library
 	FT_Library library_;
+	/// Font loaded face
 	FT_Face face_;
+	/// Font size
 	int size_;
+	/// Video buffer pointer to print in
 	u16* video_buffer_;
 };
 

@@ -20,26 +20,32 @@
 #ifndef KANJIMODESCREEN_H_
 #define KANJIMODESCREEN_H_
 
+class Card;
 class Text;
 
+/// Screen manager for kanji mode
 class KanjiModeScreen
 {
 public:
-	/// Constructor
-	KanjiModeScreen(int bgid);
-	void kanji (const std::string& str);
-	void first_reading (const std::string& str);
-	void second_reading (const std::string& str);
-	void translation (const std::string& str);
-	void example_kanji (const std::string& str);
-	void example_reading (const std::string& str);
-	void example_translation (const std::string& str);
+  /// Default constructor
+  KanjiModeScreen() {}
+  /// Initializer
+  /// \param bgid Background id
+  void Init (int bgid);
+  /// Print a card
+  void Print (const Card& card);
 
 private:
-	Text kanji_, first_reading_, second_reading_, translation_, 
-		example_kanji_, example_reading_, example_translation_;
-		
-	u16* video_buffer_;
+  Text kanji_,                ///< Kanji
+       first_reading_,        ///< First reading
+       second_reading_,       ///< Second reading
+       translation_,          ///< Translation
+       example_kanji_,        ///< Example in kanjis
+       example_reading_,      ///< Reading of the example
+       example_translation_;  ///< Translation of the example
+
+  /// Video buffer pointer to print in
+  u16* video_buffer_;
 };
 
 #endif // KANJIMODESCREEN_H_
