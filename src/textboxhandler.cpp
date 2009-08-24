@@ -1,4 +1,4 @@
-/// \file text.cpp Text printing.
+/// \file textboxhandler.cpp Text boxes handler functions.
 /* Copyright 2009 Diego Barrios Romero
  *
  * This file is part of DSMemorizer.
@@ -23,12 +23,15 @@
 #include FT_FREETYPE_H
 
 #include <string>
+#include <vector>
 using std::string;
+using std::vector;
 
 #include "utf8.h"
 
 #include "types.h"
-#include "text.h"
+#include "textbox.h"
+#include "textboxhandler.h"
 #include "files.h"
 
 inline u8 convert_color(u8 incolor)
@@ -43,13 +46,72 @@ inline u8 convert_color(u8 incolor)
 	return outcolor;
 }
 
-void Text::Init(int bgid)
+void TextBoxHandler::Init(int bgid)
 {
-  video_buffer_ = bgGetGfxPtr(bgid);
+  bgid_ = bgid;
   if (FT_Init_FreeType (&library_))
     iprintf ("Error ocurred in FreeType load. ");
+  faces_[Types::MONA_FONT] = NULL; // New NULL initializing line is needed
+                                   // for each supported font
 }
 
+TextBox* TextBoxHandler::New (Types::Font font, int size, int x, int y, int width,
+                  int height)
+{
+  if (faces_[font] == NULL)
+  {
+    // Font not loaded, it's loaded now
+    FT_Face face;
+    int error = FT_New_Face (library_, Files::filepath(font).c_str(), 0, &face);
+    if (error == FT_Err_Unknown_File_Format)
+    {
+      iprintf ("the font file could be opened and read, but it appears that "
+               "its font format is unsupported.");
+    }
+    else if (error)
+    {
+      iprintf ("the font file could not be opened or read, or it's broken.");
+    }
+    else
+      // OK
+      faces_[font] = face;
+  }
+  TextBox* tb = new TextBox ();
+  tb->Init(bgid_, faces_[font], size, x, y, width, height);
+  text_boxes_.push_back(tb);
+  return tb;
+}
+
+void TextBoxHandler::Destroy (TextBox* tb)
+{
+  size_t i = 0;
+  for (; text_boxes_[i] != tb && i < text_boxes_.size(); ++i);
+  if (text_boxes_[i] == tb)
+  {
+    delete tb;
+    text_boxes_.erase(text_boxes_.begin()+i);
+  }
+}
+
+void TextBoxHandler::Print ()
+{
+  iprintf("line height: %i\n", faces_[Types::MONA_FONT]->height);
+  for (size_t i = 0; i < text_boxes_.size(); ++i)
+  {
+    text_boxes_[i]->Print();
+    if (i < text_boxes_.size()-1)
+      text_boxes_[i+1]->Adjust(text_boxes_[i]->y());
+  }
+}
+
+TextBoxHandler::~TextBoxHandler()
+{
+  for (size_t i = 0; i < faces_.size(); ++i)
+    FT_Done_Face(faces_[i]);
+  FT_Done_FreeType(library_);
+}
+
+#if 0
 void Text::LoadFace (Types::Font f, int size)
 {
 	size_ = size;
@@ -116,3 +178,5 @@ void Text::Print(const string& str, int& x, int& y)
 
   x = pen.x;
 }
+#endif
+
