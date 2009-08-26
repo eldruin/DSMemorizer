@@ -132,7 +132,6 @@ void TextBox::Print ()
 
   int pen_x = x_;
   int pen_y = y_;
-  //iprintf("y: %i\n",y_);
   string::const_iterator it = text_.begin();
   while (it != text_.end())
   {

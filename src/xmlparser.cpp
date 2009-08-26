@@ -48,7 +48,6 @@ void XMLParser::Init(const string& filepath)
     if (buffer.compare("<?xml version=\"1.0\"?>"))
     {
       xml_version_ = "1.0";
-          iprintf("XML Version: %s\n", xml_version_.c_str());
       if (!feof(file_)){
         fgets(buff, BUFFER_SIZE, file_);
         int position = 0;

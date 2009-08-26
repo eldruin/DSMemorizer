@@ -34,8 +34,6 @@
 using namespace std;
 int main (void)
 {
-  irqInit();
-  irqEnable(IRQ_VBLANK);
   consoleDemoInit ();
 
   if (EFS_Init (EFS_AND_FAT | EFS_DEFAULT_DEVICE, NULL))

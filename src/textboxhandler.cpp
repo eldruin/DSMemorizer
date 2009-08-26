@@ -42,8 +42,8 @@ void TextBoxHandler::Init()
                                    // for each supported font
 }
 
-TextBox* TextBoxHandler::NewTextBox (int bgid, Types::Font font, int size, int x, int y, int width,
-                  int height)
+TextBox* TextBoxHandler::NewTextBox (int bgid, Types::Font font, int size,
+                                     int x, int y, int width, int height)
 {
   if (faces_[font] == NULL)
   {
@@ -87,7 +87,7 @@ void TextBoxHandler::PrintAll ()
     text_boxes_[i]->Print();
     if (i < text_boxes_.size()-1)
       if (!text_boxes_[i]->floats() &&
-          text_boxes_[i]->bgid() == text_boxes_[i]->bgid())
+          text_boxes_[i]->bgid() == text_boxes_[i+1]->bgid())
         text_boxes_[i+1]->Adjust(text_boxes_[i]->y());
   }
 }
