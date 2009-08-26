@@ -34,6 +34,8 @@ namespace Files
 		{
 			case Types::MONA_FONT: path = string ("/fonts/mona.ttf");
 				break;
+      case Types::VERA_FONT: path = string ("/fonts/vera.ttf");
+        break;
 		}
 		return path;
 	}

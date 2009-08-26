@@ -1,4 +1,4 @@
-/// \file kanjimodescreen.cpp Kanji mode screen manager.
+/// \file kanjimode.cpp Kanji game mode.
 /* Copyright 2009 Diego Barrios Romero
  *
  * This file is part of DSMemorizer.
@@ -19,47 +19,144 @@
 
 #include <string>
 
-#include "nds.h"
+#include <nds.h>
+#include <stdio.h>
 #include "types.h"
-#include "text.h"
+#include "textbox.h"
+#include "textboxhandler.h"
 #include "card.h"
-#include "kanjimodescreen.h"
+#include "xmlparser.h"
+#include "kanjimode.h"
 
-void KanjiModeScreen::Init(int bgid)
+#include "kanjibg.h"
+#include "kanjisubbg.h"
+
+void KanjiMode::Init(int bgid)
 {
-	video_buffer_ = bgGetGfxPtr(bgid);
+  dmaCopy(kanjibgBitmap, bgGetGfxPtr(bgid), 256*256);
+  dmaCopy(kanjibgPal, BG_PALETTE, 256*2);
+  BG_PALETTE[Types::Color::BLACK]= RGB15(0,0,0);
+  BG_PALETTE[Types::Color::GREY]= RGB15(15,15,15);
+  BG_PALETTE[Types::Color::WHITE]= RGB15(18,18,28);
 
-	// Init all the text
-	kanji_.Init(bgid);
-	kanji_.LoadFace(Types::MONA_FONT, 30);
-	first_reading_.Init(bgid);
-	first_reading_.LoadFace(Types::MONA_FONT, 10);
-	second_reading_.Init(bgid);
-	second_reading_.LoadFace(Types::MONA_FONT, 10);
-	translation_.Init(bgid);
-	translation_.LoadFace(Types::MONA_FONT, 10);
-	example_kanji_.Init(bgid);
-	example_kanji_.LoadFace(Types::MONA_FONT, 10);
-	example_reading_.Init(bgid);
-	example_reading_.LoadFace(Types::MONA_FONT, 10);
-	example_translation_.Init(bgid);
-	example_translation_.LoadFace(Types::MONA_FONT, 10);
+  videoSetModeSub (MODE_5_2D);
+  int subbg3 = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
+  dmaCopy(kanjisubbgBitmap, bgGetGfxPtr(subbg3), 256*256);
+  dmaCopy(kanjisubbgPal, BG_PALETTE_SUB, 256*2);
+  int subbg2 = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 0,0);
+  BG_PALETTE_SUB[Types::Color::BLACK]= RGB15(0,0,0);
+  BG_PALETTE_SUB[Types::Color::GREY]= RGB15(15,15,15);
+  BG_PALETTE_SUB[Types::Color::WHITE]= RGB15(18,18,28);
+
+  xmlparser_ = new XMLParser ();
+  xmlparser_->Init("/db/kanjis.xml");
+  int bg2 = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 0,0);
+
+  tbh_ = new TextBoxHandler ();
+  tbh_->Init();
+
+  // Main screen
+  caption_kanji_ = tbh_->NewTextBox (bg2, Types::VERA_FONT, 8,15,17,60,0);
+  kanji_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 30,12,60,100,0);
+  kanji_->floats(true);
+  caption_first_reading_ = tbh_->NewTextBox (bg2, Types::VERA_FONT, 8,70,17,100,0);
+  first_reading_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 10,70,30,100,0);
+  caption_second_reading_ = tbh_->NewTextBox (bg2, Types::VERA_FONT, 8,70,35,100,0);
+  second_reading_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 10,70,40,100,0);
+  caption_translation_ = tbh_->NewTextBox (bg2, Types::VERA_FONT, 8,10,100,100,0);
+  translation_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 10,10,100,235,0);
+  caption_example_ = tbh_->NewTextBox (bg2, Types::VERA_FONT, 8,10,130,100,0);
+  example_kanji_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 10,10,135,235,0);
+  example_reading_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 10,10,160,235,0);
+  example_translation_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 10,10,190,235,0);
+
+  // Sub screen
+  card_number_ = tbh_->NewTextBox (subbg3, Types::VERA_FONT, 10,20,10,225,0);
+
+
+  int sy = 0;
+  int card = 1;
+  int previous_card = 0;
+  int height = 256;
+  int keys = 0;
+  touchPosition tp = {0,0,0,0};
+  // Loop
+  while(!(keys & KEY_B))
+   {
+      scanKeys();
+
+      touchRead(&tp);
+
+      keys = keysHeld();
+
+      if(keys & KEY_UP) sy--;
+      if(keys & KEY_DOWN) sy++;
+      if(keys & KEY_LEFT) card--;
+      if(keys & KEY_RIGHT) card++;
+
+      //if (keys & KEY_TOUCH){
+        //iprintf("hola");
+        if (tp.px > 36 && tp.px < 102 && tp.py > 40 && tp.py < 146)
+          card--;
+        if (tp.px > 156 && tp.px < 224 && tp.py > 40 && tp.py < 146){
+          card++;
+          iprintf("hola");
+        }
+      //}
+
+      if (card < 1) card = 1;
+      if (card > xmlparser_->package_records())
+        card = xmlparser_->package_records();
+      if(sy < 0) sy = 0;
+      if(sy >= height - 192) sy = height - 1 - 192;
+
+      swiWaitForVBlank();
+      Card c;
+      if (previous_card != card)
+      {
+        sy = 0;
+        dmaCopy(kanjibgBitmap, bgGetGfxPtr(bgid), 256*256);
+        bgSetScroll(bgid,0,sy);
+        bgSetScroll(bg2,0,sy);
+        bgUpdate();
+        c = xmlparser_->card(card);
+        PrintCard(c);
+        previous_card = card;
+      }
+      bgSetScroll(bgid,0,sy);
+      bgSetScroll(bg2,0,sy);
+      bgUpdate();
+   }
+
 }
 
-void KanjiModeScreen::Print (const Card& card)
+void KanjiMode::PrintCard (const Card& card)
 {
-  int x = 10, y = 50;
-	kanji_.Print(card.symbol(), x, y);
-	x = 50, y = 30;
-	first_reading_.Print(card.reading(), x, y);
-	x = 50, y = 60;
-	second_reading_.Print(card.reading2(), x, y);
-	x = 10, y = 90;
-	translation_.Print(card.translation(), x, y);
-	x = 10, y = 120;
-	example_kanji_.Print(card.example_symbol(), x, y);
-	x = 10, y = 150;
-	example_reading_.Print(card.example_reading(), x, y);
-	x = 10, y = 180;
-	example_translation_.Print(card.example_translation(), x, y);
+ 	kanji_->text(card.symbol());
+	first_reading_->text(card.reading());
+	second_reading_->text(card.reading2());
+	translation_->text(card.translation());
+	example_kanji_->text(card.example_symbol());
+	example_reading_->text(card.example_reading());
+	example_translation_->text(card.example_translation());
+	caption_kanji_->text("Kanji");
+	caption_first_reading_->text("First reading");
+	caption_second_reading_->text("Second reading");
+	caption_translation_->text("Translation");
+	caption_example_->text("Example");
+
+  char* card_number_text = new char [40];
+  sprintf(card_number_text, "Card number: %i",card.index());
+	card_number_->text("asdfasdfadsf");
+	tbh_->PrintAll();
 }
+
+KanjiMode::~KanjiMode ()
+{
+  // it destroys all its text boxes
+  tbh_->~TextBoxHandler();
+  delete tbh_;
+  xmlparser_->~XMLParser();
+  delete xmlparser_;
+}
+

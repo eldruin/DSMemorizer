@@ -32,10 +32,10 @@ public:
 	/// Default constructor
 	TextBoxHandler() {}
 	/// Initializer
-	/// \param bgid background id
-	void Init(int bgid);
+	void Init();
 
   /// Creates a new text box in the class
+  /// \param bgid background id
   /// \param font Font name
   /// \param size Font size
   /// \param x X position of the upper left corner
@@ -44,18 +44,17 @@ public:
   /// \param height Maximum height of the box. By default is 0 which means
   /// infinite
   /// \return Created TextBox ID
-  TextBox* New (Types::Font font, int size, int x, int y, int width,
+  TextBox* NewTextBox (int bgid, Types::Font font, int size, int x, int y, int width,
                   int height = 0);
 
   /// Destroy a text box
-  void Destroy (TextBox* tb);
+  void DestroyTextBox (TextBox* tb);
   /// Print all the text boxes
-  void Print ();
+  void PrintAll ();
   /// Destroyer
   ~TextBoxHandler();
 
 private:
-
 	/// Font library
 	FT_Library library_;
 
@@ -65,9 +64,6 @@ private:
 	std::vector< FT_Face > faces_;
   /// Created text boxes pointers
 	std::vector< TextBox* > text_boxes_;
-
-  /// Background id
-  int bgid_;
 };
 
 #endif // TEXTBOXHANDLER_H_

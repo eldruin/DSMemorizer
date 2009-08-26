@@ -16,23 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with DSMemorizer.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 
 #ifndef TYPES_H_
 #define TYPES_H_
- 
+
 namespace Types
 {
 	enum Font
 	{
-		MONA_FONT
+		MONA_FONT,
+		VERA_FONT
 	};
-	
+
 	namespace Color
 	{
-		const char BLACK = 1;
-		const char GREY = 2;
-		const char WHITE = 3;
+		const short BLACK = 255;
+		const short GREY = 254;
+		const short WHITE = 253;
 	}
 }
 

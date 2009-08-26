@@ -24,13 +24,26 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include "textbox.h"
+#include "types.h"
 
 using std::string;
+
+inline u8 convert_color(u8 incolor)
+{
+	u8 outcolor;
+	if (incolor > 180)
+		outcolor = Types::Color::BLACK;
+	else if (incolor > 128)
+		outcolor = Types::Color::GREY;
+	else
+		outcolor = Types::Color::WHITE;
+	return outcolor;
+}
 
 void TextBox::Init (int bgid, FT_Face face, int size, int x, int y, int width,
                     int height)
 {
-  video_buffer_ = bgGetGfxPtr(bgid);
+  bgid_ = bgid;
   face_ = face;
   size_ = size;
   x_ = x;
@@ -38,6 +51,7 @@ void TextBox::Init (int bgid, FT_Face face, int size, int x, int y, int width,
   width_ = width;
   height_ = height;
   mutable_height_ = (height == 0);
+  floats_ = false;
 }
 
 string TextBox::text () const
@@ -70,6 +84,21 @@ int TextBox::height () const
   return height_;
 }
 
+int TextBox::bgid () const
+{
+  return bgid_;
+}
+
+bool TextBox::floats () const
+{
+  return floats_;
+}
+
+void TextBox::floats (bool f)
+{
+  floats_ = f;
+}
+
 void TextBox::text (const string& str)
 {
   text_ = str;
@@ -83,21 +112,27 @@ void TextBox::Move (int x, int y)
 
 void TextBox::Adjust (int y)
 {
-  if (y > y_ + face_->height)
+  // The ((size_*3)>>1)-5 is because the points are a distance of 1/72 of
+  // an inch in freetype library, but the DS screen resolution is 110 dpi,
+  // so 110/72 is aproximately 1.5
+  // And 5 extra pixels of line separation
+  if (y > (y_ - ((size_*3)>>1)-5))
   {
-    y_ = y + face_->height;
+    y_ = y + ((size_*3)>>1)+5;
   }
 }
 
 void TextBox::Print ()
 {
-  // set the size because it could be changed by another textbox sharing
+  // set the size because it could have been changed by another textbox sharing
   // the same face
-  FT_Set_Char_Size (face_, size_ * 64, 0, 110, 110);
+  FT_Set_Char_Size (face_, size_ << 6, 0, 110, 110);
+
+  u16* video_buffer = bgGetGfxPtr(bgid_);
 
   int pen_x = x_;
   int pen_y = y_;
-
+  //iprintf("y: %i\n",y_);
   string::const_iterator it = text_.begin();
   while (it != text_.end())
   {
@@ -108,7 +143,7 @@ void TextBox::Print ()
       pen_x += size_*2/3;
       if ((pen_x - x_) > width_)
       { // New line
-        pen_y += face_->height/64;
+        pen_y += face_->height>>6;
         pen_x = x_;
         if ((pen_y - y_) > height_)
         {
@@ -129,7 +164,7 @@ void TextBox::Print ()
       // Added lots of local variables trying to speed up the rendering.
 			int width = face_->glyph->bitmap.width;
   		int rows = face_->glyph->bitmap.rows;
-  		int ycoord = pen_y - rows; //face_->glyph->metrics->horiBearingY;
+  		int ycoord = pen_y - (face_->glyph->metrics.horiBearingY>>6);
   		u8* buffer = face_->glyph->bitmap.buffer;
 
       // Copy the image from the rendered glyph bitmap to the video buffer
@@ -141,26 +176,26 @@ void TextBox::Print ()
           int index = glyph_y * width + glyph_x;
           // Gets the color of two pixels, if the gray level is above 248,
           // prints black, else prints white. Also aligns the two bytes.
-          u16 color = (((buffer[index]>>3) & 0x1f)>>4) |
-                      ((((buffer[index+1]>>3) & 0x1f)>>4)<<8);
-          int video_index = (ycoord + glyph_y) * 128 + (pen_x + glyph_x) / 2;
-          video_buffer_[video_index] = color;
+          u16 color = convert_color(buffer[index]) |
+                      convert_color(buffer[index+1])<<8;
+          int video_index = ((ycoord + glyph_y) <<7) + ((pen_x + glyph_x) >> 1);
+          video_buffer[video_index] = color;
         }
         if (glyph_x == width-1)
         {
           // for the last pixel in the row if the glyph width is odd
           int index = glyph_y * width + glyph_x;
-          u16 color = (((buffer[index]>>3) & 0x1f)>>4);
-          int video_index = (ycoord + glyph_y) * 128 + (pen_x + glyph_x) / 2;
-          video_buffer_[video_index] = color;
+          u16 color = convert_color(buffer[index]) | Types::Color::WHITE <<8;
+          int video_index = ((ycoord + glyph_y) <<7) + ((pen_x + glyph_x) >> 1);
+          video_buffer[video_index] = color;
         }
       }
 
       // increment pen position
-      pen_x += face_->glyph->advance.x >> 6;
+      pen_x += face_->glyph->metrics.horiAdvance >> 6;
       if ((pen_x - x_) > width_)
       { // New line
-        pen_y += face_->height/64;
+        pen_y += face_->height >> 6;
         pen_x = x_;
         if ((pen_y - y_) > height_)
         {

@@ -28,29 +28,20 @@
 #include "utf8.h"		// UTF-8 string library
 
 #include "types.h"
-#include "text.h"
-#include "kanjimodescreen.h"
+#include "kanjimode.h"
 #include "card.h"
-#include "xmlparser.h"
 
 using namespace std;
 int main (void)
 {
   irqInit();
   irqEnable(IRQ_VBLANK);
-  int position = 0;
   consoleDemoInit ();
-  iprintf ("hello\n");
 
   if (EFS_Init (EFS_AND_FAT | EFS_DEFAULT_DEVICE, NULL))
   {
-    iprintf ("EFS init OK!\n");
-    iprintf ("found NDS path: %s\n", efs_path);
-
-    int error;
-
-    //point our video buffer to the start of bitmap background video
-    u16 *video_buffer = (u16 *) BG_BMP_RAM (0);
+    //iprintf ("EFS init OK!\n");
+    //iprintf ("found NDS path: %s\n", efs_path);
 
     //set video mode to mode 5
     videoSetMode (MODE_5_2D);
@@ -60,41 +51,8 @@ using namespace std;
 
     int bg3 = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
 
-    BG_PALETTE[0]= RGB15(31,31,31);
-    BG_PALETTE[Types::Color::BLACK]= RGB15(0,0,0);
-    BG_PALETTE[Types::Color::GREY]= RGB15(15,15,15);
-    BG_PALETTE[Types::Color::WHITE]= RGB15(31,31,31);
-    BG_PALETTE[255]= RGB15(0,0,0);
-
-
-    XMLParser xmlparser;
-    xmlparser.Init("/db/kanjis.xml");
-    Card c = xmlparser.card(2);
-    iprintf("Card symbol: %s\n", c.symbol().c_str());
-    iprintf("Card reading: %s\n", c.reading().c_str());
-    iprintf("Card reading2: %s\n", c.reading2().c_str());
-    iprintf("Card translation: %s\n", c.translation().c_str());
-    iprintf("Card example_symbol: %s\n", c.example_symbol().c_str());
-    iprintf("Card example_reading: %s\n", c.example_reading().c_str());
-    iprintf("Card example_translation: %s\n", c.example_translation().c_str());
-
-    KanjiModeScreen kms;
-    kms.Init(bg3);
-    kms.Print(c);
-
-#if 0
-    // Manually fill
-    KanjiModeScreen kms;
-    kms.Init(bg3);
-    kms.kanji("日");
-    kms.first_reading("び、か");
-    kms.second_reading("ひ");
-    kms.translation("Day, sun");
-    kms.example_kanji("今日");
-    kms.example_reading("きょう");
-    kms.example_translation ("Today");
-#endif
-
+    KanjiMode km;
+    km.Init(bg3);
   }
   else
   {

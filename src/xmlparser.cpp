@@ -98,6 +98,11 @@ Card XMLParser::card (int index)
   return read_card;
 }
 
+int XMLParser::package_records () const
+{
+  return package_records_;
+}
+
 string XMLParser::attribute_value(const char* name, const char* buffer, int& position)
 {
   string result;
@@ -118,6 +123,11 @@ string XMLParser::attribute_value(const char* name, const char* buffer, int& pos
   ++position; // skip '\"'
 
   return result;
+}
+
+XMLParser::~XMLParser ()
+{
+  fclose(file_);
 }
 
 

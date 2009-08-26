@@ -1,4 +1,4 @@
-/// \file kanjimodescreen.h Kanji mode screen manager.
+/// \file kanjimode.h Kanji game mode.
 /* Copyright 2009 Diego Barrios Romero
  *
  * This file is part of DSMemorizer.
@@ -17,35 +17,47 @@
  * along with DSMemorizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KANJIMODESCREEN_H_
-#define KANJIMODESCREEN_H_
+#ifndef KANJIMODE_H_
+#define KANJIMODE_H_
 
 class Card;
-class Text;
+class TextBox;
+class TextBoxHandler;
+class XMLParser;
 
-/// Screen manager for kanji mode
-class KanjiModeScreen
+/// Kanji game mode
+class KanjiMode
 {
 public:
   /// Default constructor
-  KanjiModeScreen() {}
-  /// Initializer
+  KanjiMode() {}
+  /// \brief Initializer
   /// \param bgid Background id
   void Init (int bgid);
-  /// Print a card
-  void Print (const Card& card);
+
+  /// Destructor
+  ~KanjiMode();
 
 private:
-  Text kanji_,                ///< Kanji
-       first_reading_,        ///< First reading
-       second_reading_,       ///< Second reading
-       translation_,          ///< Translation
-       example_kanji_,        ///< Example in kanjis
-       example_reading_,      ///< Reading of the example
-       example_translation_;  ///< Translation of the example
-
-  /// Video buffer pointer to print in
-  u16* video_buffer_;
+  /// Print a card
+  void PrintCard (const Card& card);
+  /// XML database file parser
+  XMLParser *xmlparser_;
+  /// Text boxes handler
+  TextBoxHandler* tbh_;
+  TextBox *kanji_,                  ///< Kanji
+          *first_reading_,          ///< First reading
+          *second_reading_,         ///< Second reading
+          *translation_,            ///< Translation
+          *example_kanji_,          ///< Example in kanjis
+          *example_reading_,        ///< Reading of the example
+          *example_translation_,    ///< Translation of the example
+          *caption_kanji_,          ///< Kanji caption
+          *caption_first_reading_,  ///< First reading caption
+          *caption_second_reading_, ///< Second reading caption
+          *caption_translation_,    ///< Translation caption
+          *caption_example_,        ///< Example caption
+          *card_number_;            ///< Card number
 };
 
 #endif // KANJIMODESCREEN_H_

@@ -33,8 +33,8 @@ public:
   /// \param bgid background id
   /// \param face FT_Face object from the TextHandler class
   /// \param size Font size
-  /// \param x X position of the upper left corner
-  /// \param y Y position of the upper left corner
+  /// \param x X position of the left side
+  /// \param y Y position of the bottom side
   /// \param width Width of the box in pixels
   /// \param height Maximum height of the box. By default is 0 which means
   /// infinite
@@ -43,16 +43,22 @@ public:
 
   /// Get the font size
   int size () const;
-  /// Get the X position of the upper left corner
+  /// Get the X position of the left side
   int x () const;
-  /// Get the Y position of the upper left corner
+  /// Get the Y position of the bottom side
   int y () const;
   /// Get the width of the box in pixels
   int width () const;
   /// Get the height of the box in pixels
   int height () const;
+  /// Get whether the text box floats or not
+  bool floats () const;
   /// Get the text
   std::string text () const;
+  /// Get the background id
+  int bgid () const;
+  /// Set whether the text box floats or not
+  void floats (bool f);
   /// Set the text
   void text (const std::string& str);
 
@@ -69,14 +75,14 @@ private:
   /// String of text to print
   std::string text_;
   int size_,              ///< Font size
-      x_,                 ///< X position of the upper left corner
-      y_,                 ///< Y position of the upper left corner
+      x_,                 ///< X position of the left side
+      y_,                 ///< Y position of the bottom side
       width_,             ///< Width of the box in pixels
       height_;            ///< Height of the box in pixels
-  bool mutable_height_;   ///< Whether the height is mutable or not
-
-  /// Video buffer pointer to print in
-	u16* video_buffer_;
+  bool mutable_height_,   ///< Whether the height is mutable or not
+       floats_;           ///< Whether the textbox floats independently
+                          /// \sa TextBoxHandler::Print();
+  int bgid_;              ///< Background id
 };
 
 #endif // TEXTBOX_H_

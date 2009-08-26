@@ -36,6 +36,10 @@ public:
 	/// Get a card determined by its index
 	Card card(int index);
 
+	/// Get the number of records in the package
+	int package_records () const;
+
+  ~XMLParser ();
 private:
   // Data members
   /// XML file
