@@ -92,7 +92,7 @@ void KanjiMode::Init(int bgid)
   touchPosition touch;
   // Loop
   while(!(keys & KEY_B))
-   {
+  {
       scanKeys();
 
       touchRead(&touch);

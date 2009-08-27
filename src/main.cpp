@@ -27,9 +27,8 @@
 #include "efs_lib.h"		// include EFS lib
 #include "utf8.h"		// UTF-8 string library
 
-#include "types.h"
 #include "kanjimode.h"
-#include "card.h"
+#include "kanjiquizmode.h"
 
 using namespace std;
 int main (void)
@@ -49,8 +48,8 @@ using namespace std;
 
     int bg3 = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
 
-    KanjiMode km;
-    km.Init(bg3);
+    KanjiQuizMode kqm;
+    kqm.Init(bg3);
   }
   else
   {

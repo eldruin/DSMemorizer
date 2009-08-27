@@ -60,5 +60,5 @@ private:
           *card_number_;            ///< Card number
 };
 
-#endif // KANJIMODESCREEN_H_
+#endif // KANJIMODE_H_
 

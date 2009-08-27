@@ -166,6 +166,7 @@ void TextBox::Print ()
   		int ycoord = pen_y - (face_->glyph->metrics.horiBearingY>>6);
   		u8* buffer = face_->glyph->bitmap.buffer;
 
+      pen_x += face_->glyph->metrics.horiBearingX>>6;
       // Copy the image from the rendered glyph bitmap to the video buffer
       for (int glyph_y = 0; glyph_y < rows; ++glyph_y)
       {
@@ -191,7 +192,7 @@ void TextBox::Print ()
       }
 
       // increment pen position
-      pen_x += face_->glyph->metrics.horiAdvance >> 6;
+      pen_x += face_->glyph->advance.x >>6;
       if ((pen_x - x_) > width_)
       { // New line
         pen_y += face_->height >> 6;
