@@ -46,15 +46,15 @@ private:
   /// Text boxes handler
   TextBoxHandler* tbh_;
   TextBox *kanji_,                  ///< Kanji
-          *first_reading_,          ///< First reading
-          *second_reading_,         ///< Second reading
+          *on_reading_,             ///< On reading
+          *kun_reading_,            ///< Kun reading
           *translation_,            ///< Translation
           *example_kanji_,          ///< Example in kanjis
           *example_reading_,        ///< Reading of the example
           *example_translation_,    ///< Translation of the example
           *caption_kanji_,          ///< Kanji caption
-          *caption_first_reading_,  ///< First reading caption
-          *caption_second_reading_, ///< Second reading caption
+          *caption_on_reading_,     ///< On reading caption
+          *caption_kun_reading_,    ///< Kun reading caption
           *caption_translation_,    ///< Translation caption
           *caption_example_,        ///< Example caption
           *card_number_;            ///< Card number

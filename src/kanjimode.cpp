@@ -66,10 +66,10 @@ void KanjiMode::Init(int bgid)
   caption_kanji_ = tbh_->NewTextBox (bg2, Types::VERA_FONT, 8,15,17,60,0);
   kanji_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 30,12,60,100,0);
   kanji_->floats(true);
-  caption_first_reading_ = tbh_->NewTextBox (bg2, Types::VERA_FONT, 8,70,17,100,0);
-  first_reading_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 10,70,30,100,0);
-  caption_second_reading_ = tbh_->NewTextBox (bg2, Types::VERA_FONT, 8,70,35,100,0);
-  second_reading_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 10,70,40,100,0);
+  caption_on_reading_ = tbh_->NewTextBox (bg2, Types::VERA_FONT, 8,70,17,100,0);
+  on_reading_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 10,70,30,100,0);
+  caption_kun_reading_ = tbh_->NewTextBox (bg2, Types::VERA_FONT, 8,70,35,100,0);
+  kun_reading_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 10,70,40,100,0);
   caption_translation_ = tbh_->NewTextBox (bg2, Types::VERA_FONT, 8,10,100,100,0);
   translation_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 10,10,100,235,0);
   caption_example_ = tbh_->NewTextBox (bg2, Types::VERA_FONT, 8,10,130,100,0);
@@ -79,8 +79,8 @@ void KanjiMode::Init(int bgid)
 
   // Text that won't change
   caption_kanji_->text("Kanji");
-	caption_first_reading_->text("First reading");
-	caption_second_reading_->text("Second reading");
+	caption_on_reading_->text("on reading");
+	caption_kun_reading_->text("kun reading");
 	caption_translation_->text("Translation");
 	caption_example_->text("Example");
 
@@ -140,8 +140,8 @@ void KanjiMode::Init(int bgid)
 void KanjiMode::PrintCard (const Card& card)
 {
  	kanji_->text(card.symbol());
-	first_reading_->text(card.reading());
-	second_reading_->text(card.reading2());
+	on_reading_->text(card.reading());
+	kun_reading_->text(card.reading2());
 	translation_->text(card.translation());
 	example_kanji_->text(card.example_symbol());
 	example_reading_->text(card.example_reading());
