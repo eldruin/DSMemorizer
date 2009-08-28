@@ -51,21 +51,25 @@ public:
   int width () const;
   /// Get the height of the box in pixels
   int height () const;
-  /// Get whether the text box floats or not
+  /// Get whether the text box floats or not \sa floats_
   bool floats () const;
-  /// Get whether the text box is independent or not
+  /// Get whether the text box is independent or not \sa independent_
   bool independent () const;
+  /// Get whether the text will be visible or not \sa visible_
+  bool visible () const;
   /// Get the text
   std::string text () const;
   /// Get the background id
   int bgid () const;
 
-  /// Set whether the text box floats or not
-  void floats (bool f);
   /// Set the text
   void text (const std::string& str);
-  /// Set whether the text box is independent or not
+  /// Set whether the text box floats or not \sa floats_
+  void floats (bool f);
+  /// Set whether the text box is independent or not \sa independent_
   void independent (bool i);
+  /// Set whether the text will be visible or not \sa visible_
+  void visible (bool v);
 
   /// Moves the text box to another position
   void Move (int x, int y);
@@ -85,14 +89,17 @@ private:
       width_,             ///< Width of the box in pixels
       height_;            ///< Height of the box in pixels
   bool mutable_height_,   ///< Whether the height is mutable or not
-       floats_,           ///< Whether the text box floats or not.
-                          /// A floating text box isn't adjusted by its
-                          /// predecessor nor adjusts the next text box
-                          /// \sa TextBoxHandler::PrintAll();
-       independent_;      ///< An independent text box won't be printed by
+       floats_,           ///< A floating text box isn't adjusted by its
+                          /// predecessor nor adjusts the next text box.
+                          /// By default: \c false
+       independent_,      ///< An independent text box won't be printed by
                           /// the text boxes handler needs to be manually
-                          /// printed
-                          /// \sa TextBoxHandler::PrintAll();
+                          /// printed.
+                          /// By default: \c false
+       visible_;          ///< Text not visible is rendered by the freetype
+                          /// library (needed to compute the spacing)
+                          /// but it's not printed to the screen.
+                          /// By default: \c true
   int bgid_;              ///< Background id
 };
 
