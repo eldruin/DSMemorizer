@@ -30,8 +30,27 @@
 
 #include "kanjibg.h"
 #include "kanjiquizsubbg.h"
+#include "tick.h"
+#include "cross.h"
 
 #define SUB 1
+
+inline int x_position (int selected_kanji)
+{
+  int x_pos;
+  switch (selected_kanji)
+  {
+    case 1: x_pos = 43;
+    break;
+    case 2: x_pos = 98;
+    break;
+    case 3: x_pos = 153;
+    break;
+    case 4: x_pos = 200;
+    break;
+  }
+  return x_pos;
+}
 
 void KanjiQuizMode::Init (int bgid)
 {
@@ -53,6 +72,8 @@ void KanjiQuizMode::Init (int bgid)
 
   dmaCopy(kanjiquizsubbgBitmap, bgGetGfxPtr(subbg3), 256*256);
   dmaCopy(kanjiquizsubbgPal, BG_PALETTE_SUB, 256*2);
+  dmaCopy(tickPal,BG_PALETTE_SUB+8,43*2);
+  dmaCopy(tickPal,BG_PALETTE_SUB+94,43*2);
 
   BG_PALETTE_SUB[Types::Color::BLACK]= RGB15(0,0,0);
   BG_PALETTE_SUB[Types::Color::GREY]= RGB15(15,15,15);
@@ -124,8 +145,27 @@ void KanjiQuizMode::Init (int bgid)
       iprintf("touch x: %i, y: %i\n",touch.px,touch.py);
 #endif
 
-      if (selected_kanji == correct_)
+      if (selected_kanji)
       {
+        if (selected_kanji == correct_)
+        {
+#if SUB
+          PrintBitmap(x_position(selected_kanji), 103, subbg3, tickBitmap,8);
+#endif
+        }
+        else
+        {
+#if SUB
+          PrintBitmap(x_position(selected_kanji), 103, subbg3, crossBitmap,94);
+          PrintBitmap(x_position(correct_), 103, subbg3, tickBitmap,8);
+#endif
+        }
+
+        do
+        {
+          scanKeys();
+        }while(!keysDown());
+
         sy = 0;
         dmaCopy(kanjibgBitmap, bgGetGfxPtr(bgid), 256*256);
 #if SUB
@@ -181,6 +221,36 @@ int KanjiQuizMode::PrintScreens (const Card& card)
 	tbh_->PrintAll();
 
 	return new_position + 1;
+}
+
+void KanjiQuizMode::PrintBitmap (int x, int y, int bgid,
+                                 const unsigned int* bitmap, int palette_offset)
+{
+  // FIXME: Don't print correctly
+  u16* video_buffer = bgGetGfxPtr(bgid);
+  for (int image_y = 0; image_y < 20; ++image_y)
+    for (int image_x = 0; image_x < 20; ++image_x)
+    {
+      int pixel_num = image_y * 20 + image_x;
+      // select the indicated byte in the word and adds the offset
+      // for the new palette
+      int pixel_palette_index =
+        ((bitmap [(pixel_num >> 2)] & (0xFF000000 >> (pixel_num % 4))
+        ) >> ((3-pixel_num%4) << 3 )) + palette_offset;
+      int video_index = (image_y + y)*128 + (image_x + x)/2;
+      if ((image_x+x) % 2)
+      {
+        // odd
+        video_buffer[video_index] = pixel_palette_index |
+                                    (video_buffer[video_index] & 0xFF00);
+      }
+      else
+      {
+        // even
+        video_buffer[video_index] = (pixel_palette_index << 8) |
+                                    (video_buffer[video_index] & 0x00FF);
+      }
+    }
 }
 
 KanjiQuizMode::~KanjiQuizMode ()

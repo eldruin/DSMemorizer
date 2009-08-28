@@ -44,6 +44,9 @@ public:
 private:
   /// Prints the text in the two screens
   int PrintScreens (const Card& card);
+  /// Prints a bitmap in a background
+  static void PrintBitmap (int x, int y, int bgid, const unsigned int* bitmap,
+                           int palette_offset);
   /// XML database file parser
   XMLParser *xmlparser_;
   /// Text boxes handler
