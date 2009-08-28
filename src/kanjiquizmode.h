@@ -61,11 +61,15 @@ private:
           *kanji2_,                   ///< Kanji 2
           *kanji3_,                   ///< Kanji 3
           *kanji4_,                   ///< Kanji 4
-          *scoreboard_;               ///< Scoreboard
+          *scoreboard_,               ///< Scoreboard
+          *accuracy_;               ///< Right answer percentage
   /// Number of the correct kanji
   short correct_;
   /// Player score
   int score_;
+  /// Player answer number
+  int answers_;
+
 };
 
 #endif // KANJIQUIZMODE_H_

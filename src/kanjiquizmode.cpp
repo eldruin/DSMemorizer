@@ -94,12 +94,14 @@ void KanjiQuizMode::Init (int bgid)
   kun_reading_ = tbh_->NewTextBox (bg2, Types::MONA_FONT, 10,20,80,225,0);
 #if SUB
   // Sub screen
-  scoreboard_  = tbh_->NewTextBox (subbg3, Types::VERA_FONT, 10,145,25,225,0);
+  scoreboard_  = tbh_->NewTextBox (subbg3, Types::VERA_FONT, 8,154,25,225,0);
+  accuracy_  = tbh_->NewTextBox (subbg3, Types::VERA_FONT, 8,23,25,225,0);
   kanji1_ = tbh_->NewTextBox (subbg3, Types::MONA_FONT, 30,33,80,225,0);
   kanji2_ = tbh_->NewTextBox (subbg3, Types::MONA_FONT, 30,85,80,225,0);
   kanji3_ = tbh_->NewTextBox (subbg3, Types::MONA_FONT, 30,137,80,225,0);
   kanji4_ = tbh_->NewTextBox (subbg3, Types::MONA_FONT, 30,189,80,225,0);
   scoreboard_->independent(true);
+  accuracy_->independent(true);
   kanji1_->floats(true);
   kanji2_->floats(true);
   kanji3_->floats(true);
@@ -118,6 +120,11 @@ void KanjiQuizMode::Init (int bgid)
   sprintf(score_text, "Score: %i",score_);
   scoreboard_->text(score_text);
   scoreboard_->Print();
+  answers_ = 0;
+  char* accuracy_text = new char [40];
+  sprintf(accuracy_text, "Accuracy: %i%%",score_*100/answers_);
+  accuracy_->text(accuracy_text);
+  accuracy_->Print();
 
   int selected_kanji = 0;
   int sy = 0;
@@ -154,13 +161,15 @@ void KanjiQuizMode::Init (int bgid)
 
       if (selected_kanji)
       {
+        ++answers_;
         if (selected_kanji == correct_)
         {
           ++score_;
           sprintf(score_text, "Score: %i",score_);
 #if SUB
           scoreboard_->text(score_text);
-          scoreboard_->Print();
+          sprintf(accuracy_text, "Accuracy: %i%%",score_*100/answers_);
+          accuracy_->text(accuracy_text);
           PrintBitmap(x_position(selected_kanji), 103, subbg3, tickBitmap,8);
 #endif
         }
@@ -181,6 +190,7 @@ void KanjiQuizMode::Init (int bgid)
         dmaCopy(kanjibgBitmap, bgGetGfxPtr(bgid), 256*256);
 #if SUB
         dmaCopy(kanjiquizsubbgBitmap, bgGetGfxPtr(subbg3), 256*256);
+        accuracy_->Print();
         scoreboard_->Print();
 #endif
         bgSetScroll(bgid,0,sy);
