@@ -52,6 +52,7 @@ void TextBox::Init (int bgid, FT_Face face, int size, int x, int y, int width,
   height_ = height;
   mutable_height_ = (height == 0);
   floats_ = false;
+  independent_ = false;
 }
 
 string TextBox::text () const
@@ -94,9 +95,19 @@ bool TextBox::floats () const
   return floats_;
 }
 
+bool TextBox::independent () const
+{
+  return independent_;
+}
+
 void TextBox::floats (bool f)
 {
   floats_ = f;
+}
+
+void TextBox::independent (bool i)
+{
+  independent_ = i;
 }
 
 void TextBox::text (const string& str)

@@ -150,6 +150,7 @@ void KanjiMode::PrintCard (const Card& card)
   char* card_number_text = new char [40];
   sprintf(card_number_text, "Card number: %i",card.index());
 	card_number_->text(card_number_text);
+	delete card_number_text;
 	tbh_->PrintAll();
 }
 

@@ -60,9 +60,12 @@ private:
           *kanji1_,                   ///< Kanji 1
           *kanji2_,                   ///< Kanji 2
           *kanji3_,                   ///< Kanji 3
-          *kanji4_;                   ///< Kanji 4
+          *kanji4_,                   ///< Kanji 4
+          *scoreboard_;               ///< Scoreboard
   /// Number of the correct kanji
   short correct_;
+  /// Player score
+  int score_;
 };
 
 #endif // KANJIQUIZMODE_H_

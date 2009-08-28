@@ -53,14 +53,19 @@ public:
   int height () const;
   /// Get whether the text box floats or not
   bool floats () const;
+  /// Get whether the text box is independent or not
+  bool independent () const;
   /// Get the text
   std::string text () const;
   /// Get the background id
   int bgid () const;
+
   /// Set whether the text box floats or not
   void floats (bool f);
   /// Set the text
   void text (const std::string& str);
+  /// Set whether the text box is independent or not
+  void independent (bool i);
 
   /// Moves the text box to another position
   void Move (int x, int y);
@@ -80,8 +85,14 @@ private:
       width_,             ///< Width of the box in pixels
       height_;            ///< Height of the box in pixels
   bool mutable_height_,   ///< Whether the height is mutable or not
-       floats_;           ///< Whether the textbox floats independently
-                          /// \sa TextBoxHandler::Print();
+       floats_,           ///< Whether the text box floats or not.
+                          /// A floating text box isn't adjusted by its
+                          /// predecessor nor adjusts the next text box
+                          /// \sa TextBoxHandler::PrintAll();
+       independent_;      ///< An independent text box won't be printed by
+                          /// the text boxes handler needs to be manually
+                          /// printed
+                          /// \sa TextBoxHandler::PrintAll();
   int bgid_;              ///< Background id
 };
 
