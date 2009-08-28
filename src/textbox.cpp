@@ -203,7 +203,8 @@ void TextBox::Print ()
       }
 
       // increment pen position
-      pen_x += face_->glyph->advance.x >>6;
+      pen_x += (face_->glyph->advance.x >> 6) -
+               (face_->glyph->metrics.horiBearingX >> 6);
       if ((pen_x - x_) > width_)
       { // New line
         pen_y += face_->height >> 6;
