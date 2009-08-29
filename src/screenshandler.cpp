@@ -1,4 +1,4 @@
-/// \file vocabularymode.h Vocabulary memorizing game mode.
+/// \file screenshandler.cpp Screen handler
 /* Copyright 2009 Diego Barrios Romero
  *
  * This file is part of DSMemorizer.
@@ -17,20 +17,23 @@
  * along with DSMemorizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VOCABULARYMODE_H_
-#define VOCABULARYMODE_H_
+#include "textbox.h"
+#include "textboxhandler.h"
+#include "screenshandler.h"
 
-/// Vocabulary memorizing game mode.
-/// Shows words with their reading and translation
-class VocabularyMode
+void ScreensHandler::Init()
 {
-public:
-  /// Default constructor
-  VocabularyMode() {}
-  /// \brief Initializer
-  /// \param bgid Background id
-  void Init (int bgid);
-};
+  tbh_ = new TextBoxHandler ();
+  tbh_->Init ();
+}
 
-#endif // VOCABULARYMODE_H_
+TextBoxHandler* ScreensHandler::tbh () const
+{
+  return tbh_;
+}
 
+ScreensHandler::~ScreensHandler ()
+{
+  tbh_->~TextBoxHandler();
+  delete tbh_;
+}

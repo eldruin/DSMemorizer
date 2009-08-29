@@ -35,6 +35,34 @@ namespace Types
 		const short GREY = 254;
 		const short WHITE = 253;
 	}
+
+  namespace MainScreenMode
+  {
+    enum mode
+    {
+      KANJI,
+      VERTICAL_TEXTBOXES,
+      VERTICAL_TEXTBOXES_VISIBLE
+    };
+  }
+
+  namespace SubScreenMode
+  {
+    enum mode
+    {
+      CARDS,
+      KANJI_CHOOSE
+    };
+  }
+
+  namespace Screen
+  {
+    enum selector
+    {
+      MAIN,
+      SUB
+    };
+  }
 }
 
 #endif // TYPES_H_

@@ -20,6 +20,8 @@
 #ifndef CARD_H_
 #define CARD_H_
 
+#include <string>
+
 /// Card of a package
 class Card
 {

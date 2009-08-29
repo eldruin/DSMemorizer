@@ -44,13 +44,14 @@ public:
   /// \param height Maximum height of the box. By default is 0 which means
   /// infinite
   /// \return Created TextBox ID
-  TextBox* NewTextBox (int bgid, Types::Font font, int size, int x, int y, int width,
-                  int height = 0);
+  TextBox* NewTextBox (Types::Screen::selector screen, int bgid,
+                       Types::Font font, int size, int x, int y,
+                       int width, int height = 0);
 
   /// Destroy a text box
   void DestroyTextBox (TextBox* tb);
   /// Print all the text boxes
-  void PrintAll ();
+  void PrintAll (Types::Screen::selector);
   /// Destroyer
   ~TextBoxHandler();
 

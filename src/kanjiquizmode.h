@@ -20,11 +20,6 @@
 #ifndef KANJIQUIZMODE_H_
 #define KANJIQUIZMODE_H_
 
-class Card;
-class TextBox;
-class TextBoxHandler;
-class XMLParser;
-
 /// Kanji quiz game mode.
 /// Shows the translation and the two readings of a kanji in the main screen
 /// and the right kanji plus 3 more random in the sub screen.
@@ -38,38 +33,13 @@ public:
   /// \param bgid Background id
   void Init (int bgid);
 
-  /// Destructor
-  ~KanjiQuizMode();
-
 private:
-  /// Prints the text in the two screens
-  int PrintScreens (const Card& card);
-  /// Prints a bitmap in a background
-  static void PrintBitmap (int x, int y, int bgid, const unsigned int* bitmap,
-                           int palette_offset);
-  /// XML database file parser
-  XMLParser *xmlparser_;
-  /// Text boxes handler
-  TextBoxHandler* tbh_;
-  TextBox *translation_,              ///< Translation
-          *on_reading_,               ///< On reading
-          *kun_reading_,              ///< Kun reading
-          *caption_translation_,      ///< Translation
-          *caption_on_reading_,       ///< On reading
-          *caption_kun_reading_,      ///< Kun reading
-          *kanji1_,                   ///< Kanji 1
-          *kanji2_,                   ///< Kanji 2
-          *kanji3_,                   ///< Kanji 3
-          *kanji4_,                   ///< Kanji 4
-          *scoreboard_,               ///< Scoreboard
-          *accuracy_;               ///< Right answer percentage
   /// Number of the correct kanji
   short correct_;
   /// Player score
   int score_;
   /// Player answer number
   int answers_;
-
 };
 
 #endif // KANJIQUIZMODE_H_

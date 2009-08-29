@@ -40,9 +40,10 @@ inline u8 convert_color(u8 incolor)
 	return outcolor;
 }
 
-void TextBox::Init (int bgid, FT_Face face, int size, int x, int y, int width,
-                    int height)
+void TextBox::Init (Types::Screen::selector screen, int bgid, FT_Face face,
+                    int size, int x, int y, int width, int height)
 {
+  screen_ = screen;
   bgid_ = bgid;
   face_ = face;
   size_ = size;
@@ -55,7 +56,7 @@ void TextBox::Init (int bgid, FT_Face face, int size, int x, int y, int width,
   visible_ = true;
 }
 
-string TextBox::text () const
+std::string TextBox::text () const
 {
   return text_;
 }
@@ -105,6 +106,11 @@ bool TextBox::visible () const
   return visible_;
 }
 
+Types::Screen::selector TextBox::screen () const
+{
+  return screen_;
+}
+
 void TextBox::floats (bool f)
 {
   floats_ = f;
@@ -120,7 +126,7 @@ void TextBox::visible (bool v)
   visible_ = v;
 }
 
-void TextBox::text (const string& str)
+void TextBox::text (const std::string& str)
 {
   text_ = str;
 }

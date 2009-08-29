@@ -20,10 +20,8 @@
 #ifndef KANJIMODE_H_
 #define KANJIMODE_H_
 
-class Card;
-class TextBox;
-class TextBoxHandler;
-class XMLParser;
+class MainScreenHandler;
+class SubScreenHandler;
 
 /// Kanji game mode
 class KanjiMode
@@ -35,29 +33,9 @@ public:
   /// \param bgid Background id
   void Init (int bgid);
 
-  /// Destructor
-  ~KanjiMode();
-
 private:
-  /// Print a card
-  void PrintCard (const Card& card);
-  /// XML database file parser
-  XMLParser *xmlparser_;
-  /// Text boxes handler
-  TextBoxHandler* tbh_;
-  TextBox *kanji_,                  ///< Kanji
-          *on_reading_,             ///< On reading
-          *kun_reading_,            ///< Kun reading
-          *translation_,            ///< Translation
-          *example_kanji_,          ///< Example in kanjis
-          *example_reading_,        ///< Reading of the example
-          *example_translation_,    ///< Translation of the example
-          *caption_kanji_,          ///< Kanji caption
-          *caption_on_reading_,     ///< On reading caption
-          *caption_kun_reading_,    ///< Kun reading caption
-          *caption_translation_,    ///< Translation caption
-          *caption_example_,        ///< Example caption
-          *card_number_;            ///< Card number
+  MainScreenHandler *main_screen_handler_;
+  SubScreenHandler *sub_screen_handler_;
 };
 
 #endif // KANJIMODE_H_

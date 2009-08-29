@@ -20,8 +20,11 @@
 #ifndef TEXTBOX_H_
 #define TEXTBOX_H_
 
+#include <string>
 #include <ft2build.h>
 #include FT_FREETYPE_H
+
+#include "types.h"
 
 /// Box of text with line control
 class TextBox
@@ -38,8 +41,8 @@ public:
   /// \param width Width of the box in pixels
   /// \param height Maximum height of the box. By default is 0 which means
   /// infinite
-  void Init (int bgid, FT_Face face, int size, int x, int y, int width,
-             int height = 0);
+  void Init (Types::Screen::selector screen, int bgid, FT_Face face, int size,
+             int x, int y, int width, int height = 0);
 
   /// Get the font size
   int size () const;
@@ -59,6 +62,8 @@ public:
   bool visible () const;
   /// Get the text
   std::string text () const;
+  /// Get the screen where the textbox is
+  Types::Screen::selector screen () const;
   /// Get the background id
   int bgid () const;
 
@@ -100,7 +105,9 @@ private:
                           /// library (needed to compute the spacing)
                           /// but it's not printed to the screen.
                           /// By default: \c true
-  int bgid_;              ///< Background id
+
+  Types::Screen::selector screen_; ///< Screen where the text box is
+  int bgid_;                       ///< Background id
 };
 
 #endif // TEXTBOX_H_

@@ -42,7 +42,8 @@ void TextBoxHandler::Init()
                                    // for each supported font
 }
 
-TextBox* TextBoxHandler::NewTextBox (int bgid, Types::Font font, int size,
+TextBox* TextBoxHandler::NewTextBox (Types::Screen::selector screen, int bgid,
+                                     Types::Font font, int size,
                                      int x, int y, int width, int height)
 {
   if (faces_[font] == NULL)
@@ -64,7 +65,7 @@ TextBox* TextBoxHandler::NewTextBox (int bgid, Types::Font font, int size,
       faces_[font] = face;
   }
   TextBox* tb = new TextBox ();
-  tb->Init(bgid, faces_[font], size, x, y, width, height);
+  tb->Init(screen, bgid, faces_[font], size, x, y, width, height);
   text_boxes_.push_back(tb);
   return tb;
 }
@@ -80,16 +81,19 @@ void TextBoxHandler::DestroyTextBox (TextBox* tb)
   }
 }
 
-void TextBoxHandler::PrintAll ()
+void TextBoxHandler::PrintAll (Types::Screen::selector screen)
 {
   for (size_t i = 0; i < text_boxes_.size(); ++i)
   {
-    text_boxes_[i]->Print();
-    if (i < text_boxes_.size()-1)
-      if (!text_boxes_[i]->independent() && !text_boxes_[i+1]->independent() &&
-          !text_boxes_[i]->floats() && !text_boxes_[i+1]->floats() &&
-          text_boxes_[i]->bgid() == text_boxes_[i+1]->bgid())
-        text_boxes_[i+1]->Adjust(text_boxes_[i]->y());
+    if (screen == text_boxes_[i]->screen())
+    {
+      text_boxes_[i]->Print();
+      if (i < text_boxes_.size()-1)
+        if (!text_boxes_[i]->independent() && !text_boxes_[i+1]->independent() &&
+            !text_boxes_[i]->floats() && !text_boxes_[i+1]->floats() &&
+            text_boxes_[i]->bgid() == text_boxes_[i+1]->bgid())
+          text_boxes_[i+1]->Adjust(text_boxes_[i]->y());
+    }
   }
 }
 
