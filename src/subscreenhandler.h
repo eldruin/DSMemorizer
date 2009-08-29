@@ -77,4 +77,9 @@ private:
   int bgid_;
 };
 
+/// Calculates 4 random cards including the correct one given by card_index.
+/// \return The correct card position
+int randomize_positions (int card_index, int package_records, int& card0,
+                         int& card1, int& card2, int& card3);
+
 #endif // SUBSCREENHANDLER_H_

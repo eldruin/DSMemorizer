@@ -240,3 +240,36 @@ SubScreenHandler::~SubScreenHandler()
     screens_handler_->tbh()->DestroyTextBox(kanji4_);
   }
 }
+
+
+int randomize_positions (int card_index, int package_records, int& card0,
+                         int& card1, int& card2, int& card3)
+{
+
+  int selected_card [4] = {0,0,0,0};
+  selected_card[0] = card_index;
+  // Fills the vector with not repeated random cards
+  for (size_t i = 1; i < 4; ++i)
+  {
+    bool chosen;
+    do
+    {
+      chosen = false;
+      selected_card[i] = rand()%package_records + 1;
+      for (size_t j = 0;!chosen && j < 4; ++j)
+        chosen = (i!=j) && (selected_card[j] == selected_card[i]);
+    }while(chosen);
+  }
+
+  // randomizes the correct card position
+  int new_position = rand()%4;
+  int aux = selected_card[new_position];
+  selected_card[new_position] = selected_card[0];
+  card0 = aux;
+  card1 = selected_card[1];
+  card2 = selected_card[2];
+  card3 = selected_card[3];
+
+  return new_position + 1;
+}
+
