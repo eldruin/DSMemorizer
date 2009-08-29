@@ -66,10 +66,11 @@ namespace Types
     /// Mode
     enum mode
     {
-      CARDS,            ///< Screen showing the card number and two cards
-                        /// to navigate.
-      KANJI_CHOOSE      ///< Screen showing 4 kanjis to choose and
-                        /// the score and accuracy percentage
+      CARDS,                      ///< Screen showing the card number and two
+                                  /// cards to navigate.
+      KANJI_CHOOSE,               ///< Screen showing 4 kanjis to choose and
+                                  /// the score and accuracy percentage
+      VERTICAL_TEXTBOXES_CHOOSE   ///< Vertical textboxes
     };
   }
 

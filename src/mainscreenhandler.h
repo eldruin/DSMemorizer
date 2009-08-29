@@ -35,7 +35,7 @@ public:
   MainScreenHandler(Types::MainScreenMode::mode screen_mode);
   /// \brief Initializer
   /// \param screens_handler Already created and initialized screens handler
-  void Init (ScreensHandler* screens_handler);
+  void Init (ScreensHandler* screens_handler, int boxes_number = 0);
   /// Set the boxes captions
   void Captions (std::string box1, std::string box2, std::string box3);
 
@@ -74,6 +74,8 @@ private:
           *caption_box2_,           ///< Box 2 caption text
           *caption_box3_;           ///< Box 3 caption text
 
+  /// number of boxes [0-3]
+  int boxes_number_;
   /// background image bitmap
   const unsigned int* bg_image_bitmap_;
   /// background image palette

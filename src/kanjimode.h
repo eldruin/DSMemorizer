@@ -23,7 +23,8 @@
 /// Game modes functions
 namespace GameMode
 {
-/// Kanji game mode
+/// Kanji game mode.
+/// Shows a kanji with its readings, translation and an example
 void KanjiMode ();
 }
 

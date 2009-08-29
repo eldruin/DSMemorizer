@@ -40,9 +40,11 @@ MainScreenHandler::MainScreenHandler(MainScreenMode::mode screen_mode)
   }
 }
 
-void MainScreenHandler::Init (ScreensHandler* screens_handler)
+void MainScreenHandler::Init (ScreensHandler* screens_handler,
+                              int boxes_number)
 {
   screens_handler_ = screens_handler;
+  boxes_number_ = boxes_number;
   short white_color;
   if (screen_mode_ == MainScreenMode::KANJI)
   {
@@ -84,25 +86,39 @@ void MainScreenHandler::Init (ScreensHandler* screens_handler)
   else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
            screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
   {
-    caption_box1_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,30,225,0);
-    box1_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT, 10,20,40,225,0);
-    caption_box2_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,50,225,0);
-    box2_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT, 10,20,60,225,0);
-    caption_box3_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,70,225,0);
-    box3_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT, 10,20,80,225,0);
+    if (boxes_number_ >= 1)
+    {
+      caption_box1_ = screens_handler_->tbh()->
+        NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,30,225,0);
+      box1_ = screens_handler_->tbh()->
+        NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT, 10,20,40,225,0);
+      if (boxes_number_ >= 2)
+      {
+        caption_box2_ = screens_handler_->tbh()->
+          NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,50,225,0);
+        box2_ = screens_handler_->tbh()->
+          NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT, 10,20,60,225,0);
+        if (boxes_number_ >= 3)
+        {
+          caption_box3_ = screens_handler_->tbh()->
+            NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,70,225,0);
+          box3_ = screens_handler_->tbh()->
+            NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT,
+              10,20,80,225,0);
+        }
+      }
+    }
 
     white_color = RGB15(18,18,28);
   }
   if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES)
   {
-    box2_->visible(false);
-    box3_->visible(false);
+    if (boxes_number_ >= 2)
+    {
+      box2_->visible(false);
+      if (boxes_number_>= 3)
+        box3_->visible(false);
+    }
   }
 
   videoSetMode(MODE_5_2D);
@@ -135,15 +151,25 @@ void MainScreenHandler::PrintCard (const Card& card)
   else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
            screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
   {
-    box1_->text(card.translation());
-    box2_->text(card.reading());
-    box3_->text(card.reading2());
-    if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES)
+    if (boxes_number_ >= 1)
     {
-      box2_->visible(false);
-      box3_->visible(false);
+      box1_->text(card.translation());
+      if (boxes_number_ >= 2)
+      {
+        box2_->text(card.reading());
+        if (boxes_number_ >= 3)
+          box3_->text(card.reading2());
+        if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES)
+        {
+          if (boxes_number_ >= 2)
+          {
+            box2_->visible(false);
+            if (boxes_number_>= 3)
+              box3_->visible(false);
+          }
+        }
+      }
     }
-
     screens_handler_->tbh()->PrintAll(Screen::MAIN);
   }
 }
@@ -157,27 +183,36 @@ void MainScreenHandler::Scroll (int sx, int sy) const
 void MainScreenHandler::Captions (std::string box1, std::string box2,
                                   std::string box3)
 {
-  caption_box1_->text(box1);
-  caption_box2_->text(box2);
-  caption_box3_->text(box3);
+  if (boxes_number_ >= 1)
+  {
+    caption_box1_->text(box1);
+    if (boxes_number_ >= 2)
+    {
+      caption_box2_->text(box2);
+      if (boxes_number_ >= 3)
+        caption_box3_->text(box3);
+    }
+  }
 }
 
 bool MainScreenHandler::ViewNext ()
 {
   bool all_visible = false;
-  if (box2_->visible())
-    if (!box3_->visible())
+  if (boxes_number_ >= 2 && box2_->visible())
+    if (boxes_number_ >= 3 && !box3_->visible())
     {
       box3_->visible(true);
       box3_->Print();
     }
     else
-      all_visible = true;
-  else
+        all_visible = true;
+  else if (boxes_number_ >= 2)
   {
     box2_->visible(true);
     box2_->Print();
   }
+  else
+    all_visible = true;
   return all_visible;
 }
 
@@ -201,12 +236,21 @@ MainScreenHandler::~MainScreenHandler()
   else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
            screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
   {
-    screens_handler_->tbh()->DestroyTextBox(box1_);
-    screens_handler_->tbh()->DestroyTextBox(box2_);
-    screens_handler_->tbh()->DestroyTextBox(box3_);
-    screens_handler_->tbh()->DestroyTextBox(caption_box1_);
-    screens_handler_->tbh()->DestroyTextBox(caption_box2_);
-    screens_handler_->tbh()->DestroyTextBox(caption_box3_);
+    if (boxes_number_ >= 1)
+    {
+      screens_handler_->tbh()->DestroyTextBox(box1_);
+      screens_handler_->tbh()->DestroyTextBox(caption_box1_);
+      if (boxes_number_ >= 2)
+      {
+        screens_handler_->tbh()->DestroyTextBox(box2_);
+        screens_handler_->tbh()->DestroyTextBox(caption_box2_);
+        if (boxes_number_ >= 3)
+        {
+          screens_handler_->tbh()->DestroyTextBox(box3_);
+          screens_handler_->tbh()->DestroyTextBox(caption_box3_);
+        }
+      }
+    }
   }
 }
 

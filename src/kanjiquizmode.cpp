@@ -45,7 +45,7 @@ void GameMode::KanjiQuizMode ()
   sh.Init();
   MainScreenHandler main_screen_handler (
     MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE);
-  main_screen_handler.Init (&sh);
+  main_screen_handler.Init (&sh, 3);
   main_screen_handler.Captions("Translation", "on reading", "kun reading");
   SubScreenHandler sub_screen_handler (SubScreenMode::KANJI_CHOOSE);
   sub_screen_handler.Init (&sh);
