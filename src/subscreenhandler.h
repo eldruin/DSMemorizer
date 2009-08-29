@@ -65,10 +65,10 @@ private:
   TextBox *card_number_,      ///< Card number
           *scoreboard_,       ///< Scoreboard
           *accuracy_,         ///< Right answer percentage
-          *kanji1_,           ///< Kanji 1
-          *kanji2_,           ///< Kanji 2
-          *kanji3_,           ///< Kanji 3
-          *kanji4_;           ///< Kanji 4
+          *box1_,             ///< Box 1
+          *box2_,             ///< Box 2
+          *box3_,             ///< Box 3
+          *box4_;             ///< Box 4
   /// background image bitmap
   const unsigned int* bg_image_bitmap_;
   /// background image palette

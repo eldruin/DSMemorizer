@@ -26,12 +26,13 @@
 
 #include "kanjisubbg.h"
 #include "kanjiquizsubbg.h"
+#include "vertical_textboxes_choose_bg.h"
 #include "tick.h"
 #include "cross.h"
 
 using namespace Types;
 
-/// Returns the position of the textbox to show the kanji number 'position'
+/// Returns the position for the tick or cross on the kanji number 'position'
 inline int x_position (int position)
 {
   int x_pos = 0;
@@ -49,6 +50,25 @@ inline int x_position (int position)
   return x_pos;
 }
 
+/// Returns the position for the tick or cross on the kanji word
+/// number 'position'
+inline int y_position (int position)
+{
+  int y_pos = 0;
+  switch (position)
+  {
+    case 1: y_pos = 39;
+    break;
+    case 2: y_pos = 68;
+    break;
+    case 3: y_pos = 97;
+    break;
+    case 4: y_pos = 126;
+    break;
+  }
+  return y_pos;
+}
+
 SubScreenHandler::SubScreenHandler(Types::SubScreenMode::mode screen_mode)
 {
   screen_mode_ = screen_mode;
@@ -61,6 +81,11 @@ SubScreenHandler::SubScreenHandler(Types::SubScreenMode::mode screen_mode)
   {
     bg_image_bitmap_ = kanjiquizsubbgBitmap;
     bg_image_palette_ = kanjiquizsubbgPal;
+  }
+  if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
+  {
+    bg_image_bitmap_ = vertical_textboxes_choose_bgBitmap;
+    bg_image_palette_ = vertical_textboxes_choose_bgPal;
   }
 }
 
@@ -96,24 +121,55 @@ void SubScreenHandler::Init (ScreensHandler* screens_handler)
     accuracy_  =
       screens_handler_->tbh()->NewTextBox
         (Screen::SUB, bgid_, Types::VERA_FONT, 8,23,25,225,0);
-    kanji1_ =
+    box1_ =
       screens_handler_->tbh()->NewTextBox
         (Screen::SUB, bgid_, Types::MONA_FONT, 30,33,80,225,0);
-    kanji2_ =
+    box2_ =
       screens_handler_->tbh()->NewTextBox
         (Screen::SUB, bgid_, Types::MONA_FONT, 30,85,80,225,0);
-    kanji3_ =
+    box3_ =
       screens_handler_->tbh()->NewTextBox
         (Screen::SUB, bgid_, Types::MONA_FONT, 30,137,80,225,0);
-    kanji4_ =
+    box4_ =
       screens_handler_->tbh()->NewTextBox
         (Screen::SUB, bgid_, Types::MONA_FONT, 30,189,80,225,0);
     scoreboard_->floats(true);
     accuracy_->floats(true);
-    kanji1_->floats(true);
-    kanji2_->floats(true);
-    kanji3_->floats(true);
-    kanji4_->floats(true);
+    box1_->floats(true);
+    box2_->floats(true);
+    box3_->floats(true);
+    box4_->floats(true);
+  }
+  else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
+  {
+    dmaCopy(tickPal,BG_PALETTE_SUB+8,43*2);
+    dmaCopy(crossPal,BG_PALETTE_SUB+94,43*2);
+    white_color = RGB15(28,28,20);
+
+    scoreboard_  =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, Types::VERA_FONT, 8,154,25,225,0);
+    accuracy_  =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, Types::VERA_FONT, 8,23,25,225,0);
+    box1_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,54,225,0);
+    box2_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,83,225,0);
+    box3_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,112,225,0);
+    box4_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,141,225,0);
+    scoreboard_->floats(true);
+    accuracy_->floats(true);
+    box1_->floats(true);
+    box2_->floats(true);
+    box3_->floats(true);
+    box4_->floats(true);
   }
 
   BG_PALETTE_SUB[Types::Color::BLACK] = RGB15(0,0,0);
@@ -157,12 +213,24 @@ void SubScreenHandler::PrintBoards (int score, int answers)
 
 void SubScreenHandler::PrintTick (int position)
 {
-  PrintBitmap(x_position(position), 103, bgid_, tickBitmap,8);
+  int x_pos = 0, y_pos = 0;
+  if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
+    x_pos = x_position(position), y_pos = 103;
+  else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
+    x_pos = 10 , y_pos = y_position(position);
+
+  PrintBitmap(x_pos, y_pos, bgid_, tickBitmap,8);
 }
 
 void SubScreenHandler::PrintCross (int position)
 {
-  PrintBitmap(x_position(position), 103, bgid_, crossBitmap,94);
+  int x_pos = 0, y_pos = 0;
+  if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
+    x_pos = x_position(position), y_pos = 103;
+  else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
+    x_pos = 10 , y_pos = y_position(position);
+
+  PrintBitmap(x_pos, y_pos, bgid_, crossBitmap,94);
 }
 
 void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
@@ -170,12 +238,13 @@ void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
                                     int score, int answers)
 {
   dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
-  if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
+  if (screen_mode_ == SubScreenMode::KANJI_CHOOSE ||
+      screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
   {
-    kanji1_->text(kanji1);
-    kanji2_->text(kanji2);
-    kanji3_->text(kanji3);
-    kanji4_->text(kanji4);
+    box1_->text(kanji1);
+    box2_->text(kanji2);
+    box3_->text(kanji3);
+    box4_->text(kanji4);
 
     char* score_text = new char [40];
     sprintf(score_text, "Score: %i",score);
@@ -234,10 +303,10 @@ SubScreenHandler::~SubScreenHandler()
   {
     screens_handler_->tbh()->DestroyTextBox(scoreboard_);
     screens_handler_->tbh()->DestroyTextBox(accuracy_);
-    screens_handler_->tbh()->DestroyTextBox(kanji1_);
-    screens_handler_->tbh()->DestroyTextBox(kanji2_);
-    screens_handler_->tbh()->DestroyTextBox(kanji3_);
-    screens_handler_->tbh()->DestroyTextBox(kanji4_);
+    screens_handler_->tbh()->DestroyTextBox(box1_);
+    screens_handler_->tbh()->DestroyTextBox(box2_);
+    screens_handler_->tbh()->DestroyTextBox(box3_);
+    screens_handler_->tbh()->DestroyTextBox(box4_);
   }
 }
 

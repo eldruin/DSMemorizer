@@ -29,9 +29,11 @@
 #include "kanjimode.h"
 #include "kanjiquizmode.h"
 #include "vocabularymode.h"
+#include "vocabularyquizmode.h"
 
 using namespace std;
-int main (void)
+
+int main (void)
 {
   consoleDemoInit ();
 
@@ -46,9 +48,7 @@ using namespace std;
     //map vram a to start of main background graphics memory
     vramSetBankA (VRAM_A_MAIN_BG_0x06000000);
 
-    int bg3 = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
-
-    GameMode::VocabularyMode ();
+    GameMode::VocabularyQuizMode ();
   }
   else
   {
