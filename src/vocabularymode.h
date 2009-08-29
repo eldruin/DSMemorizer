@@ -20,17 +20,12 @@
 #ifndef VOCABULARYMODE_H_
 #define VOCABULARYMODE_H_
 
-/// Vocabulary memorizing game mode.
-/// Shows words with their reading and translation
-class VocabularyMode
+namespace GameMode
 {
-public:
-  /// Default constructor
-  VocabularyMode() {}
-  /// \brief Initializer
-  /// \param bgid Background id
-  void Init (int bgid);
-};
+  /// Vocabulary memorizing game mode.
+  /// Shows words with their reading and translation
+  void VocabularyMode ();
+}
 
 #endif // VOCABULARYMODE_H_
 

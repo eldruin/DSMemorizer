@@ -33,6 +33,7 @@ public:
   /// Default constructor
   TextBox() {}
   /// Initializer
+  /// \param screen Screen where the text box is
   /// \param bgid background id
   /// \param face FT_Face object from the TextHandler class
   /// \param size Font size

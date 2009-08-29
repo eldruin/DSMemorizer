@@ -20,23 +20,12 @@
 #ifndef KANJIMODE_H_
 #define KANJIMODE_H_
 
-class MainScreenHandler;
-class SubScreenHandler;
-
-/// Kanji game mode
-class KanjiMode
+/// Game modes functions
+namespace GameMode
 {
-public:
-  /// Default constructor
-  KanjiMode() {}
-  /// \brief Initializer
-  /// \param bgid Background id
-  void Init (int bgid);
-
-private:
-  MainScreenHandler *main_screen_handler_;
-  SubScreenHandler *sub_screen_handler_;
-};
+/// Kanji game mode
+void KanjiMode ();
+}
 
 #endif // KANJIMODE_H_
 

@@ -31,10 +31,10 @@ class MainScreenHandler
 {
 public:
   /// Default constructor
+  /// \param screen_mode Mode of the screen
   MainScreenHandler(Types::MainScreenMode::mode screen_mode);
   /// \brief Initializer
-  /// \param sub_screen_mode Sub screen mode
-  /// \param tbh Already initialized TextBoxHandler
+  /// \param screens_handler Already created and initialized screens handler
   void Init (ScreensHandler* screens_handler);
   /// Set the boxes captions
   void Captions (std::string box1, std::string box2, std::string box3);
@@ -53,6 +53,7 @@ public:
 private:
   /// Base screens handler
   ScreensHandler* screens_handler_;
+  /// Mode of the screen
   Types::MainScreenMode::mode screen_mode_;
   TextBox *kanji_,                  ///< Kanji
           *on_reading_,             ///< On reading

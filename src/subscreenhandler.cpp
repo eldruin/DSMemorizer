@@ -31,6 +31,7 @@
 
 using namespace Types;
 
+/// Returns the position of the textbox to show the kanji number 'position'
 inline int x_position (int position)
 {
   int x_pos = 0;

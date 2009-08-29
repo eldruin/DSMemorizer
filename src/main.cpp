@@ -48,8 +48,7 @@ using namespace std;
 
     int bg3 = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
 
-    VocabularyMode vm;
-    vm.Init(bg3);
+    GameMode::VocabularyMode ();
   }
   else
   {

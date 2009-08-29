@@ -21,20 +21,20 @@
 #define FILES_H_
 
 #include <string>
-using std::string;
+#include "types.h"
 
-#define FONTS_PREFIX /fonts
-
+/// Files handling
 namespace Files
 {
-	string filepath (Types::Font f)
+  /// Returns the path of the font files
+	std::string filepath (Types::Font f)
 	{
-		string path;
+		std::string path;
 		switch(f)
 		{
-			case Types::MONA_FONT: path = string ("/fonts/mona.ttf");
+			case Types::MONA_FONT: path = std::string ("/fonts/mona.ttf");
 				break;
-      case Types::VERA_FONT: path = string ("/fonts/vera.ttf");
+      case Types::VERA_FONT: path = std::string ("/fonts/vera.ttf");
         break;
 		}
 		return path;

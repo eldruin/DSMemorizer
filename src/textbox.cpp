@@ -28,6 +28,8 @@
 
 using std::string;
 
+/// Converts a color in [0-255] range to the black, grey and white
+/// palette indexes
 inline u8 convert_color(u8 incolor)
 {
 	u8 outcolor;

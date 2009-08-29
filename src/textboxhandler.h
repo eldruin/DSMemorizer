@@ -35,6 +35,7 @@ public:
 	void Init();
 
   /// Creates a new text box in the class
+  /// \param screen Screen where the text box is
   /// \param bgid background id
   /// \param font Font name
   /// \param size Font size

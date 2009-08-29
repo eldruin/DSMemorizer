@@ -32,6 +32,7 @@ public:
   /// \brief Initializer
   void Init ();
 
+  /// Get the text box handler pointer
   TextBoxHandler* tbh () const;
 
   /// Destructor

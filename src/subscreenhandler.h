@@ -31,10 +31,10 @@ class SubScreenHandler
 {
 public:
   /// Default constructor
+  /// \param screen_mode Mode of the screen
   SubScreenHandler (Types::SubScreenMode::mode screen_mode);
   /// \brief Initializer
-  /// \param sub_screen_mode Sub screen mode
-  /// \param tbh Already initialized TextBoxHandler
+  /// \param screens_handler Already created and initialized screens handler
   void Init (ScreensHandler* screens_handler);
 
   /// Print a card

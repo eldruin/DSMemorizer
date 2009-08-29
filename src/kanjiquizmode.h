@@ -20,27 +20,13 @@
 #ifndef KANJIQUIZMODE_H_
 #define KANJIQUIZMODE_H_
 
+namespace GameMode
+{
 /// Kanji quiz game mode.
 /// Shows the translation and the two readings of a kanji in the main screen
 /// and the right kanji plus 3 more random in the sub screen.
 /// The user have to guess which is the right one.
-class KanjiQuizMode
-{
-public:
-  /// Default constructor
-  KanjiQuizMode() {}
-  /// \brief Initializer
-  /// \param bgid Background id
-  void Init (int bgid);
-
-private:
-  /// Number of the correct kanji
-  short correct_;
-  /// Player score
-  int score_;
-  /// Player answer number
-  int answers_;
-};
-
+void KanjiQuizMode ();
+}
 #endif // KANJIQUIZMODE_H_
 

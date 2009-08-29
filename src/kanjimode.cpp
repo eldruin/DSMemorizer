@@ -31,7 +31,7 @@
 
 using namespace Types;
 
-void KanjiMode::Init(int bgid)
+void GameMode::KanjiMode ()
 {
   XMLParser xmlparser;
   xmlparser.Init("/db/kanjis.xml");
@@ -44,8 +44,11 @@ void KanjiMode::Init(int bgid)
   sub_screen_handler.Init (&sh);
 
   int sy = 0;
+  // Shown card
   int card = 1;
+  // Previously shown card
   int previous_card = 0;
+
   int height = 256;
   int keys = 0;
   touchPosition touch;
