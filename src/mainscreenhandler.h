@@ -35,6 +35,7 @@ public:
   MainScreenHandler(Types::MainScreenMode::mode screen_mode);
   /// \brief Initializer
   /// \param screens_handler Already created and initialized screens handler
+  /// \param boxes_number Number of text boxes to be used [0-3].
   void Init (ScreensHandler* screens_handler, int boxes_number = 0);
   /// Set the boxes captions
   void Captions (std::string box1, std::string box2, std::string box3);

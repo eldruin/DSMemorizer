@@ -69,6 +69,14 @@ inline int y_position (int position)
   return y_pos;
 }
 
+/// Find a color in the palette of the sub screen starting on a given offset
+inline int find_color_in_palette_sub(short color, int palette_offset)
+{
+  int i = palette_offset;
+  for (; i < 256 && BG_PALETTE_SUB[i] != color; ++i);
+  return i;
+}
+
 SubScreenHandler::SubScreenHandler(Types::SubScreenMode::mode screen_mode)
 {
   screen_mode_ = screen_mode;
@@ -219,7 +227,7 @@ void SubScreenHandler::PrintTick (int position)
   else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
     x_pos = 10 , y_pos = y_position(position);
 
-  PrintBitmap(x_pos, y_pos, bgid_, tickBitmap,8);
+  PrintBitmap(x_pos, y_pos, 20, 20, bgid_, tickBitmap,RGB15(18,18,28),8);
 }
 
 void SubScreenHandler::PrintCross (int position)
@@ -230,7 +238,7 @@ void SubScreenHandler::PrintCross (int position)
   else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
     x_pos = 10 , y_pos = y_position(position);
 
-  PrintBitmap(x_pos, y_pos, bgid_, crossBitmap,94);
+  PrintBitmap(x_pos, y_pos, 20, 20, bgid_, crossBitmap, RGB15(18,18,28),94);
 }
 
 void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
@@ -262,34 +270,70 @@ void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
   }
 }
 
-void SubScreenHandler::PrintBitmap (int x, int y, int bgid,
-                                    const unsigned int* bitmap,
-                                    int palette_offset)
+/**
+ *  \param x Upper left corner x coordinate where to print the bitmap.
+ *  \param y Upper left corner y coordinate where to print the bitmap.
+ *  \param width Width of the bitmap.
+ *  \param height Height of the bitmap.
+ *  \param bgid Background id where to print.
+ *  \param bitmap Pointer to an array of 4 bytes words containing the bitmap
+ *         pixels color palette index.
+ *  \param key_color Masking color.
+ *  \param palette_offset Offset to the color palette where the colors of
+ *         the bitmap start.
+ */
+  void SubScreenHandler::PrintBitmap (int x, int y, int width, int height,
+                                      int bgid, const unsigned int* bitmap,
+                                      short key_color, int palette_offset)
 {
-  // FIXME: Don't print correctly
   u16* video_buffer = bgGetGfxPtr(bgid);
-  for (int image_y = 0; image_y < 20; ++image_y)
-    for (int image_x = 0; image_x < 20; ++image_x)
+  int key_color_index = find_color_in_palette_sub(key_color, palette_offset);
+  for (int image_y = 0; image_y < height; ++image_y)
+    for (int image_x = 0; image_x < width; image_x+=2)
     {
-      int pixel_num = image_y * 20 + image_x;
+      bool print_pixel0 = true, print_pixel1 = true;
+      int pixel_index_normal = image_y * width + image_x;
+      // Now convert the bitmap index because of the half words inversion
+      // in the words of the bitmap.
+      // Conversion is done like this:
+      // -----------------          old  new
+      // | a | b | c | d |          0  -> 2
+      // -----------------          1  -> 3
+      //         |                  2  -> 0
+      //         v                  3  -> 1
+      // -----------------
+      // | c | d | a | b |
+      // -----------------
+      int pixel_index_inverted = pixel_index_normal -
+        (pixel_index_normal % 4) + ((pixel_index_normal % 4 + 2) & 3);
       // select the indicated byte in the word and adds the offset
       // for the new palette
-      int pixel_palette_index =
-        ((bitmap [(pixel_num >> 2)] & (0xFF000000 >> (pixel_num % 4))
-        ) >> ((3-pixel_num%4) << 3 )) + palette_offset;
+      int pixel0 =
+        ( (bitmap [(pixel_index_inverted >> 2)] &
+          (0xFF000000 >> ((pixel_index_inverted%4)<<3))
+        ) >> ((3-pixel_index_inverted%4) << 3 )) + palette_offset;
+      if (pixel0 == key_color_index) print_pixel0 = false;
+
+      ++pixel_index_inverted;
+
+      int pixel1 =
+        ( (bitmap [(pixel_index_inverted >> 2)] &
+          (0xFF000000 >> ((pixel_index_inverted%4)<<3))
+        ) >> ((3-pixel_index_inverted%4) << 3 )) + palette_offset;
+
+      if (pixel1 == key_color_index) print_pixel1 = false;
+
       int video_index = (image_y + y)*128 + (image_x + x)/2;
-      if ((image_x+x) % 2)
-      {
-        // odd
-        video_buffer[video_index] = pixel_palette_index |
-                                    (video_buffer[video_index] & 0xFF00);
-      }
-      else
-      {
+
+      if (print_pixel0)
         // even
-        video_buffer[video_index] = (pixel_palette_index << 8) |
+        video_buffer[video_index] = (pixel0 << 8) |
                                     (video_buffer[video_index] & 0x00FF);
-      }
+
+      if (print_pixel1)
+        // odd
+        video_buffer[video_index] = pixel1 |
+                                    (video_buffer[video_index] & 0xFF00);
     }
 }
 

@@ -55,7 +55,8 @@ public:
 
 private:
   /// Prints a bitmap in a background
-  static void PrintBitmap (int x, int y, int bgid, const unsigned int* bitmap,
+  static void PrintBitmap (int x, int y, int width, int height, int bgid,
+                           const unsigned int* bitmap, short key_color,
                            int palette_offset);
 
   /// Base screens handler
