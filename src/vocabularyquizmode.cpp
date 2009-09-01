@@ -36,9 +36,8 @@ void GameMode::VocabularyQuizMode ()
 
   ScreensHandler sh;
   sh.Init();
-  MainScreenHandler main_screen_handler
-    (MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE);
-  main_screen_handler.Init (&sh, 2);
+  MainScreenHandler main_screen_handler (GameMode::VOCABULARY_QUIZ);
+  main_screen_handler.Init (MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE, &sh, 2);
   main_screen_handler.Captions("Translation", "Reading", "");
   SubScreenHandler sub_screen_handler
     (SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE);

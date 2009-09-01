@@ -86,5 +86,18 @@ namespace Types
   }
 }
 
+/// Game modes functions
+namespace GameMode
+{
+  /// Game mode
+  enum mode
+  {
+    KANJI,
+    KANJI_QUIZ,
+    VOCABULARY,
+    VOCABULARY_QUIZ
+  };
+}
+
 #endif // TYPES_H_
 

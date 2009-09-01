@@ -20,7 +20,6 @@
 #ifndef KANJIMODE_H_
 #define KANJIMODE_H_
 
-/// Game modes functions
 namespace GameMode
 {
 /// Kanji game mode.

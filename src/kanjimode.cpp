@@ -38,8 +38,8 @@ void GameMode::KanjiMode ()
 
   ScreensHandler sh;
   sh.Init();
-  MainScreenHandler main_screen_handler (MainScreenMode::KANJI);
-  main_screen_handler.Init (&sh);
+  MainScreenHandler main_screen_handler (GameMode::KANJI);
+  main_screen_handler.Init (MainScreenMode::KANJI, &sh);
   SubScreenHandler sub_screen_handler (SubScreenMode::CARDS);
   sub_screen_handler.Init (&sh);
 

@@ -38,8 +38,8 @@ void GameMode::VocabularyMode ()
 
   ScreensHandler sh;
   sh.Init();
-  MainScreenHandler main_screen_handler (MainScreenMode::VERTICAL_TEXTBOXES);
-  main_screen_handler.Init (&sh, 3);
+  MainScreenHandler main_screen_handler (GameMode::VOCABULARY);
+  main_screen_handler.Init (MainScreenMode::VERTICAL_TEXTBOXES, &sh, 3);
   main_screen_handler.Captions("Kanji", "Reading", "Translation");
   SubScreenHandler sub_screen_handler (SubScreenMode::CARDS);
   sub_screen_handler.Init (&sh);

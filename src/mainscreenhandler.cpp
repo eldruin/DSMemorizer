@@ -25,24 +25,30 @@
 #include "mainscreenhandler.h"
 
 #include "kanjibg.h"
+#include "goibg.h"
 
 using namespace Types;
 
-MainScreenHandler::MainScreenHandler(MainScreenMode::mode screen_mode)
+MainScreenHandler::MainScreenHandler(GameMode::mode game_mode)
 {
-  screen_mode_ = screen_mode;
-  if (screen_mode_ == MainScreenMode::KANJI ||
-      screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
-      screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
+  if (game_mode == GameMode::KANJI || game_mode == GameMode::KANJI_QUIZ)
   {
     bg_image_bitmap_ = kanjibgBitmap;
     bg_image_palette_ = kanjibgPal;
   }
+  else if (game_mode == GameMode::VOCABULARY ||
+           game_mode == GameMode::VOCABULARY_QUIZ)
+  {
+    bg_image_bitmap_ = goibgBitmap;
+    bg_image_palette_ = goibgPal;
+  }
 }
 
-void MainScreenHandler::Init (ScreensHandler* screens_handler,
+void MainScreenHandler::Init (MainScreenMode::mode screen_mode,
+                              ScreensHandler* screens_handler,
                               int boxes_number)
 {
+  screen_mode_ = screen_mode;
   screens_handler_ = screens_handler;
   boxes_number_ = boxes_number;
   short white_color;
