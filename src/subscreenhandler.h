@@ -54,11 +54,6 @@ public:
   ~SubScreenHandler();
 
 private:
-  /// Prints a bitmap in a background
-  static void PrintBitmap (int x, int y, int width, int height, int bgid,
-                           const unsigned int* bitmap, short key_color,
-                           int palette_offset);
-
   /// Base screens handler
   ScreensHandler* screens_handler_;
   /// Screen mode

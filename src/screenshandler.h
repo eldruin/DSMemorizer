@@ -20,6 +20,8 @@
 #ifndef SCREENHANDLER_H_
 #define SCREENHANDLER_H_
 
+#include "types.h"
+
 class TextBoxHandler;
 
 /// Screens handler
@@ -42,6 +44,11 @@ protected:
   /// Text boxes handler
   TextBoxHandler* tbh_;
 };
+
+/// Prints a bitmap in a background
+void PrintBitmap (int x, int y, int width, int height,
+                  const unsigned int* bitmap, short key_color,
+                  int palette_offset, int bgid, Types::Screen::selector screen);
 
 #endif // SCREENHANDLER_H_
 
