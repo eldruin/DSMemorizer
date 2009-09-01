@@ -206,8 +206,6 @@ void TextBox::Print ()
           for (; glyph_x < width-1; glyph_x += 2, index+=2)
           {
             bool print_pixel0 = true, print_pixel1 = true;
-            // Gets the color of two pixels, if the gray level is above 248,
-            // prints black, else prints white. Also aligns the two bytes.
             u8 pixel0 = convert_color(buffer[index]);
             if (pixel0 == Types::Color::WHITE) print_pixel0 = false;
             u8 pixel1 = convert_color(buffer[index+1]);

@@ -55,8 +55,9 @@ namespace Types
       VERTICAL_TEXTBOXES,         ///< Screen filled with text boxes
                                   /// vertically. Only the first box text is
                                   /// visible.
-      VERTICAL_TEXTBOXES_VISIBLE  ///< Screen filled with text boxes
+      VERTICAL_TEXTBOXES_VISIBLE, ///< Screen filled with text boxes
                                   /// vertically. All boxes are visible.
+      SPLASH_SCREEN               ///< Show the splash screen.
     };
   }
 
@@ -70,7 +71,8 @@ namespace Types
                                   /// cards to navigate.
       KANJI_CHOOSE,               ///< Screen showing 4 kanjis to choose and
                                   /// the score and accuracy percentage
-      VERTICAL_TEXTBOXES_CHOOSE   ///< Vertical textboxes
+      VERTICAL_TEXTBOXES_CHOOSE,  ///< Vertical textboxes
+      SPLASH_SCREEN               ///< Show the splash screen.
     };
   }
 
@@ -95,7 +97,9 @@ namespace GameMode
     KANJI,
     KANJI_QUIZ,
     VOCABULARY,
-    VOCABULARY_QUIZ
+    VOCABULARY_QUIZ,
+    MAIN_MENU,
+    SPLASH_SCREEN
   };
 }
 

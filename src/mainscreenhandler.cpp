@@ -21,11 +21,13 @@
 #include "card.h"
 #include "textbox.h"
 #include "textboxhandler.h"
+#include "graphics.h"
 #include "screenshandler.h"
 #include "mainscreenhandler.h"
 
 #include "kanjibg.h"
 #include "goibg.h"
+#include "splash_main_bg.h"
 
 using namespace Types;
 
@@ -42,6 +44,11 @@ MainScreenHandler::MainScreenHandler(GameMode::mode game_mode)
     bg_image_bitmap_ = goibgBitmap;
     bg_image_palette_ = goibgPal;
   }
+  else if (game_mode == GameMode::SPLASH_SCREEN)
+  {
+    bg_image_bitmap_ = splash_main_bgBitmap;
+    bg_image_palette_ = splash_main_bgPal;
+  }
 }
 
 void MainScreenHandler::Init (MainScreenMode::mode screen_mode,
@@ -51,9 +58,18 @@ void MainScreenHandler::Init (MainScreenMode::mode screen_mode,
   screen_mode_ = screen_mode;
   screens_handler_ = screens_handler;
   boxes_number_ = boxes_number;
+
+  videoSetMode (MODE_5_2D);
+  vramSetBankA (VRAM_A_MAIN_BG_0x06000000);
+
+  bgid_ = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
+
   short white_color;
   if (screen_mode_ == MainScreenMode::KANJI)
   {
+    dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
+    dmaCopy(bg_image_palette_, BG_PALETTE, 256*2);
+
     caption_kanji_ = screens_handler_->tbh()->
       NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,15,17,60,0);
     kanji_ = screens_handler_->tbh()->
@@ -100,6 +116,9 @@ void MainScreenHandler::Init (MainScreenMode::mode screen_mode,
   else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
            screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
   {
+    dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
+    dmaCopy(bg_image_palette_, BG_PALETTE, 256*2);
+
     if (boxes_number_ >= 1)
     {
       caption_box1_ = screens_handler_->tbh()->
@@ -125,6 +144,11 @@ void MainScreenHandler::Init (MainScreenMode::mode screen_mode,
 
     white_color = RGB15(18,18,28);
   }
+  else if (screen_mode_ == MainScreenMode::SPLASH_SCREEN)
+  {
+    Graphics::SplashImage(bg_image_bitmap_, bg_image_palette_,
+                          Screen::MAIN, bgid_, Graphics::SplashEffect::APPEAR);
+  }
   if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES)
   {
     if (boxes_number_ >= 2)
@@ -134,17 +158,12 @@ void MainScreenHandler::Init (MainScreenMode::mode screen_mode,
         box3_->visible(false);
     }
   }
-
-  videoSetMode(MODE_5_2D);
-  vramSetBankA (VRAM_A_MAIN_BG_0x06000000);
-
-  bgid_ = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
-
-  dmaCopy(bg_image_palette_, BG_PALETTE, 256*2);
-
-  BG_PALETTE[Color::BLACK] = RGB15(0,0,0);
-  BG_PALETTE[Color::GREY] = RGB15(15,15,15);
-  BG_PALETTE[Color::WHITE] = white_color;
+  if (screen_mode_ != MainScreenMode::SPLASH_SCREEN)
+  {
+    BG_PALETTE[Color::BLACK] = RGB15(0,0,0);
+    BG_PALETTE[Color::GREY] = RGB15(15,15,15);
+    BG_PALETTE[Color::WHITE] = white_color;
+  }
 }
 
 void MainScreenHandler::PrintCard (const Card& card)

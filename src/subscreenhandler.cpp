@@ -23,6 +23,7 @@
 #include "textboxhandler.h"
 #include "screenshandler.h"
 #include "subscreenhandler.h"
+#include "graphics.h"
 
 #include "kanjisubbg.h"
 #include "kanjiquizsubbg.h"
@@ -87,6 +88,8 @@ SubScreenHandler::SubScreenHandler(Types::SubScreenMode::mode screen_mode)
     bg_image_bitmap_ = vertical_textboxes_choose_bgBitmap;
     bg_image_palette_ = vertical_textboxes_choose_bgPal;
   }
+  dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
+  dmaCopy(bg_image_palette_, BG_PALETTE_SUB, 256*2);
 }
 
 void SubScreenHandler::Init (ScreensHandler* screens_handler)
@@ -220,8 +223,8 @@ void SubScreenHandler::PrintTick (int position)
   else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
     x_pos = 10 , y_pos = y_position(position);
 
-  PrintBitmap(x_pos, y_pos, 20, 20, tickBitmap, RGB15(18,18,28), 8,
-              bgid_, Screen::SUB);
+  Graphics::PrintBitmap(x_pos, y_pos, 20, 20, tickBitmap, RGB15(18,18,28), 8,
+                        bgid_, Screen::SUB);
 }
 
 void SubScreenHandler::PrintCross (int position)
@@ -232,8 +235,8 @@ void SubScreenHandler::PrintCross (int position)
   else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
     x_pos = 10 , y_pos = y_position(position);
 
-  PrintBitmap(x_pos, y_pos, 20, 20, crossBitmap, RGB15(18,18,28), 94,
-              bgid_, Screen::SUB);
+  Graphics::PrintBitmap(x_pos, y_pos, 20, 20, crossBitmap, RGB15(18,18,28), 94,
+                        bgid_, Screen::SUB);
 }
 
 void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
