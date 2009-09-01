@@ -87,6 +87,14 @@ void MainScreenHandler::Init (MainScreenMode::mode screen_mode,
     caption_translation_->text("Translation");
     caption_example_->text("Example");
 
+    // Make all but the kanji and captions invisible.
+    on_reading_->visible(false);
+    kun_reading_->visible(false);
+    translation_->visible(false);
+    example_kanji_->visible(false);
+    example_reading_->visible(false);
+    example_translation_->visible(false);
+
     white_color = RGB15(18,18,28);
   }
   else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
@@ -152,6 +160,14 @@ void MainScreenHandler::PrintCard (const Card& card)
     example_reading_->text(card.example_reading());
     example_translation_->text(card.example_translation());
 
+    // Make all but the kanji and captions invisible.
+    on_reading_->visible(false);
+    kun_reading_->visible(false);
+    translation_->visible(false);
+    example_kanji_->visible(false);
+    example_reading_->visible(false);
+    example_translation_->visible(false);
+
     screens_handler_->tbh()->PrintAll(Screen::MAIN);
   }
   else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
@@ -204,21 +220,63 @@ void MainScreenHandler::Captions (std::string box1, std::string box2,
 bool MainScreenHandler::ViewNext ()
 {
   bool all_visible = false;
-  if (boxes_number_ >= 2 && box2_->visible())
-    if (boxes_number_ >= 3 && !box3_->visible())
+  if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
+      screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
+  {
+    if (boxes_number_ >= 2 && box2_->visible())
+      if (boxes_number_ >= 3 && !box3_->visible())
+      {
+        box3_->visible(true);
+        box3_->Print();
+      }
+      else
+          all_visible = true;
+    else if (boxes_number_ >= 2)
     {
-      box3_->visible(true);
-      box3_->Print();
+      box2_->visible(true);
+      box2_->Print();
     }
     else
-        all_visible = true;
-  else if (boxes_number_ >= 2)
-  {
-    box2_->visible(true);
-    box2_->Print();
+      all_visible = true;
   }
-  else
-    all_visible = true;
+  else if (screen_mode_ == MainScreenMode::KANJI)
+  {
+    if (on_reading_->visible())
+    {
+      if (kun_reading_->visible())
+      {
+        if (translation_->visible())
+        {
+          if (example_kanji_->visible())
+            all_visible = true;
+          else
+          {
+            example_kanji_->visible(true);
+            example_reading_->visible(true);
+            example_translation_->visible(true);
+            example_kanji_->Print();
+            example_reading_->Print();
+            example_translation_->Print();
+          }
+        }
+        else
+        {
+          translation_->visible(true);
+          translation_->Print();
+        }
+      }
+      else
+      {
+        kun_reading_->visible(true);
+        kun_reading_->Print();
+      }
+    }
+    else
+    {
+      on_reading_->visible(true);
+      on_reading_->Print();
+    }
+  }
   return all_visible;
 }
 

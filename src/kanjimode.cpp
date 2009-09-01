@@ -61,10 +61,13 @@ void GameMode::KanjiMode ()
 
       keys = keysHeld();
 
-      if(keys & KEY_UP) sy--;
-      if(keys & KEY_DOWN) sy++;
-      if(keys & KEY_LEFT) card--;
-      if(keys & KEY_RIGHT) card++;
+      if (keys & KEY_UP) sy--;
+      if (keys & KEY_DOWN) sy++;
+      if (keys & KEY_LEFT) card--;
+      if (keys & KEY_RIGHT) card++;
+      if (keys & KEY_A)
+        if (main_screen_handler.ViewNext())
+          ++card;
 
       // WARNING: This is related to the image displayed in the sub screen and
       // needs to be changed if the image changes
