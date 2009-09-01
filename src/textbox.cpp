@@ -204,13 +204,26 @@ void TextBox::Print ()
           int glyph_x = 0;
           for (; glyph_x < width-1; glyph_x += 2)
           {
+            bool print_pixel0 = true, print_pixel1 = true;
             int index = glyph_y * width + glyph_x;
             // Gets the color of two pixels, if the gray level is above 248,
             // prints black, else prints white. Also aligns the two bytes.
-            u16 color = convert_color(buffer[index]) |
-                        convert_color(buffer[index+1])<<8;
-            int video_index = ((ycoord + glyph_y) <<7) + ((pen_x + glyph_x) >> 1);
-            video_buffer[video_index] = color;
+            u8 pixel0 = convert_color(buffer[index]);
+            if (pixel0 == Types::Color::WHITE) print_pixel0 = false;
+            u8 pixel1 = convert_color(buffer[index+1]);
+            if (pixel1 == Types::Color::WHITE) print_pixel1 = false;
+            int video_index = ((ycoord + glyph_y) <<7) +
+                               ((pen_x + glyph_x) >> 1);
+
+            if (print_pixel0)
+              // odd
+              video_buffer[video_index] = pixel0 |
+                                          (video_buffer[video_index] & 0xFF00);
+
+            if (print_pixel1)
+              // even
+              video_buffer[video_index] = (pixel1 << 8) |
+                                          (video_buffer[video_index] & 0x00FF);
           }
           if (glyph_x == width-1)
           {
