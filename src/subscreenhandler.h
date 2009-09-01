@@ -49,6 +49,8 @@ public:
   void PrintScreen (std::string kanji1, std::string kanji2,
                     std::string kanji3, std::string kanji4,
                     int score, int answers);
+  /// Show the image of the screen
+  void Show ();
 
   /// Destructor
   ~SubScreenHandler();

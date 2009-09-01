@@ -26,10 +26,7 @@
 
 #include "efs_lib.h"		// include EFS lib
 
-#include "kanjimode.h"
-#include "kanjiquizmode.h"
-#include "vocabularymode.h"
-#include "vocabularyquizmode.h"
+#include "dsmemorizer.h"
 
 using namespace std;
 
@@ -48,7 +45,7 @@ int main (void)
     //map vram a to start of main background graphics memory
     vramSetBankA (VRAM_A_MAIN_BG_0x06000000);
 
-    GameMode::VocabularyQuizMode ();
+    DSMemorizer ();
   }
   else
   {

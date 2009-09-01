@@ -49,6 +49,8 @@ public:
   /// Shows the next invisible box
   /// \return true if all was already visible
   bool ViewNext ();
+  /// Shows the image of the screen
+  void Show ();
 
   /// Destructor
   ~MainScreenHandler();

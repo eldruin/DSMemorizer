@@ -299,6 +299,19 @@ bool MainScreenHandler::ViewNext ()
   return all_visible;
 }
 
+
+void MainScreenHandler::Show ()
+{
+  if (screen_mode_ == MainScreenMode::SPLASH_SCREEN)
+    Graphics::SplashImage(bg_image_bitmap_, bg_image_palette_,
+                          Screen::MAIN, bgid_, Graphics::SplashEffect::APPEAR);
+  else
+  {
+    dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
+    dmaCopy(bg_image_palette_, BG_PALETTE, 256*2);
+  }
+}
+
 MainScreenHandler::~MainScreenHandler()
 {
   if (screen_mode_ == MainScreenMode::KANJI)

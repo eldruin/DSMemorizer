@@ -72,7 +72,7 @@ namespace Types
       KANJI_CHOOSE,               ///< Screen showing 4 kanjis to choose and
                                   /// the score and accuracy percentage
       VERTICAL_TEXTBOXES_CHOOSE,  ///< Vertical textboxes
-      SPLASH_SCREEN               ///< Show the splash screen.
+      MAIN_MENU                   ///< Main menu
     };
   }
 

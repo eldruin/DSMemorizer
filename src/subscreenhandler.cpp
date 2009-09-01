@@ -28,6 +28,7 @@
 #include "kanjisubbg.h"
 #include "kanjiquizsubbg.h"
 #include "vertical_textboxes_choose_bg.h"
+#include "main_menu_bg.h"
 #include "tick.h"
 #include "cross.h"
 
@@ -88,8 +89,11 @@ SubScreenHandler::SubScreenHandler(Types::SubScreenMode::mode screen_mode)
     bg_image_bitmap_ = vertical_textboxes_choose_bgBitmap;
     bg_image_palette_ = vertical_textboxes_choose_bgPal;
   }
-  dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
-  dmaCopy(bg_image_palette_, BG_PALETTE_SUB, 256*2);
+  if (screen_mode_ == SubScreenMode::MAIN_MENU)
+  {
+    bg_image_bitmap_ = main_menu_bgBitmap;
+    bg_image_palette_ = main_menu_bgPal;
+  }
 }
 
 void SubScreenHandler::Init (ScreensHandler* screens_handler)
@@ -102,7 +106,6 @@ void SubScreenHandler::Init (ScreensHandler* screens_handler)
   bgid_ = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
 
   dmaCopy(bg_image_palette_, BG_PALETTE_SUB, 256*2);
-
   short white_color = 0;
   if (screen_mode_ == SubScreenMode::CARDS)
   {
@@ -174,10 +177,14 @@ void SubScreenHandler::Init (ScreensHandler* screens_handler)
     box3_->floats(true);
     box4_->floats(true);
   }
+  dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
 
-  BG_PALETTE_SUB[Types::Color::BLACK] = RGB15(0,0,0);
-  BG_PALETTE_SUB[Types::Color::GREY] = RGB15(15,15,15);
-  BG_PALETTE_SUB[Types::Color::WHITE] = white_color;
+  if (screen_mode_ != SubScreenMode::MAIN_MENU)
+  {
+    BG_PALETTE_SUB[Types::Color::BLACK] = RGB15(0,0,0);
+    BG_PALETTE_SUB[Types::Color::GREY] = RGB15(15,15,15);
+    BG_PALETTE_SUB[Types::Color::WHITE] = white_color;
+  }
 }
 
 void SubScreenHandler::PrintCard (const Card& card)
@@ -266,6 +273,12 @@ void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
 
     screens_handler_->tbh()->PrintAll(Screen::SUB);
   }
+}
+
+void SubScreenHandler::Show ()
+{
+  dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
+  dmaCopy(bg_image_palette_, BG_PALETTE, 256*2);
 }
 
 SubScreenHandler::~SubScreenHandler()
