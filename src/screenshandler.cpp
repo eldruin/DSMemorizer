@@ -69,10 +69,11 @@ void PrintBitmap (int x, int y, int width, int height,
   int key_color_index = i;
 
   for (int image_y = 0; image_y < height; ++image_y)
-    for (int image_x = 0; image_x < width; image_x+=2)
+  {
+    int pixel_index_normal = image_y * width;
+    for (int image_x = 0; image_x < width; image_x+=2, pixel_index_normal+=2)
     {
       bool print_pixel0 = true, print_pixel1 = true;
-      int pixel_index_normal = image_y * width + image_x;
       // Now convert the bitmap index because of the half words inversion
       // in the words of the bitmap.
       // Conversion is done like this:
@@ -115,4 +116,5 @@ void PrintBitmap (int x, int y, int width, int height,
         video_buffer[video_index] = pixel1 |
                                     (video_buffer[video_index] & 0xFF00);
     }
+  }
 }

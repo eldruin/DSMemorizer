@@ -202,10 +202,10 @@ void TextBox::Print ()
         for (int glyph_y = 0; glyph_y < rows; ++glyph_y)
         {
           int glyph_x = 0;
-          for (; glyph_x < width-1; glyph_x += 2)
+          int index = glyph_y * width;
+          for (; glyph_x < width-1; glyph_x += 2, index+=2)
           {
             bool print_pixel0 = true, print_pixel1 = true;
-            int index = glyph_y * width + glyph_x;
             // Gets the color of two pixels, if the gray level is above 248,
             // prints black, else prints white. Also aligns the two bytes.
             u8 pixel0 = convert_color(buffer[index]);
@@ -215,23 +215,31 @@ void TextBox::Print ()
             int video_index = ((ycoord + glyph_y) <<7) +
                                ((pen_x + glyph_x) >> 1);
 
-            if (print_pixel0)
+            if (print_pixel0 && print_pixel1)
+              video_buffer[video_index] = pixel0 | (pixel1 << 8);
+            else if (print_pixel0)
               // odd
               video_buffer[video_index] = pixel0 |
                                           (video_buffer[video_index] & 0xFF00);
 
-            if (print_pixel1)
+            else if (print_pixel1)
               // even
               video_buffer[video_index] = (pixel1 << 8) |
                                           (video_buffer[video_index] & 0x00FF);
           }
           if (glyph_x == width-1)
           {
+            bool print_pixel = true;
             // for the last pixel in the row if the glyph width is odd
             int index = glyph_y * width + glyph_x;
-            u16 color = convert_color(buffer[index]) | Types::Color::WHITE <<8;
-            int video_index = ((ycoord + glyph_y) <<7) + ((pen_x + glyph_x) >> 1);
-            video_buffer[video_index] = color;
+            u8 pixel = convert_color(buffer[index]);
+            if (pixel == Types::Color::WHITE) print_pixel = false;
+            int video_index = ((ycoord + glyph_y) <<7) +
+                               ((pen_x + glyph_x) >> 1);
+            if (print_pixel)
+              // odd
+              video_buffer[video_index] = pixel |
+                                          (video_buffer[video_index] & 0xFF00);
           }
         }
       }
