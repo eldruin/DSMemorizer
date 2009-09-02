@@ -24,7 +24,8 @@ namespace GameMode
 {
   /// Vocabulary quiz game mode.
   /// Shows a word and its reading and asks for the kanji version.
-  void VocabularyQuizMode ();
+  void VocabularyQuizMode (MainScreenHandler* main_screen_handler,
+                           SubScreenHandler* sub_screen_handler);
 }
 
 #endif // VOCABULARYQUIZMODE_H_

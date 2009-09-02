@@ -24,7 +24,8 @@ namespace GameMode
 {
   /// Vocabulary memorizing game mode.
   /// Shows words with their reading and translation
-  void VocabularyMode ();
+  void VocabularyMode (MainScreenHandler* main_screen_handler,
+                       SubScreenHandler* sub_screen_handler);
 }
 
 #endif // VOCABULARYMODE_H_

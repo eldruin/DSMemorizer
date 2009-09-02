@@ -31,45 +31,63 @@
 
 using namespace Types;
 
-MainScreenHandler::MainScreenHandler(GameMode::mode game_mode)
+MainScreenHandler::MainScreenHandler()
 {
-  if (game_mode == GameMode::KANJI || game_mode == GameMode::KANJI_QUIZ)
-  {
-    bg_image_bitmap_ = kanjibgBitmap;
-    bg_image_palette_ = kanjibgPal;
-  }
-  else if (game_mode == GameMode::VOCABULARY ||
-           game_mode == GameMode::VOCABULARY_QUIZ)
-  {
-    bg_image_bitmap_ = goibgBitmap;
-    bg_image_palette_ = goibgPal;
-  }
-  else if (game_mode == GameMode::SPLASH_SCREEN)
-  {
-    bg_image_bitmap_ = splash_main_bgBitmap;
-    bg_image_palette_ = splash_main_bgPal;
-  }
-}
-
-void MainScreenHandler::Init (MainScreenMode::mode screen_mode,
-                              ScreensHandler* screens_handler,
-                              int boxes_number)
-{
-  screen_mode_ = screen_mode;
-  screens_handler_ = screens_handler;
-  boxes_number_ = boxes_number;
-
   videoSetMode (MODE_5_2D);
   vramSetBankA (VRAM_A_MAIN_BG_0x06000000);
 
   bgid_ = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
+  // To check later
+  screens_handler_ = NULL;
+}
+
+/**
+ *  \param screen_mode Mode of the screen
+ *  \param game_mode Game mode
+ *  \param screens_handler Already created and initialized screens handler
+ *  \param boxes_number Number of text boxes to be used [0-3].
+ */
+void MainScreenHandler::Init (MainScreenMode::mode screen_mode,
+                              GameMode::mode game_mode,
+                              ScreensHandler* screens_handler,
+                              int boxes_number)
+{
+  SetMode(screen_mode, game_mode, screens_handler, boxes_number);
+}
+
+/**
+ *  \param screen_mode Mode of the screen
+ *  \param game_mode Game mode
+ *  \param boxes_number Number of text boxes to be used [0-3].
+ */
+void MainScreenHandler::SwitchMode (MainScreenMode::mode screen_mode,
+                                    GameMode::mode game_mode,
+                                    int boxes_number)
+{
+  ClearMembers ();
+  SetMode(screen_mode, game_mode, screens_handler_, boxes_number);
+}
+
+/**
+ *  \param screen_mode Mode of the screen
+ *  \param game_mode Game mode
+ *  \param screens_handler Already created and initialized screens handler
+ *  \param boxes_number Number of text boxes to be used [0-3].
+ */
+void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
+                                 GameMode::mode game_mode,
+                                 ScreensHandler* screens_handler,
+                                 int boxes_number)
+{
+  screens_handler_ = screens_handler;
+  game_mode_ = game_mode;
+  screen_mode_ = screen_mode;
+  boxes_number_ = boxes_number;
 
   short white_color;
+  //============================================================================
   if (screen_mode_ == MainScreenMode::KANJI)
   {
-    dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
-    dmaCopy(bg_image_palette_, BG_PALETTE, 256*2);
-
     caption_kanji_ = screens_handler_->tbh()->
       NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,15,17,60,0);
     kanji_ = screens_handler_->tbh()->
@@ -113,12 +131,10 @@ void MainScreenHandler::Init (MainScreenMode::mode screen_mode,
 
     white_color = RGB15(18,18,28);
   }
+  //============================================================================
   else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
            screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
   {
-    dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
-    dmaCopy(bg_image_palette_, BG_PALETTE, 256*2);
-
     if (boxes_number_ >= 1)
     {
       caption_box1_ = screens_handler_->tbh()->
@@ -144,11 +160,7 @@ void MainScreenHandler::Init (MainScreenMode::mode screen_mode,
 
     white_color = RGB15(18,18,28);
   }
-  else if (screen_mode_ == MainScreenMode::SPLASH_SCREEN)
-  {
-    Graphics::SplashImage(bg_image_bitmap_, bg_image_palette_,
-                          Screen::MAIN, bgid_, Graphics::SplashEffect::APPEAR);
-  }
+
   if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES)
   {
     if (boxes_number_ >= 2)
@@ -164,11 +176,13 @@ void MainScreenHandler::Init (MainScreenMode::mode screen_mode,
     BG_PALETTE[Color::GREY] = RGB15(15,15,15);
     BG_PALETTE[Color::WHITE] = white_color;
   }
+
+  DrawBgImage ();
 }
 
 void MainScreenHandler::PrintCard (const Card& card)
 {
-  dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
+  DrawBgImage ();
  	if (screen_mode_ == MainScreenMode::KANJI)
   {
     kanji_->text(card.symbol());
@@ -300,53 +314,75 @@ bool MainScreenHandler::ViewNext ()
 }
 
 
-void MainScreenHandler::Show ()
-{
-  if (screen_mode_ == MainScreenMode::SPLASH_SCREEN)
-    Graphics::SplashImage(bg_image_bitmap_, bg_image_palette_,
-                          Screen::MAIN, bgid_, Graphics::SplashEffect::APPEAR);
-  else
-  {
-    dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
-    dmaCopy(bg_image_palette_, BG_PALETTE, 256*2);
-  }
-}
-
-MainScreenHandler::~MainScreenHandler()
+void MainScreenHandler::DrawBgImage ()
 {
   if (screen_mode_ == MainScreenMode::KANJI)
   {
-    screens_handler_->tbh()->DestroyTextBox(caption_kanji_);
-    screens_handler_->tbh()->DestroyTextBox(kanji_);
-    screens_handler_->tbh()->DestroyTextBox(caption_on_reading_);
-    screens_handler_->tbh()->DestroyTextBox(on_reading_);
-    screens_handler_->tbh()->DestroyTextBox(caption_kun_reading_);
-    screens_handler_->tbh()->DestroyTextBox(kun_reading_);
-    screens_handler_->tbh()->DestroyTextBox(caption_translation_);
-    screens_handler_->tbh()->DestroyTextBox(translation_);
-    screens_handler_->tbh()->DestroyTextBox(caption_example_);
-    screens_handler_->tbh()->DestroyTextBox(example_kanji_);
-    screens_handler_->tbh()->DestroyTextBox(example_reading_);
-    screens_handler_->tbh()->DestroyTextBox(example_translation_);
+    dmaCopy(kanjibgBitmap, bgGetGfxPtr(bgid_), 256*256);
+    dmaCopy(kanjibgPal, BG_PALETTE, 256*2);
   }
   else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
            screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
   {
-    if (boxes_number_ >= 1)
+    if (game_mode_ == GameMode::KANJI_QUIZ)
     {
-      screens_handler_->tbh()->DestroyTextBox(box1_);
-      screens_handler_->tbh()->DestroyTextBox(caption_box1_);
-      if (boxes_number_ >= 2)
+      dmaCopy(kanjibgBitmap, bgGetGfxPtr(bgid_), 256*256);
+      dmaCopy(kanjibgPal, BG_PALETTE, 256*2);
+    }
+    else if (game_mode_ == GameMode::VOCABULARY ||
+             game_mode_ == GameMode::VOCABULARY_QUIZ)
+    {
+      dmaCopy(goibgBitmap, bgGetGfxPtr(bgid_), 256*256);
+      dmaCopy(goibgPal, BG_PALETTE, 256*2);
+    }
+  }
+  else if (screen_mode_ == MainScreenMode::SPLASH_SCREEN)
+    Graphics::SplashImage(splash_main_bgBitmap, splash_main_bgPal,
+                          Screen::MAIN, bgid_, Graphics::SplashEffect::APPEAR);
+}
+
+void MainScreenHandler::ClearMembers ()
+{
+  if (screens_handler_)
+  {
+    if (screen_mode_ == MainScreenMode::KANJI)
+    {
+      screens_handler_->tbh()->DestroyTextBox(caption_kanji_);
+      screens_handler_->tbh()->DestroyTextBox(kanji_);
+      screens_handler_->tbh()->DestroyTextBox(caption_on_reading_);
+      screens_handler_->tbh()->DestroyTextBox(on_reading_);
+      screens_handler_->tbh()->DestroyTextBox(caption_kun_reading_);
+      screens_handler_->tbh()->DestroyTextBox(kun_reading_);
+      screens_handler_->tbh()->DestroyTextBox(caption_translation_);
+      screens_handler_->tbh()->DestroyTextBox(translation_);
+      screens_handler_->tbh()->DestroyTextBox(caption_example_);
+      screens_handler_->tbh()->DestroyTextBox(example_kanji_);
+      screens_handler_->tbh()->DestroyTextBox(example_reading_);
+      screens_handler_->tbh()->DestroyTextBox(example_translation_);
+    }
+    else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
+             screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
+    {
+      if (boxes_number_ >= 1)
       {
-        screens_handler_->tbh()->DestroyTextBox(box2_);
-        screens_handler_->tbh()->DestroyTextBox(caption_box2_);
-        if (boxes_number_ >= 3)
+        screens_handler_->tbh()->DestroyTextBox(box1_);
+        screens_handler_->tbh()->DestroyTextBox(caption_box1_);
+        if (boxes_number_ >= 2)
         {
-          screens_handler_->tbh()->DestroyTextBox(box3_);
-          screens_handler_->tbh()->DestroyTextBox(caption_box3_);
+          screens_handler_->tbh()->DestroyTextBox(box2_);
+          screens_handler_->tbh()->DestroyTextBox(caption_box2_);
+          if (boxes_number_ >= 3)
+          {
+            screens_handler_->tbh()->DestroyTextBox(box3_);
+            screens_handler_->tbh()->DestroyTextBox(caption_box3_);
+          }
         }
       }
     }
   }
 }
 
+MainScreenHandler::~MainScreenHandler()
+{
+  ClearMembers();
+}

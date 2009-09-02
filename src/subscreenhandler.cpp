@@ -71,41 +71,46 @@ inline int y_position (int position)
   return y_pos;
 }
 
-SubScreenHandler::SubScreenHandler(Types::SubScreenMode::mode screen_mode)
+SubScreenHandler::SubScreenHandler()
 {
-  screen_mode_ = screen_mode;
-  if (screen_mode_ == SubScreenMode::CARDS)
-  {
-    bg_image_bitmap_ = kanjisubbgBitmap;
-    bg_image_palette_ = kanjisubbgPal;
-  }
-  if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
-  {
-    bg_image_bitmap_ = kanjiquizsubbgBitmap;
-    bg_image_palette_ = kanjiquizsubbgPal;
-  }
-  if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
-  {
-    bg_image_bitmap_ = vertical_textboxes_choose_bgBitmap;
-    bg_image_palette_ = vertical_textboxes_choose_bgPal;
-  }
-  if (screen_mode_ == SubScreenMode::MAIN_MENU)
-  {
-    bg_image_bitmap_ = main_menu_bgBitmap;
-    bg_image_palette_ = main_menu_bgPal;
-  }
-}
-
-void SubScreenHandler::Init (ScreensHandler* screens_handler)
-{
-  screens_handler_ = screens_handler;
-
   videoSetModeSub(MODE_5_2D);
   vramSetBankC(VRAM_C_SUB_BG);
 
   bgid_ = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
+  // To check later if it's set mode or switch mode
+  screens_handler_ = NULL;
+}
 
-  dmaCopy(bg_image_palette_, BG_PALETTE_SUB, 256*2);
+/**
+ *  \param screen_mode Mode of the screen
+ *  \param screens_handler Already created and initialized screens handler
+ */
+void SubScreenHandler::Init (SubScreenMode::mode screen_mode,
+                             ScreensHandler* screens_handler)
+{
+  SetMode (screen_mode, screens_handler);
+}
+
+/**
+ *  \param screen_mode Mode of the screen
+ *  \param screens_handler Already created and initialized screens handler
+ */
+void SubScreenHandler::SwitchMode (SubScreenMode::mode screen_mode)
+{
+  ClearMembers ();
+  SetMode (screen_mode, screens_handler_);
+}
+
+/**
+ *  \param screen_mode Mode of the screen
+ *  \param screens_handler Already created and initialized screens handler
+ */
+void SubScreenHandler::SetMode (SubScreenMode::mode screen_mode,
+                                ScreensHandler* screens_handler)
+{
+  screen_mode_ = screen_mode;
+  screens_handler_ = screens_handler;
+
   short white_color = 0;
   if (screen_mode_ == SubScreenMode::CARDS)
   {
@@ -148,8 +153,6 @@ void SubScreenHandler::Init (ScreensHandler* screens_handler)
   }
   else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
   {
-    dmaCopy(tickPal,BG_PALETTE_SUB+8,43*2);
-    dmaCopy(crossPal,BG_PALETTE_SUB+94,43*2);
     white_color = RGB15(28,28,20);
 
     scoreboard_  =
@@ -177,7 +180,6 @@ void SubScreenHandler::Init (ScreensHandler* screens_handler)
     box3_->floats(true);
     box4_->floats(true);
   }
-  dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
 
   if (screen_mode_ != SubScreenMode::MAIN_MENU)
   {
@@ -185,11 +187,12 @@ void SubScreenHandler::Init (ScreensHandler* screens_handler)
     BG_PALETTE_SUB[Types::Color::GREY] = RGB15(15,15,15);
     BG_PALETTE_SUB[Types::Color::WHITE] = white_color;
   }
+  DrawBgImage();
 }
 
 void SubScreenHandler::PrintCard (const Card& card)
 {
-  dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
+  DrawBgImage();
  	if (screen_mode_ == SubScreenMode::CARDS)
   {
     char* card_number_text = new char [40];
@@ -202,10 +205,10 @@ void SubScreenHandler::PrintCard (const Card& card)
 
 void SubScreenHandler::PrintBoards (int score, int answers)
 {
-  dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*33);
   if (screen_mode_ == SubScreenMode::KANJI_CHOOSE ||
       screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
   {
+    dmaCopy(vertical_textboxes_choose_bgBitmap, bgGetGfxPtr(bgid_), 256*33);
     char* score_text = new char [40];
     sprintf(score_text, "Score: %i",score);
     scoreboard_->text(score_text);
@@ -230,7 +233,7 @@ void SubScreenHandler::PrintTick (int position)
   else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
     x_pos = 10 , y_pos = y_position(position);
 
-  Graphics::PrintBitmap(x_pos, y_pos, 20, 20, tickBitmap, RGB15(18,18,28), 8,
+  Graphics::PrintBitmap(x_pos, y_pos, 20, 20, tickBitmap, RGB15(18,18,28), 9,
                         bgid_, Screen::SUB);
 }
 
@@ -242,7 +245,7 @@ void SubScreenHandler::PrintCross (int position)
   else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
     x_pos = 10 , y_pos = y_position(position);
 
-  Graphics::PrintBitmap(x_pos, y_pos, 20, 20, crossBitmap, RGB15(18,18,28), 94,
+  Graphics::PrintBitmap(x_pos, y_pos, 20, 20, crossBitmap, RGB15(18,18,28), 95,
                         bgid_, Screen::SUB);
 }
 
@@ -250,7 +253,7 @@ void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
                                     std::string kanji3, std::string kanji4,
                                     int score, int answers)
 {
-  dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
+  DrawBgImage();
   if (screen_mode_ == SubScreenMode::KANJI_CHOOSE ||
       screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
   {
@@ -275,29 +278,58 @@ void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
   }
 }
 
-void SubScreenHandler::Show ()
-{
-  dmaCopy(bg_image_bitmap_, bgGetGfxPtr(bgid_), 256*256);
-  dmaCopy(bg_image_palette_, BG_PALETTE, 256*2);
-}
-
-SubScreenHandler::~SubScreenHandler()
+void SubScreenHandler::DrawBgImage ()
 {
   if (screen_mode_ == SubScreenMode::CARDS)
   {
-    screens_handler_->tbh()->DestroyTextBox(card_number_);
+    dmaCopy(kanjisubbgBitmap, bgGetGfxPtr(bgid_), 256*256);
+    dmaCopy(kanjisubbgPal, BG_PALETTE_SUB, 256*2);
   }
-  else if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
+  if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
   {
-    screens_handler_->tbh()->DestroyTextBox(scoreboard_);
-    screens_handler_->tbh()->DestroyTextBox(accuracy_);
-    screens_handler_->tbh()->DestroyTextBox(box1_);
-    screens_handler_->tbh()->DestroyTextBox(box2_);
-    screens_handler_->tbh()->DestroyTextBox(box3_);
-    screens_handler_->tbh()->DestroyTextBox(box4_);
+    dmaCopy(kanjiquizsubbgBitmap, bgGetGfxPtr(bgid_), 256*256);
+    dmaCopy(kanjiquizsubbgPal, BG_PALETTE_SUB, 256*2);
+    dmaCopy(tickPal,BG_PALETTE_SUB+9,43*2);
+    dmaCopy(crossPal,BG_PALETTE_SUB+95,43*2);
+  }
+  if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
+  {
+    dmaCopy(vertical_textboxes_choose_bgBitmap, bgGetGfxPtr(bgid_), 256*256);
+    dmaCopy(vertical_textboxes_choose_bgPal, BG_PALETTE_SUB, 256*2);
+    dmaCopy(tickPal,BG_PALETTE_SUB+9,43*2);
+    dmaCopy(crossPal,BG_PALETTE_SUB+95,43*2);
+  }
+  if (screen_mode_ == SubScreenMode::MAIN_MENU)
+  {
+    dmaCopy(main_menu_bgBitmap, bgGetGfxPtr(bgid_), 256*256);
+    dmaCopy(main_menu_bgPal, BG_PALETTE_SUB, 256*2);
   }
 }
 
+void SubScreenHandler::ClearMembers ()
+{
+  if (screens_handler_)
+  {
+    if (screen_mode_ == SubScreenMode::CARDS)
+    {
+      screens_handler_->tbh()->DestroyTextBox(card_number_);
+    }
+    else if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
+    {
+      screens_handler_->tbh()->DestroyTextBox(scoreboard_);
+      screens_handler_->tbh()->DestroyTextBox(accuracy_);
+      screens_handler_->tbh()->DestroyTextBox(box1_);
+      screens_handler_->tbh()->DestroyTextBox(box2_);
+      screens_handler_->tbh()->DestroyTextBox(box3_);
+      screens_handler_->tbh()->DestroyTextBox(box4_);
+    }
+  }
+}
+
+SubScreenHandler::~SubScreenHandler ()
+{
+  ClearMembers();
+}
 
 int randomize_positions (int card_index, int package_records, int& card0,
                          int& card1, int& card2, int& card3)

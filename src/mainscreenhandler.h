@@ -30,15 +30,19 @@ class ScreensHandler;
 class MainScreenHandler
 {
 public:
-  /// Default constructor
-  MainScreenHandler(GameMode::mode game_mode);
-  /// \brief Initializer
-  /// \param screen_mode Mode of the screen
-  /// \param screens_handler Already created and initialized screens handler
-  /// \param boxes_number Number of text boxes to be used [0-3].
+  /// Constructor
+  MainScreenHandler ();
+
+  /// Set the screen mode
   void Init (Types::MainScreenMode::mode screen_mode,
+             GameMode::mode game_mode,
              ScreensHandler* screens_handler,
              int boxes_number = 0);
+  /// Switch mode
+  void SwitchMode (Types::MainScreenMode::mode screen_mode,
+                   GameMode::mode game_mode,
+                   int boxes_number = 0);
+
   /// Set the boxes captions
   void Captions (std::string box1, std::string box2, std::string box3);
 
@@ -49,13 +53,19 @@ public:
   /// Shows the next invisible box
   /// \return true if all was already visible
   bool ViewNext ();
-  /// Shows the image of the screen
-  void Show ();
+  /// Shows the background image of the screen in the current mode
+  void DrawBgImage ();
 
   /// Destructor
   ~MainScreenHandler();
 
 private:
+  /// Set the mode
+  void SetMode (Types::MainScreenMode::mode screen_mode,
+                GameMode::mode game_mode, ScreensHandler* screens_handler,
+                int boxes_number);
+  /// Delete all members
+  void ClearMembers ();
   /// Base screens handler
   ScreensHandler* screens_handler_;
   /// Mode of the screen
@@ -81,10 +91,8 @@ private:
 
   /// number of boxes [0-3]
   int boxes_number_;
-  /// background image bitmap
-  const unsigned int* bg_image_bitmap_;
-  /// background image palette
-  const unsigned short* bg_image_palette_;
+  /// Game mode
+  GameMode::mode game_mode_;
   /// Background id
   int bgid_;
 };

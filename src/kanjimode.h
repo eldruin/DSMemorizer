@@ -24,7 +24,8 @@ namespace GameMode
 {
 /// Kanji game mode.
 /// Shows a kanji with its readings, translation and an example
-void KanjiMode ();
+void KanjiMode (MainScreenHandler* main_screen_handler,
+                SubScreenHandler* sub_screen_handler);
 }
 
 #endif // KANJIMODE_H_

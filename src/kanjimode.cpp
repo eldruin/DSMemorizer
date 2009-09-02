@@ -31,17 +31,14 @@
 
 using namespace Types;
 
-void GameMode::KanjiMode ()
+void GameMode::KanjiMode (MainScreenHandler* main_screen_handler,
+                          SubScreenHandler* sub_screen_handler)
 {
   XMLParser xmlparser;
   xmlparser.Init("/db/kanjis.xml");
 
-  ScreensHandler sh;
-  sh.Init();
-  MainScreenHandler main_screen_handler (GameMode::KANJI);
-  main_screen_handler.Init (MainScreenMode::KANJI, &sh);
-  SubScreenHandler sub_screen_handler (SubScreenMode::CARDS);
-  sub_screen_handler.Init (&sh);
+  main_screen_handler->SwitchMode (MainScreenMode::KANJI, GameMode::KANJI);
+  sub_screen_handler->SwitchMode (SubScreenMode::CARDS);
 
   int sy = 0;
   // Shown card
@@ -66,7 +63,7 @@ void GameMode::KanjiMode ()
       if (keys & KEY_LEFT) card--;
       if (keys & KEY_RIGHT) card++;
       if (keys & KEY_A)
-        if (main_screen_handler.ViewNext())
+        if (main_screen_handler->ViewNext())
           ++card;
 
       // WARNING: This is related to the image displayed in the sub screen and
@@ -86,13 +83,13 @@ void GameMode::KanjiMode ()
       if (previous_card != card)
       {
         sy = 0;
-        main_screen_handler.Scroll(0,sy);
+        main_screen_handler->Scroll(0,sy);
         c = xmlparser.card(card);
-        sub_screen_handler.PrintCard(c);
-        main_screen_handler.PrintCard(c);
+        sub_screen_handler->PrintCard(c);
+        main_screen_handler->PrintCard(c);
         previous_card = card;
       }
-      main_screen_handler.Scroll(0,sy);
+      main_screen_handler->Scroll(0,sy);
       swiWaitForVBlank();
    }
 }

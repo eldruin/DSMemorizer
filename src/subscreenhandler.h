@@ -30,12 +30,14 @@ class ScreensHandler;
 class SubScreenHandler
 {
 public:
-  /// Default constructor
-  /// \param screen_mode Mode of the screen
-  SubScreenHandler (Types::SubScreenMode::mode screen_mode);
-  /// \brief Initializer
-  /// \param screens_handler Already created and initialized screens handler
-  void Init (ScreensHandler* screens_handler);
+  /// Constructor
+  SubScreenHandler ();
+
+  /// Set the screen mode
+  void Init (Types::SubScreenMode::mode screen_mode,
+             ScreensHandler* screens_handler);
+  /// Switch mode
+  void SwitchMode (Types::SubScreenMode::mode screen_mode);
 
   /// Print a card
   void PrintCard (const Card& card);
@@ -49,13 +51,18 @@ public:
   void PrintScreen (std::string kanji1, std::string kanji2,
                     std::string kanji3, std::string kanji4,
                     int score, int answers);
-  /// Show the image of the screen
-  void Show ();
+  /// Shows the background image of the screen in the current mode
+  void DrawBgImage ();
 
   /// Destructor
   ~SubScreenHandler();
 
 private:
+  /// Set the mode
+  void SetMode (Types::SubScreenMode::mode screen_mode,
+                ScreensHandler* screens_handler);
+  /// Delete all members
+  void ClearMembers ();
   /// Base screens handler
   ScreensHandler* screens_handler_;
   /// Screen mode
@@ -67,10 +74,8 @@ private:
           *box2_,             ///< Box 2
           *box3_,             ///< Box 3
           *box4_;             ///< Box 4
-  /// background image bitmap
-  const unsigned int* bg_image_bitmap_;
-  /// background image palette
-  const unsigned short* bg_image_palette_;
+  /// Game mode
+  GameMode::mode game_mode_;
   /// Background id
   int bgid_;
 };

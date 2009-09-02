@@ -34,10 +34,11 @@ void DSMemorizer()
 {
   ScreensHandler sh;
   sh.Init();
-  MainScreenHandler main_screen_handler (GameMode::SPLASH_SCREEN);
-  main_screen_handler.Init (MainScreenMode::SPLASH_SCREEN, &sh);
-  SubScreenHandler sub_screen_handler (SubScreenMode::MAIN_MENU);
-  sub_screen_handler.Init (&sh);
+  MainScreenHandler main_screen_handler;
+  main_screen_handler.Init (MainScreenMode::SPLASH_SCREEN,
+                            GameMode::SPLASH_SCREEN, &sh);
+  SubScreenHandler sub_screen_handler;
+  sub_screen_handler.Init (SubScreenMode::MAIN_MENU, &sh);
 
   // Vertical scroll
   int sy = 0;
@@ -72,17 +73,22 @@ void DSMemorizer()
       {
         switch(selected_button)
         {
-          case 1: GameMode::KanjiMode();
+          case 1: GameMode::KanjiMode (&main_screen_handler,
+                                       &sub_screen_handler);
           break;
-          case 2: GameMode::KanjiQuizMode();
+          case 2: GameMode::KanjiQuizMode (&main_screen_handler,
+                                           &sub_screen_handler);
           break;
-          case 3: GameMode::VocabularyMode();
+          case 3: GameMode::VocabularyMode (&main_screen_handler,
+                                            &sub_screen_handler);
           break;
-          case 4: GameMode::VocabularyQuizMode();
+          case 4: GameMode::VocabularyQuizMode (&main_screen_handler,
+                                                &sub_screen_handler);
           break;
         }
-        main_screen_handler.Show ();
-        sub_screen_handler.Show ();
+        main_screen_handler.SwitchMode (MainScreenMode::SPLASH_SCREEN,
+                                        GameMode::MAIN_MENU);
+        sub_screen_handler.SwitchMode (SubScreenMode::MAIN_MENU);
       }
       swiWaitForVBlank();
    }

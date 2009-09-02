@@ -31,18 +31,16 @@
 
 using namespace Types;
 
-void GameMode::KanjiQuizMode ()
+void GameMode::KanjiQuizMode (MainScreenHandler* main_screen_handler,
+                              SubScreenHandler* sub_screen_handler)
 {
   XMLParser xmlparser;
   xmlparser.Init("/db/kanjis.xml");
 
-  ScreensHandler sh;
-  sh.Init();
-  MainScreenHandler main_screen_handler (GameMode::KANJI_QUIZ);
-  main_screen_handler.Init (MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE, &sh, 3);
-  main_screen_handler.Captions("Translation", "on reading", "kun reading");
-  SubScreenHandler sub_screen_handler (SubScreenMode::KANJI_CHOOSE);
-  sub_screen_handler.Init (&sh);
+  main_screen_handler->SwitchMode (MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE,
+                                   GameMode::KANJI_QUIZ, 3);
+  sub_screen_handler->SwitchMode (SubScreenMode::KANJI_CHOOSE);
+  main_screen_handler->Captions("Translation", "on reading", "kun reading");
 
   // player score
   int score = 0;
@@ -67,13 +65,13 @@ void GameMode::KanjiQuizMode ()
                                      selected_card[2], selected_card[3]);
   Card c;
   c = xmlparser.card(card_number);
-  main_screen_handler.PrintCard(c);
+  main_screen_handler->PrintCard(c);
 
-  sub_screen_handler.PrintScreen(xmlparser.card(selected_card[0]).symbol(),
-                                 xmlparser.card(selected_card[1]).symbol(),
-                                 xmlparser.card(selected_card[2]).symbol(),
-                                 xmlparser.card(selected_card[3]).symbol(),
-                                 score, answers);
+  sub_screen_handler->PrintScreen(xmlparser.card(selected_card[0]).symbol(),
+                                  xmlparser.card(selected_card[1]).symbol(),
+                                  xmlparser.card(selected_card[2]).symbol(),
+                                  xmlparser.card(selected_card[3]).symbol(),
+                                  score, answers);
 
   // Loop
   while(!(keys & KEY_B))
@@ -105,13 +103,13 @@ void GameMode::KanjiQuizMode ()
         if (selected_kanji == correct)
         {
           ++score;
-          sub_screen_handler.PrintBoards (score, answers);
-          sub_screen_handler.PrintTick (selected_kanji);
+          sub_screen_handler->PrintBoards (score, answers);
+          sub_screen_handler->PrintTick (selected_kanji);
         }
         else
         {
-          sub_screen_handler.PrintTick (correct);
-          sub_screen_handler.PrintCross (selected_kanji);
+          sub_screen_handler->PrintTick (correct);
+          sub_screen_handler->PrintCross (selected_kanji);
         }
 
         do
@@ -120,7 +118,7 @@ void GameMode::KanjiQuizMode ()
         }while(!keysDown());
 
         sy = 0;
-        main_screen_handler.Scroll(0,sy);
+        main_screen_handler->Scroll(0,sy);
 
         card_number = rand()%xmlparser.package_records() + 1;
         correct = randomize_positions (card_number,
@@ -128,9 +126,9 @@ void GameMode::KanjiQuizMode ()
                                        selected_card[0], selected_card[1],
                                        selected_card[2], selected_card[3]);
         c = xmlparser.card(card_number);
-        main_screen_handler.PrintCard(c);
+        main_screen_handler->PrintCard(c);
 
-        sub_screen_handler.PrintScreen(
+        sub_screen_handler->PrintScreen(
           xmlparser.card(selected_card[0]).symbol(),
           xmlparser.card(selected_card[1]).symbol(),
           xmlparser.card(selected_card[2]).symbol(),
@@ -139,7 +137,7 @@ void GameMode::KanjiQuizMode ()
 
         selected_kanji = 0;
       }
-      main_screen_handler.Scroll(0,sy);
+      main_screen_handler->Scroll(0,sy);
       swiWaitForVBlank();
    }
 }

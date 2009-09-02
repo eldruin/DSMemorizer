@@ -26,7 +26,8 @@ namespace GameMode
 /// Shows the translation and the two readings of a kanji in the main screen
 /// and the right kanji plus 3 more random in the sub screen.
 /// The user have to guess which is the right one.
-void KanjiQuizMode ();
+void KanjiQuizMode (MainScreenHandler* main_screen_handler,
+                    SubScreenHandler* sub_screen_handler);
 }
 #endif // KANJIQUIZMODE_H_
 
