@@ -306,6 +306,11 @@ void SubScreenHandler::DrawBgImage ()
   }
 }
 
+void SubScreenHandler::Fill (unsigned short color)
+{
+  Graphics::Fill (color, Screen::SUB);
+}
+
 void SubScreenHandler::ClearMembers ()
 {
   if (screens_handler_)

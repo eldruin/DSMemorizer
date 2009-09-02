@@ -57,13 +57,13 @@ void DSMemorizer()
 
       keys = keysHeld();
 
-      if (touch.px > 23 && touch.px < 50 && touch.py > 25 && touch.py < 83)
+      if (touch.px > 23 && touch.px < 81 && touch.py > 25 && touch.py < 83)
         selected_button = 1;
       if (touch.px > 99 && touch.px < 158 && touch.py > 25 && touch.py < 83)
         selected_button = 2;
       if (touch.px > 174 && touch.px < 233 && touch.py > 25 && touch.py < 83)
         selected_button = 3;
-      if (touch.px > 23 && touch.px < 50 && touch.py > 97 && touch.py < 156)
+      if (touch.px > 23 && touch.px < 81 && touch.py > 97 && touch.py < 156)
         selected_button = 4;
 
       if (sy < 0) sy = 0;
@@ -86,6 +86,7 @@ void DSMemorizer()
                                                 &sub_screen_handler);
           break;
         }
+        sub_screen_handler.Fill(0);
         main_screen_handler.SwitchMode (MainScreenMode::SPLASH_SCREEN,
                                         GameMode::MAIN_MENU);
         sub_screen_handler.SwitchMode (SubScreenMode::MAIN_MENU);

@@ -195,3 +195,11 @@ void Graphics::PrintBitmap (int x, int y, int width, int height,
     }
   }
 }
+
+void Graphics::Fill (unsigned short color, Screen::selector screen)
+{
+  if (screen == Screen::MAIN)
+    dmaFillHalfWords(color, BG_PALETTE, 256*2);
+  else
+    dmaFillHalfWords(color, BG_PALETTE_SUB, 256*2);
+}

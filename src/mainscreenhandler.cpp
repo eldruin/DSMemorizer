@@ -341,6 +341,11 @@ void MainScreenHandler::DrawBgImage ()
                           Screen::MAIN, bgid_, Graphics::SplashEffect::APPEAR);
 }
 
+void MainScreenHandler::Fill (unsigned short color)
+{
+  Graphics::Fill (color, Screen::MAIN);
+}
+
 void MainScreenHandler::ClearMembers ()
 {
   if (screens_handler_)

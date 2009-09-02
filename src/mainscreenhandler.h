@@ -55,6 +55,8 @@ public:
   bool ViewNext ();
   /// Shows the background image of the screen in the current mode
   void DrawBgImage ();
+  /// Fill the screen with a color
+  void Fill (unsigned short color);
 
   /// Destructor
   ~MainScreenHandler();

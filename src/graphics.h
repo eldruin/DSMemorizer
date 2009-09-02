@@ -55,6 +55,9 @@ namespace Graphics
   void PrintBitmap (int x, int y, int width, int height,
                   const unsigned int* bitmap, short key_color,
                   int palette_offset, int bgid, Types::Screen::selector screen);
+
+  /// Fill the screen with a color
+  void Fill (unsigned short color, Types::Screen::selector screen);
 }
 
 #endif // GRAPHICS_H_
