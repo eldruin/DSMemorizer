@@ -35,7 +35,7 @@ void GameMode::VocabularyMode (MainScreenHandler* main_screen_handler,
                                SubScreenHandler* sub_screen_handler)
 {
   XMLParser xmlparser;
-  xmlparser.Init("/db/kanjis.xml");
+  xmlparser.Init("/db/vocabulary.xml");
 
   main_screen_handler->SwitchMode (MainScreenMode::VERTICAL_TEXTBOXES,
                                    GameMode::VOCABULARY, 3);
