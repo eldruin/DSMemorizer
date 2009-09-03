@@ -52,7 +52,8 @@ void GameMode::VocabularyMode (MainScreenHandler* main_screen_handler,
   int keys = 0;
   touchPosition touch;
   // Loop
-  while(!(keys & KEY_B))
+  bool done = false;
+  while(!(keys & KEY_B) && !done)
   {
       scanKeys();
 
@@ -67,6 +68,8 @@ void GameMode::VocabularyMode (MainScreenHandler* main_screen_handler,
       if (keys & KEY_A)
         if (main_screen_handler->ViewNext())
           ++card;
+      if (touch.px > 5 && touch.px < 39 && touch.py > 152 && touch.py < 187)
+        done = true;
 
       // WARNING: This is related to the image displayed in the sub screen and
       // needs to be changed if the image changes

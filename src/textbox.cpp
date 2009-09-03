@@ -25,22 +25,9 @@
 #include FT_FREETYPE_H
 #include "textbox.h"
 #include "types.h"
+#include "graphics.h"
 
 using std::string;
-
-/// Converts a color in [0-255] range to the black, grey and white
-/// palette indexes
-inline u8 convert_color(u8 incolor)
-{
-	u8 outcolor;
-	if (incolor > 180)
-		outcolor = Types::Color::BLACK;
-	else if (incolor > 128)
-		outcolor = Types::Color::GREY;
-	else
-		outcolor = Types::Color::WHITE;
-	return outcolor;
-}
 
 void TextBox::Init (Types::Screen::selector screen, int bgid, FT_Face face,
                     int size, int x, int y, int width, int height)
@@ -157,8 +144,6 @@ void TextBox::Print ()
   // the same face
   FT_Set_Char_Size (face_, size_ << 6, 0, 110, 110);
 
-  u16* video_buffer = bgGetGfxPtr(bgid_);
-
   int pen_x = x_;
   int pen_y = y_;
   string::const_iterator it = text_.begin();
@@ -191,55 +176,13 @@ void TextBox::Print ()
 
       if (visible_)
       {
-        // Added lots of local variables trying to speed up the rendering.
-        int width = face_->glyph->bitmap.width;
-        int rows = face_->glyph->bitmap.rows;
-        int ycoord = pen_y - (face_->glyph->metrics.horiBearingY>>6);
-        u8* buffer = face_->glyph->bitmap.buffer;
-
         pen_x += face_->glyph->metrics.horiBearingX>>6;
         // Copy the image from the rendered glyph bitmap to the video buffer
-        for (int glyph_y = 0; glyph_y < rows; ++glyph_y)
-        {
-          int glyph_x = 0;
-          int index = glyph_y * width;
-          for (; glyph_x < width-1; glyph_x += 2, index+=2)
-          {
-            bool print_pixel0 = true, print_pixel1 = true;
-            u8 pixel0 = convert_color(buffer[index]);
-            if (pixel0 == Types::Color::WHITE) print_pixel0 = false;
-            u8 pixel1 = convert_color(buffer[index+1]);
-            if (pixel1 == Types::Color::WHITE) print_pixel1 = false;
-            int video_index = ((ycoord + glyph_y) <<7) +
-                               ((pen_x + glyph_x) >> 1);
-
-            if (print_pixel0 && print_pixel1)
-              video_buffer[video_index] = pixel0 | (pixel1 << 8);
-            else if (print_pixel0)
-              // odd
-              video_buffer[video_index] = pixel0 |
-                                          (video_buffer[video_index] & 0xFF00);
-
-            else if (print_pixel1)
-              // even
-              video_buffer[video_index] = (pixel1 << 8) |
-                                          (video_buffer[video_index] & 0x00FF);
-          }
-          if (glyph_x == width-1)
-          {
-            bool print_pixel = true;
-            // for the last pixel in the row if the glyph width is odd
-            int index = glyph_y * width + glyph_x;
-            u8 pixel = convert_color(buffer[index]);
-            if (pixel == Types::Color::WHITE) print_pixel = false;
-            int video_index = ((ycoord + glyph_y) <<7) +
-                               ((pen_x + glyph_x) >> 1);
-            if (print_pixel)
-              // odd
-              video_buffer[video_index] = pixel |
-                                          (video_buffer[video_index] & 0xFF00);
-          }
-        }
+        Graphics::PrintBitmap (pen_x,
+                               pen_y - (face_->glyph->metrics.horiBearingY>>6),
+                               face_->glyph->bitmap.width,
+                               face_->glyph->bitmap.rows,
+                               face_->glyph->bitmap.buffer, bgid_, screen_);
       }
       // increment pen position
       pen_x += (face_->glyph->advance.x >> 6) -

@@ -84,7 +84,6 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
   screen_mode_ = screen_mode;
   boxes_number_ = boxes_number;
 
-  short white_color;
   //============================================================================
   if (screen_mode_ == MainScreenMode::KANJI)
   {
@@ -128,8 +127,6 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
     example_kanji_->visible(false);
     example_reading_->visible(false);
     example_translation_->visible(false);
-
-    white_color = RGB15(18,18,28);
   }
   //============================================================================
   else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
@@ -157,8 +154,6 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
         }
       }
     }
-
-    white_color = RGB15(18,18,28);
   }
 
   if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES)
@@ -172,9 +167,7 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
   }
   if (screen_mode_ != MainScreenMode::SPLASH_SCREEN)
   {
-    BG_PALETTE[Color::BLACK] = RGB15(0,0,0);
-    BG_PALETTE[Color::GREY] = RGB15(15,15,15);
-    BG_PALETTE[Color::WHITE] = white_color;
+
   }
 
   DrawBgImage ();

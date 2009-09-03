@@ -72,7 +72,8 @@ void GameMode::VocabularyQuizMode (MainScreenHandler* main_screen_handler,
                                   score, answers);
 
   // Loop
-  while(!(keys & KEY_B))
+  bool done = false;
+  while(!(keys & KEY_B) && !done)
   {
       scanKeys();
 
@@ -82,6 +83,8 @@ void GameMode::VocabularyQuizMode (MainScreenHandler* main_screen_handler,
 
       if (keys & KEY_UP) sy--;
       if (keys & KEY_DOWN) sy++;
+      if (touch.px > 5 && touch.px < 39 && touch.py > 152 && touch.py < 187)
+        done = true;
 
       if (touch.px > 33 && touch.px < 228 && touch.py > 44 && touch.py < 54)
         selected_kanji = 1;

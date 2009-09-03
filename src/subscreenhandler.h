@@ -63,6 +63,10 @@ private:
   /// Set the mode
   void SetMode (Types::SubScreenMode::mode screen_mode,
                 ScreensHandler* screens_handler);
+  /// Get actual mode bitmap image pointer
+  const unsigned int* GetBitmapPtr ();
+  /// Get actual mode palette image pointer
+  const unsigned short* GetPalPtr ();
   /// Delete all members
   void ClearMembers ();
   /// Base screens handler

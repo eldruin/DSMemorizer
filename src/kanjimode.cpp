@@ -24,6 +24,7 @@
 #include "types.h"
 #include "card.h"
 #include "xmlparser.h"
+#include "graphics.h"
 #include "screenshandler.h"
 #include "mainscreenhandler.h"
 #include "subscreenhandler.h"
@@ -39,6 +40,7 @@ void GameMode::KanjiMode (MainScreenHandler* main_screen_handler,
 
   main_screen_handler->SwitchMode (MainScreenMode::KANJI, GameMode::KANJI);
   sub_screen_handler->SwitchMode (SubScreenMode::CARDS);
+  Graphics::SetColors();
 
   int sy = 0;
   // Shown card
@@ -50,7 +52,8 @@ void GameMode::KanjiMode (MainScreenHandler* main_screen_handler,
   int keys = 0;
   touchPosition touch;
   // Loop
-  while(!(keys & KEY_B))
+  bool done = false;
+  while(!(keys & KEY_B) && !done)
   {
       scanKeys();
 
@@ -65,6 +68,8 @@ void GameMode::KanjiMode (MainScreenHandler* main_screen_handler,
       if (keys & KEY_A)
         if (main_screen_handler->ViewNext())
           ++card;
+      if (touch.px > 5 && touch.px < 39 && touch.py > 152 && touch.py < 187)
+        done = true;
 
       // WARNING: This is related to the image displayed in the sub screen and
       // needs to be changed if the image changes

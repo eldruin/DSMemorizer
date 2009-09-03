@@ -24,6 +24,7 @@
 #include "types.h"
 #include "card.h"
 #include "xmlparser.h"
+#include "graphics.h"
 #include "screenshandler.h"
 #include "mainscreenhandler.h"
 #include "subscreenhandler.h"
@@ -41,6 +42,8 @@ void GameMode::KanjiQuizMode (MainScreenHandler* main_screen_handler,
                                    GameMode::KANJI_QUIZ, 3);
   sub_screen_handler->SwitchMode (SubScreenMode::KANJI_CHOOSE);
   main_screen_handler->Captions("Translation", "on reading", "kun reading");
+  Graphics::SetColors();
+
 
   // player score
   int score = 0;
@@ -74,7 +77,8 @@ void GameMode::KanjiQuizMode (MainScreenHandler* main_screen_handler,
                                   score, answers);
 
   // Loop
-  while(!(keys & KEY_B))
+  bool done = false;
+  while(!(keys & KEY_B) && !done)
   {
       scanKeys();
 
@@ -84,6 +88,8 @@ void GameMode::KanjiQuizMode (MainScreenHandler* main_screen_handler,
 
       if (keys & KEY_UP) sy--;
       if (keys & KEY_DOWN) sy++;
+      if (touch.px > 5 && touch.px < 39 && touch.py > 152 && touch.py < 187)
+        done = true;
 
       if (touch.px > 33 && touch.px < 63 && touch.py > 50 && touch.py < 80)
         selected_kanji = 1;

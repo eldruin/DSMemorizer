@@ -51,13 +51,34 @@ namespace Graphics
   void SplashImage (const unsigned int* bitmap, const unsigned short* palette,
                     Types::Screen::selector screen, int bgid, u8 effect);
 
-  /// Prints a bitmap in a background
+  /// Prints a bitmap from grit in a background
   void PrintBitmap (int x, int y, int width, int height,
-                  const unsigned int* bitmap, short key_color,
-                  int palette_offset, int bgid, Types::Screen::selector screen);
+                    const unsigned int* bitmap, unsigned short key_color,
+                    int bgid, Types::Screen::selector screen);
+
+  /// Print a region of a bitmap in a background
+  void PrintBitmapRegion (int dst_x, int dst_y, int region_x,
+                          int region_y, int region_width,
+                          int region_height, int bmp_width, int bmp_height,
+                          const unsigned int* bitmap,
+                          unsigned short key_color, int bgid,
+                          Types::Screen::selector screen);
+
+  /// Print a bitmap in a background
+  void PrintBitmap (int x, int y, int width, int height,
+                    const unsigned char* bitmap, int bgid,
+                    Types::Screen::selector screen);
 
   /// Fill the screen with a color
   void Fill (unsigned short color, Types::Screen::selector screen);
+
+  /// Find a color in the palette of the given screen.
+  /// Optional offset to the start of the palette can be given.
+  unsigned short FindColor (unsigned short color,
+                            Types::Screen::selector screen,
+                            unsigned short offset = 0);
+  /// Set black and gray colors variables to render fonts
+  void SetColors ();
 }
 
 #endif // GRAPHICS_H_
