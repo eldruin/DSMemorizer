@@ -18,6 +18,7 @@
  */
 
 #include <nds.h>
+#include <string>
 #include "card.h"
 #include "textbox.h"
 #include "textboxhandler.h"
@@ -165,10 +166,6 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
         box3_->visible(false);
     }
   }
-  if (screen_mode_ != MainScreenMode::SPLASH_SCREEN)
-  {
-
-  }
 
   DrawBgImage ();
 }
@@ -199,25 +196,46 @@ void MainScreenHandler::PrintCard (const Card& card)
   else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
            screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
   {
+    std::string box1text, box2text, box3text;
+    if (game_mode_ == GameMode::KANJI_QUIZ)
+    {
+      box1text = card.translation();
+      box2text = card.reading();
+      box3text = card.reading2();
+    }
+    else if (game_mode_ == GameMode::VOCABULARY)
+    {
+      box1text = card.symbol();
+      box2text = card.reading();
+      box3text = card.translation();
+    }
+    else if (game_mode_ == GameMode::VOCABULARY_QUIZ)
+    {
+      box1text = card.translation();
+      box2text = card.reading();
+    }
+
     if (boxes_number_ >= 1)
     {
-      box1_->text(card.translation());
+      box1_->text(box1text);
       if (boxes_number_ >= 2)
       {
-        box2_->text(card.reading());
+        box2_->text(box2text);
         if (boxes_number_ >= 3)
-          box3_->text(card.reading2());
-        if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES)
-        {
-          if (boxes_number_ >= 2)
-          {
-            box2_->visible(false);
-            if (boxes_number_>= 3)
-              box3_->visible(false);
-          }
-        }
+          box3_->text(box3text);
       }
     }
+
+    if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES)
+    {
+      if (boxes_number_ >= 2)
+      {
+        box2_->visible(false);
+        if (boxes_number_>= 3)
+          box3_->visible(false);
+      }
+    }
+
     screens_handler_->tbh()->PrintAll(Screen::MAIN);
   }
 }
@@ -246,8 +264,7 @@ void MainScreenHandler::Captions (std::string box1, std::string box2,
 bool MainScreenHandler::ViewNext ()
 {
   bool all_visible = false;
-  if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
-      screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
+  if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES)
   {
     if (boxes_number_ >= 2 && box2_->visible())
       if (boxes_number_ >= 3 && !box3_->visible())
