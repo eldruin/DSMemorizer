@@ -24,6 +24,7 @@
 #include "types.h"
 #include "card.h"
 #include "xmlparser.h"
+#include "graphics.h"
 #include "screenshandler.h"
 #include "mainscreenhandler.h"
 #include "subscreenhandler.h"
@@ -41,6 +42,7 @@ void GameMode::VocabularyMode (MainScreenHandler* main_screen_handler,
                                    GameMode::VOCABULARY, 3);
   sub_screen_handler->SwitchMode (SubScreenMode::CARDS);
   main_screen_handler->Captions("Kanji", "Reading", "Translation");
+  Graphics::SetColors();
 
   int sy = 0;
   // Shown card

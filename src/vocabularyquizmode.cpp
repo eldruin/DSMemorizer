@@ -22,6 +22,7 @@
 #include "types.h"
 #include "card.h"
 #include "xmlparser.h"
+#include "graphics.h"
 #include "screenshandler.h"
 #include "mainscreenhandler.h"
 #include "subscreenhandler.h"
@@ -39,6 +40,7 @@ void GameMode::VocabularyQuizMode (MainScreenHandler* main_screen_handler,
                                    GameMode::VOCABULARY_QUIZ, 2);
   sub_screen_handler->SwitchMode (SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE);
   main_screen_handler->Captions("Translation", "Reading", "");
+  Graphics::SetColors();
 
   // player score
   int score = 0;

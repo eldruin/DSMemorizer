@@ -29,8 +29,6 @@
 #include "kanjiquizsubbg.h"
 #include "vertical_textboxes_choose_bg.h"
 #include "main_menu_bg.h"
-#include "tick.h"
-#include "cross.h"
 
 using namespace Types;
 
@@ -117,9 +115,6 @@ void SubScreenHandler::SetMode (SubScreenMode::mode screen_mode,
   }
   else if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
   {
-    dmaCopy(tickPal,BG_PALETTE_SUB+8,43*2);
-    dmaCopy(crossPal,BG_PALETTE_SUB+94,43*2);
-
     scoreboard_  =
       screens_handler_->tbh()->NewTextBox
         (Screen::SUB, bgid_, Types::VERA_FONT, 8,154,25,225,0);
@@ -194,7 +189,7 @@ void SubScreenHandler::PrintBoards (int score, int answers)
   if (screen_mode_ == SubScreenMode::KANJI_CHOOSE ||
       screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
   {
-    dmaCopy(vertical_textboxes_choose_bgBitmap, bgGetGfxPtr(bgid_), 256*33);
+    dmaCopy(GetBitmapPtr(), bgGetGfxPtr(bgid_), 256*33);
     char* score_text = new char [40];
     sprintf(score_text, "Score: %i",score);
     scoreboard_->text(score_text);
@@ -314,6 +309,15 @@ void SubScreenHandler::ClearMembers ()
       screens_handler_->tbh()->DestroyTextBox(card_number_);
     }
     else if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
+    {
+      screens_handler_->tbh()->DestroyTextBox(scoreboard_);
+      screens_handler_->tbh()->DestroyTextBox(accuracy_);
+      screens_handler_->tbh()->DestroyTextBox(box1_);
+      screens_handler_->tbh()->DestroyTextBox(box2_);
+      screens_handler_->tbh()->DestroyTextBox(box3_);
+      screens_handler_->tbh()->DestroyTextBox(box4_);
+    }
+    else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
     {
       screens_handler_->tbh()->DestroyTextBox(scoreboard_);
       screens_handler_->tbh()->DestroyTextBox(accuracy_);
