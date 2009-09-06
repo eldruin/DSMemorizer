@@ -30,7 +30,7 @@ public:
   /// Default constructor
 	XMLParser();
 	/// Initializer
-	/// \param filepath Path of the file to read
+	/// \param file_path Path of the file to read
 	void Init(const std::string& file_path);
 
 	/// Get a card determined by its index

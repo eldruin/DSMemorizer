@@ -31,6 +31,7 @@ class DSMemorizer
 public:
   /// Default constructor
   DSMemorizer() {};
+  /// Init and start the game
   void Init();
 
 private:
@@ -52,9 +53,13 @@ private:
   /// Shows a word and its reading and asks for the kanji version.
   void VocabularyQuizMode ();
 
+  /// XML files parser.
   XMLParser xmlparser_;
+  /// Handler for screen common things.
   ScreensHandler screens_handler_;
+  /// Main screen handler.
   MainScreenHandler main_screen_handler_;
+  /// Sub screen handler.
   SubScreenHandler sub_screen_handler_;
 };
 
