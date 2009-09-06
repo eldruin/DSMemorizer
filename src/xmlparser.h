@@ -28,10 +28,10 @@ class XMLParser
 {
 public:
   /// Default constructor
-	XMLParser(){}
+	XMLParser();
 	/// Initializer
 	/// \param filepath Path of the file to read
-	void Init(const std::string& filepath);
+	void Init(const std::string& file_path);
 
 	/// Get a card determined by its index
 	Card card(int index);
@@ -44,6 +44,8 @@ private:
   // Data members
   /// XML file
 	FILE* file_;
+	/// File path
+	std::string file_path_;
 	/// XML file version
 	std::string xml_version_;
 	/// Name of the package in the file (only one package per file is supported)

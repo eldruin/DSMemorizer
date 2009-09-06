@@ -26,9 +26,14 @@
 
 #include "efs_lib.h"		// include EFS lib
 
+#include <string>
+#include "xmlparser.h"
+#include "screenshandler.h"
+#include "mainscreenhandler.h"
+#include "subscreenhandler.h"
 #include "dsmemorizer.h"
 
-using namespace std;
+using std::string;
 
 int main (void)
 {
@@ -45,7 +50,8 @@ int main (void)
     //map vram a to start of main background graphics memory
     vramSetBankA (VRAM_A_MAIN_BG_0x06000000);
 
-    DSMemorizer ();
+    DSMemorizer dsmemorizer;
+    dsmemorizer.Init();
   }
   else
   {

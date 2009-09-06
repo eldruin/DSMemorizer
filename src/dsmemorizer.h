@@ -20,8 +20,43 @@
 #ifndef DSMEMORIZER_H_
 #define DSMEMORIZER_H_
 
+class XMLParser;
+class ScreensHandler;
+class MainScreenHandler;
+class SubScreenHandler;
+
 /// Game main loop and main menu.
-void DSMemorizer ();
+class DSMemorizer
+{
+public:
+  /// Default constructor
+  DSMemorizer() {};
+  void Init();
+
+private:
+  /// Kanji game mode.
+  /// Shows a kanji with its readings, translation and an example
+  void KanjiMode ();
+
+  /// Kanji quiz game mode.
+  /// Shows the translation and the two readings of a kanji in the main screen
+  /// and the right kanji plus 3 more random in the sub screen.
+  /// The user have to guess which is the right one.
+  void KanjiQuizMode ();
+
+  /// Vocabulary memorizing game mode.
+  /// Shows words with their reading and translation
+  void VocabularyMode ();
+
+  /// Vocabulary quiz game mode.
+  /// Shows a word and its reading and asks for the kanji version.
+  void VocabularyQuizMode ();
+
+  XMLParser xmlparser_;
+  ScreensHandler screens_handler_;
+  MainScreenHandler main_screen_handler_;
+  SubScreenHandler sub_screen_handler_;
+};
 
 #endif // DSMEMORIZER_H_
 

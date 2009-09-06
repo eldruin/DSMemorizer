@@ -36,10 +36,28 @@
 
 using std::string;
 
-
-void XMLParser::Init(const string& filepath)
+XMLParser::XMLParser()
 {
-  file_ = fopen(filepath.c_str(),"rb");
+  file_ = NULL;
+}
+
+void XMLParser::Init(const string& file_path)
+{
+  if (file_)
+  {
+    if (file_path == file_path_)
+      // If the file is already opened just reset the cursor
+      fseek(file_, 0, SEEK_SET);
+    else
+    {
+      fclose(file_);
+      file_ = fopen(file_path.c_str(),"rb");
+    }
+  }
+  else
+    file_ = fopen(file_path.c_str(),"rb");
+
+  file_path_= file_path;
   char buff [BUFFER_SIZE];
   if (file_ && !feof(file_))
   {
