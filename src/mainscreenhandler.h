@@ -49,7 +49,7 @@ public:
   /// Print a card
   void PrintCard (const Card& card);
   /// Scrolls the screen
-  void Scroll (int sx, int sy) const;
+  void Scroll (int sx, int sy);
   /// Shows the next invisible box
   /// \return true if all was already visible
   bool ViewNext ();

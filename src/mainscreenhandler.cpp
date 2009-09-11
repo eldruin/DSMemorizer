@@ -240,12 +240,13 @@ void MainScreenHandler::PrintCard (const Card& card)
   }
 }
 
-void MainScreenHandler::Scroll (int sx, int sy) const
+void MainScreenHandler::Scroll (int sx, int sy)
 {
   if (scroll_y_ != sy)
   {
     bgSetScroll(bgid_,0,sy);
     bgUpdate();
+    scroll_y_ = sy;
   }
 }
 
@@ -329,6 +330,7 @@ bool MainScreenHandler::ViewNext ()
 
 void MainScreenHandler::DrawBgImage ()
 {
+  Scroll(0,0);
   scroll_y_ = 0;
   if (screen_mode_ == MainScreenMode::KANJI)
   {
