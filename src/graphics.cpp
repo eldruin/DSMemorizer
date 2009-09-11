@@ -119,20 +119,16 @@ void Graphics::SplashImage (const unsigned int* bitmap,
   if (effect & SplashEffect::APPEAR)
     for (int i = 0; i < 256; i+=2)
     {
-      u16 tmp_palette[256];
-      FactorizePalette (palette, tmp_palette, 256*2, i,
+      FactorizePalette (palette, dst_palette, 256*2, i,
                         ColorTransformation::LIGHTER);
       swiWaitForVBlank();
-      dmaCopy(tmp_palette, dst_palette, 256*2);
     }
   if (effect & SplashEffect::DISSOLVE)
     for (int i = 0; i < 256; i+=2)
     {
-      u16 tmp_palette[256];
-      FactorizePalette (palette, tmp_palette, 256*2, i,
+      FactorizePalette (palette, dst_palette, 256*2, i,
                         ColorTransformation::DARKER);
       swiWaitForVBlank();
-      dmaCopy(tmp_palette, dst_palette, 256*2);
     }
 }
 

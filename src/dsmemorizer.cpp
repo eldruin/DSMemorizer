@@ -18,6 +18,10 @@
  */
 
 #include <nds.h>
+#include <stdio.h>
+#include <malloc.h>
+#include <fat.h>
+#include <unistd.h>		// filesystem functions
 #include <string>
 #include "types.h"
 #include "card.h"

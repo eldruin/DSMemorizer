@@ -3,13 +3,13 @@
   Embedded File System (EFS)
   --------------------------
 
-  file        : efs_lib.h 
+  file        : efs_lib.h
   author      : Noda (initially based on Alekmaul's libNitro)
   description : File system functions
 
   special thanks : Alekmaul, Michoko, Eris, Kusma, M3d10n
 
-  history : 
+  history :
 
     12/05/2007 - v1.0
       = original release
@@ -21,19 +21,25 @@
 
     18/05/2007 - v1.1a
       + added defines for c++ compatibility
-      
+
     28/09/2007 - v1.2
       = fixed real fat mode (hopefully)
       + added some options
-      
+
     25/06/2008 - v2.0
       + complete rewrite of the lib (breaks compatibility with old versions!)
       + added full devoptab integration, so it now use standard iolib functions
-      + added automatic GBA rom detection (so it works in GBA flash kits & emu 
+      + added automatic GBA rom detection (so it works in GBA flash kits & emu
         without any modifications), based on Eris' NitroFS driver idea
-      + full chdir and unix standard paths (relative/absolute) support 
+      + full chdir and unix standard paths (relative/absolute) support
       + great speed improve
-      
+
+    12/06/2009 - v2.0 for devkitARM r26
+      = corrected EFS_MAXPATHLEN and EFS_MAXNAMELEN to work under devkitARM r26
+
+	02/08/09 - v2.0a
+	  = corrected SearchDirectory() to use proper directory functions
+
 */
 
 #ifndef __EFS_LIB_H__
@@ -44,15 +50,17 @@ extern "C" {
 #endif
 
 #include <stdio.h>
-#include <sys/dir.h>
+#include <stdlib.h>
+#include <dirent.h>
+//#include <sys/dir.h>
 
 
 // defines
-#define EFS_MAXPATHLEN  256
+#define EFS_MAXPATHLEN  768
 #define EFS_MAXNAMELEN  128
 
 // the NDS file path, dynamically set by the lib
-extern char efs_path[256];
+extern char efs_path[EFS_MAXPATHLEN];
 
 // init options
 typedef enum {
@@ -76,12 +84,12 @@ int EFS_DirNext(struct _reent *r, DIR_ITER *dirState, char *filename, struct sta
 int EFS_DirClose(struct _reent *r, DIR_ITER *dirState);
 int EFS_Open(struct _reent *r, void *fileStruct, const char *path, int flags, int mode);
 int EFS_Close(struct _reent *r, int fd);
-int EFS_Read(struct _reent *r, int fd, char *ptr, int len);
-int EFS_Write(struct _reent *r, int fd, const char *ptr, int len);
-int EFS_Seek(struct _reent *r, int fd, int pos, int dir);
+int EFS_Read(struct _reent *r, int fd, char *ptr, size_t len);
+int EFS_Write(struct _reent *r, int fd, const char *ptr, size_t len);
+off_t EFS_Seek(struct _reent *r, int fd, off_t pos, int dir);
 int EFS_Fstat(struct _reent *r, int fd, struct stat *st);
 int EFS_Stat(struct _reent *r, const char *file, struct stat *st);
-int EFS_ChDir(struct _reent *r, const char *name);    
+int EFS_ChDir(struct _reent *r, const char *name);
 
 
 #ifdef __cplusplus

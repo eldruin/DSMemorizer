@@ -242,8 +242,11 @@ void MainScreenHandler::PrintCard (const Card& card)
 
 void MainScreenHandler::Scroll (int sx, int sy) const
 {
-  bgSetScroll(bgid_,0,sy);
-  bgUpdate();
+  if (scroll_y_ != sy)
+  {
+    bgSetScroll(bgid_,0,sy);
+    bgUpdate();
+  }
 }
 
 void MainScreenHandler::Captions (std::string box1, std::string box2,
@@ -326,6 +329,7 @@ bool MainScreenHandler::ViewNext ()
 
 void MainScreenHandler::DrawBgImage ()
 {
+  scroll_y_ = 0;
   if (screen_mode_ == MainScreenMode::KANJI)
   {
     dmaCopy(kanjibgBitmap, bgGetGfxPtr(bgid_), 256*256);

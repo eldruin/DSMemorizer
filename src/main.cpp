@@ -33,23 +33,11 @@
 #include "subscreenhandler.h"
 #include "dsmemorizer.h"
 
-using std::string;
-
 int main (void)
 {
-  consoleDemoInit ();
-
+	fatInitDefault();
   if (EFS_Init (EFS_AND_FAT | EFS_DEFAULT_DEVICE, NULL))
   {
-    //iprintf ("EFS init OK!\n");
-    //iprintf ("found NDS path: %s\n", efs_path);
-
-    //set video mode to mode 5
-    videoSetMode (MODE_5_2D);
-
-    //map vram a to start of main background graphics memory
-    vramSetBankA (VRAM_A_MAIN_BG_0x06000000);
-
     DSMemorizer dsmemorizer;
     dsmemorizer.Init();
   }

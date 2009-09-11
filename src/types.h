@@ -88,10 +88,10 @@ namespace Types
   }
 }
 
-/// Game modes functions
+/// Game modes
 namespace GameMode
 {
-  /// Game mode
+  /// Game modes
   enum mode
   {
     KANJI,

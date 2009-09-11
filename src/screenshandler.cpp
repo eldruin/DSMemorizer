@@ -21,8 +21,6 @@
 #include "textboxhandler.h"
 #include "screenshandler.h"
 
-using namespace Types;
-
 void ScreensHandler::Init()
 {
   tbh_ = new TextBoxHandler ();

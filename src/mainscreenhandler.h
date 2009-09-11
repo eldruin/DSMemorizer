@@ -91,6 +91,8 @@ private:
           *caption_box2_,           ///< Box 2 caption text
           *caption_box3_;           ///< Box 3 caption text
 
+  /// Vertical scroll
+  int scroll_y_;
   /// number of boxes [0-3]
   int boxes_number_;
   /// Game mode

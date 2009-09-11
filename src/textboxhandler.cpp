@@ -38,8 +38,12 @@ void TextBoxHandler::Init()
 {
   if (FT_Init_FreeType (&library_))
     iprintf ("Error ocurred in FreeType load. ");
-  faces_[Types::MONA_FONT] = NULL; // New NULL initializing line is needed
-                                   // for each supported font
+
+  // New NULL initializing line is needed for each supported font
+  faces_.push_back(NULL);
+  faces_.push_back(NULL);
+  faces_[Types::MONA_FONT] = NULL;
+  faces_[Types::VERA_FONT] = NULL;
 }
 
 TextBox* TextBoxHandler::NewTextBox (Types::Screen::selector screen, int bgid,
