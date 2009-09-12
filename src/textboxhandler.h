@@ -47,7 +47,7 @@ public:
   /// \return Created TextBox ID
   TextBox* NewTextBox (Types::Screen::selector screen, int bgid,
                        Types::Font font, int size, int x, int y,
-                       int width, int height = 0);
+                       int width = 0, int height = 0);
 
   /// Destroy a text box
   void DestroyTextBox (TextBox* tb);

@@ -89,30 +89,30 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
   if (screen_mode_ == MainScreenMode::KANJI)
   {
     caption_kanji_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,15,17,60,0);
+      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,15,5);
     kanji_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 30,12,60,100,0);
+      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 30,12,23);
     kanji_->floats(true);
     caption_on_reading_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,70,17,100,0);
+      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,70,5);
     on_reading_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,70,30,100,0);
+      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,70,23);
     caption_kun_reading_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,70,35,100,0);
+      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,70,43);
     kun_reading_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,70,40,100,0);
+      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,70,60);
     caption_translation_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,10,100,100,0);
+      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,10,80);
     translation_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,10,100,235,0);
+      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,10,97);
     caption_example_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,10,130,100,0);
+      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,10,117);
     example_kanji_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,10,135,235,0);
+      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,10,134);
     example_reading_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,10,160,235,0);
+      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,10,154);
     example_translation_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,10,190,235,0);
+      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,10,174);
 
     // Text that won't change
     caption_kanji_->text("Kanji");
@@ -136,22 +136,22 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
     if (boxes_number_ >= 1)
     {
       caption_box1_ = screens_handler_->tbh()->
-        NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,30,225,0);
+        NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,18);
       box1_ = screens_handler_->tbh()->
-        NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT, 10,20,40,225,0);
+        NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT, 10,20,33);
       if (boxes_number_ >= 2)
       {
         caption_box2_ = screens_handler_->tbh()->
-          NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,50,225,0);
+          NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,53);
         box2_ = screens_handler_->tbh()->
-          NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT, 10,20,60,225,0);
+          NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT, 10,20,70);
         if (boxes_number_ >= 3)
         {
           caption_box3_ = screens_handler_->tbh()->
-            NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,70,225,0);
+            NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,90);
           box3_ = screens_handler_->tbh()->
             NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT,
-              10,20,80,225,0);
+              10,20,107);
         }
       }
     }

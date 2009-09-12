@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
-<package name="Kanjis" records="5" format="DSMemorizer-kanji-1.0" license="Creative Commons Reconocimiento-No comercial-Compartir bajo la misma licencia 3.0 Unported"/>
+<package name="Kanjis" records="6" format="DSMemorizer-kanji-1.0" license="Creative Commons Reconocimiento-No comercial-Compartir bajo la misma licencia 3.0 Unported"/>
   <card symbol="山" reading="サン、セン" reading2="やま" translation="Montaña" example_symbol="富士山" example_reading="ふじさん" example_translation="Monte Fuji"/>
   <card symbol="日" reading="ジツ、ニチ" reading2="ひ"  translation="Día, Sol" example_symbol="あの日は月曜日でした" example_reading="あのひはげつようびでした" example_translation="Aquel día fue lunes"/>
   <card symbol="木" reading="ボク、モク" reading2="き" translation="Árbol" example_symbol="この木はとても大きいです" example_reading="このきはとてもおおきいです" example_translation="Este árbol es muy grande"/>
   <card symbol="人" reading="ジン、ニン" reading2="ひと" translation="Persona" example_symbol="この人は田中さんです" example_reading="このひとはたなかさんです" example_translation="Esta persona es el señor Tanaka"/>
   <card symbol="火" reading="カ" reading2="ひ" translation="Fuego" example_symbol="火は暑いです" example_reading="ひはあついです" example_translation="El fuego está caliente"/>
+  <card symbol="面" reading="ベン、 メン" reading2="おも、 おもて、 つら" translation="Cara, semblante, superficie" example_symbol="日本人はとても面白い人です" example_reading="にほんじんはとてもおもしろいひとです" example_translation="Los japoneses son gente muy interesante."/>
 </package>

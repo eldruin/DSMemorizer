@@ -38,8 +38,8 @@ void TextBox::Init (Types::Screen::selector screen, int bgid, FT_Face face,
   size_ = size;
   x_ = x;
   y_ = y;
-  width_ = width;
-  height_ = height;
+  width_ = (width==0) ? SCREEN_WIDTH - x - 5 : width;
+  height_ = (height==0) ? ((size_*3)>>1) : height;
   mutable_height_ = (height == 0);
   floats_ = independent_ = false;
   visible_ = true;
@@ -132,9 +132,9 @@ void TextBox::Adjust (int y)
   // an inch in freetype library, but the DS screen resolution is 110 dpi,
   // so 110/72 is aproximately 1.5
   // And 5 extra pixels of line separation
-  if (y > (y_ - ((size_*3)>>1)-5))
+  if (y > (y_ - 5))
   {
-    y_ = y + ((size_*3)>>1)+5;
+    y_ = y +5;
   }
 }
 
@@ -145,7 +145,7 @@ void TextBox::Print ()
   FT_Set_Char_Size (face_, size_ << 6, 0, 110, 110);
 
   int pen_x = x_;
-  int pen_y = y_;
+  int pen_y = y_ + ((size_*3)>>1);
   string::const_iterator it = text_.begin();
   while (it != text_.end())
   {
@@ -162,7 +162,7 @@ void TextBox::Print ()
         {
           // vertically out of the box
           if (mutable_height_)
-            height_ = pen_y;
+            height_ = pen_y - y_;
           else
             return; // ERROR can't print a line more
         }
@@ -195,7 +195,7 @@ void TextBox::Print ()
         {
           // vertically out of the box
           if (mutable_height_)
-            height_ = pen_y;
+            height_ = pen_y - y_;
           else
             return; // ERROR can't print a line more
         }

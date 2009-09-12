@@ -96,7 +96,7 @@ void TextBoxHandler::PrintAll (Types::Screen::selector screen)
         if (!text_boxes_[i]->independent() && !text_boxes_[i+1]->independent() &&
             !text_boxes_[i]->floats() && !text_boxes_[i+1]->floats() &&
             text_boxes_[i]->bgid() == text_boxes_[i+1]->bgid())
-          text_boxes_[i+1]->Adjust(text_boxes_[i]->y());
+          text_boxes_[i+1]->Adjust(text_boxes_[i]->y() + text_boxes_[i]->height());
     }
   }
 }

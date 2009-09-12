@@ -110,29 +110,29 @@ void SubScreenHandler::SetMode (SubScreenMode::mode screen_mode,
   {
     card_number_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::VERA_FONT, 8,70,20,225,0);
+        (Screen::SUB, bgid_, Types::VERA_FONT, 8,70,8);
     card_number_->floats(true);
   }
   else if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
   {
     scoreboard_  =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::VERA_FONT, 8,154,25,225,0);
+        (Screen::SUB, bgid_, Types::VERA_FONT, 8,154,13);
     accuracy_  =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::VERA_FONT, 8,23,25,225,0);
+        (Screen::SUB, bgid_, Types::VERA_FONT, 8,23,13);
     box1_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 30,33,80,225,0);
+        (Screen::SUB, bgid_, Types::MONA_FONT, 30,33,35);
     box2_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 30,85,80,225,0);
+        (Screen::SUB, bgid_, Types::MONA_FONT, 30,85,35);
     box3_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 30,137,80,225,0);
+        (Screen::SUB, bgid_, Types::MONA_FONT, 30,137,35);
     box4_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 30,189,80,225,0);
+        (Screen::SUB, bgid_, Types::MONA_FONT, 30,189,35);
     scoreboard_->floats(true);
     accuracy_->floats(true);
     box1_->floats(true);
@@ -144,22 +144,22 @@ void SubScreenHandler::SetMode (SubScreenMode::mode screen_mode,
   {
     scoreboard_  =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::VERA_FONT, 8,154,25,225,0);
+        (Screen::SUB, bgid_, Types::VERA_FONT, 8,154,13);
     accuracy_  =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::VERA_FONT, 8,23,25,225,0);
+        (Screen::SUB, bgid_, Types::VERA_FONT, 8,23,13);
     box1_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,54,225,0);
+        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,39);
     box2_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,83,225,0);
+        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,68);
     box3_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,112,225,0);
+        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,97);
     box4_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,141,225,0);
+        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,129);
     scoreboard_->floats(true);
     accuracy_->floats(true);
     box1_->floats(true);
