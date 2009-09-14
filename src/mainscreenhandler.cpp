@@ -19,6 +19,7 @@
 
 #include <nds.h>
 #include <string>
+#include "definitions.h"
 #include "card.h"
 #include "textbox.h"
 #include "textboxhandler.h"
@@ -89,30 +90,42 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
   if (screen_mode_ == MainScreenMode::KANJI)
   {
     caption_kanji_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,15,5);
+      NewTextBox (Screen::MAIN, bgid_, CAPTION_FONT, KM_CAPTION_SIZE,
+                  KM_CAPTION_KANJI_X, KM_CAPTION_KANJI_Y);
     kanji_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 30,12,23);
+      NewTextBox (Screen::MAIN, bgid_, NORMAL_FONT, KM_KANJI_SIZE,
+                  KM_KANJI_X, KM_KANJI_Y);
     kanji_->floats(true);
     caption_on_reading_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,70,5);
+      NewTextBox (Screen::MAIN, bgid_, CAPTION_FONT, KM_CAPTION_SIZE,
+                  KM_CAPTION_ON_READING_X, KM_CAPTION_ON_READING_Y);
     on_reading_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,70,23);
+      NewTextBox (Screen::MAIN, bgid_, NORMAL_FONT, KM_NORMAL_SIZE,
+                  KM_ON_READING_X, KM_ON_READING_Y);
     caption_kun_reading_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,70,43);
+      NewTextBox (Screen::MAIN, bgid_, CAPTION_FONT, KM_CAPTION_SIZE,
+                  KM_CAPTION_KUN_READING_X, KM_CAPTION_KUN_READING_Y);
     kun_reading_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,70,60);
+      NewTextBox (Screen::MAIN, bgid_, NORMAL_FONT, KM_NORMAL_SIZE,
+                  KM_KUN_READING_X, KM_KUN_READING_Y);
     caption_translation_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,10,80);
+      NewTextBox (Screen::MAIN, bgid_, CAPTION_FONT, KM_CAPTION_SIZE,
+                  KM_CAPTION_TRANSLATION_X, KM_CAPTION_TRANSLATION_Y);
     translation_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,10,97);
+      NewTextBox (Screen::MAIN, bgid_, NORMAL_FONT, KM_NORMAL_SIZE,
+                  KM_TRANSLATION_X, KM_TRANSLATION_Y);
     caption_example_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, VERA_FONT, 8,10,117);
+      NewTextBox (Screen::MAIN, bgid_, CAPTION_FONT, KM_CAPTION_SIZE,
+                  KM_CAPTION_EXAMPLE_X, KM_CAPTION_EXAMPLE_Y);
     example_kanji_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,10,134);
+      NewTextBox (Screen::MAIN, bgid_, NORMAL_FONT, KM_NORMAL_SIZE,
+                  KM_EXAMPLE_KANJI_X, KM_EXAMPLE_KANJI_Y);
     example_reading_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,10,154);
+      NewTextBox (Screen::MAIN, bgid_, NORMAL_FONT, KM_NORMAL_SIZE,
+                  KM_EXAMPLE_READING_X, KM_EXAMPLE_READING_Y);
     example_translation_ = screens_handler_->tbh()->
-      NewTextBox (Screen::MAIN, bgid_, MONA_FONT, 10,10,174);
+      NewTextBox (Screen::MAIN, bgid_, NORMAL_FONT, KM_NORMAL_SIZE,
+                  KM_EXAMPLE_TRANSLATION_X, KM_EXAMPLE_TRANSLATION_X);
 
     // Text that won't change
     caption_kanji_->text("Kanji");
@@ -136,22 +149,29 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
     if (boxes_number_ >= 1)
     {
       caption_box1_ = screens_handler_->tbh()->
-        NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,18);
+        NewTextBox (Screen::MAIN, bgid_, CAPTION_FONT, VTB_CAPTION_SIZE,
+                    VTB_CAPTION_BOX1_X, VTB_CAPTION_BOX1_Y);
       box1_ = screens_handler_->tbh()->
-        NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT, 10,20,33);
+        NewTextBox (Screen::MAIN, bgid_, NORMAL_FONT, VTB_NORMAL_SIZE,
+                    VTB_BOX1_X, VTB_BOX1_Y);
       if (boxes_number_ >= 2)
       {
         caption_box2_ = screens_handler_->tbh()->
-          NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,53);
+          NewTextBox (Screen::MAIN, bgid_, CAPTION_FONT,
+                      VTB_CAPTION_SIZE, VTB_CAPTION_BOX2_X,
+                      VTB_CAPTION_BOX2_Y);
         box2_ = screens_handler_->tbh()->
-          NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT, 10,20,70);
+          NewTextBox (Screen::MAIN, bgid_, NORMAL_FONT,
+                      VTB_NORMAL_SIZE, VTB_BOX2_X, VTB_BOX2_Y);
         if (boxes_number_ >= 3)
         {
           caption_box3_ = screens_handler_->tbh()->
-            NewTextBox (Screen::MAIN, bgid_, Types::VERA_FONT, 8,20,90);
+            NewTextBox (Screen::MAIN, bgid_, CAPTION_FONT,
+                        VTB_CAPTION_SIZE, VTB_CAPTION_BOX3_X,
+                        VTB_CAPTION_BOX3_Y);
           box3_ = screens_handler_->tbh()->
-            NewTextBox (Screen::MAIN, bgid_, Types::MONA_FONT,
-              10,20,107);
+            NewTextBox (Screen::MAIN, bgid_, NORMAL_FONT,
+                        VTB_NORMAL_SIZE, VTB_BOX3_X, VTB_BOX3_Y);
         }
       }
     }
@@ -244,7 +264,7 @@ void MainScreenHandler::Scroll (int sx, int sy)
 {
   if (scroll_y_ != sy)
   {
-    bgSetScroll(bgid_,0,sy);
+    bgSetScroll(bgid_,sx,sy);
     bgUpdate();
     scroll_y_ = sy;
   }

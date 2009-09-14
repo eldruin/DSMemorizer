@@ -18,6 +18,7 @@
  */
 
 #include <nds.h>
+#include "definitions.h"
 #include "card.h"
 #include "textbox.h"
 #include "textboxhandler.h"
@@ -38,13 +39,13 @@ inline int x_position (int position)
   int x_pos = 0;
   switch (position)
   {
-    case 1: x_pos = 43;
+    case 1: x_pos = TICK_CROSS_X_1;
     break;
-    case 2: x_pos = 98;
+    case 2: x_pos = TICK_CROSS_X_2;
     break;
-    case 3: x_pos = 153;
+    case 3: x_pos = TICK_CROSS_X_3;
     break;
-    case 4: x_pos = 200;
+    case 4: x_pos = TICK_CROSS_X_4;
     break;
   }
   return x_pos;
@@ -57,13 +58,13 @@ inline int y_position (int position)
   int y_pos = 0;
   switch (position)
   {
-    case 1: y_pos = 39;
+    case 1: y_pos = TICK_CROSS_Y_1;
     break;
-    case 2: y_pos = 68;
+    case 2: y_pos = TICK_CROSS_Y_2;
     break;
-    case 3: y_pos = 97;
+    case 3: y_pos = TICK_CROSS_Y_3;
     break;
-    case 4: y_pos = 126;
+    case 4: y_pos = TICK_CROSS_Y_4;
     break;
   }
   return y_pos;
@@ -110,29 +111,36 @@ void SubScreenHandler::SetMode (SubScreenMode::mode screen_mode,
   {
     card_number_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::VERA_FONT, 8,70,8);
+        (Screen::SUB, bgid_, CAPTION_FONT, CARDS_TEXT_SIZE,
+         CARDS_TEXT_X, CARDS_TEXT_Y);
     card_number_->floats(true);
   }
   else if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
   {
     scoreboard_  =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::VERA_FONT, 8,154,13);
+        (Screen::SUB, bgid_, CAPTION_FONT, KC_CAPTION_SIZE,
+         KC_SCOREBOARD_X, KC_SCOREBOARD_Y);
     accuracy_  =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::VERA_FONT, 8,23,13);
+        (Screen::SUB, bgid_, CAPTION_FONT, KC_CAPTION_SIZE,
+         KC_ACCURACY_X, KC_ACCURACY_Y);
     box1_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 30,33,35);
+        (Screen::SUB, bgid_, NORMAL_FONT, KC_NORMAL_SIZE,
+         KC_BOX1_X, KC_BOX1_Y);
     box2_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 30,85,35);
+        (Screen::SUB, bgid_, NORMAL_FONT, KC_NORMAL_SIZE,
+         KC_BOX2_X, KC_BOX2_Y);
     box3_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 30,137,35);
+        (Screen::SUB, bgid_, NORMAL_FONT, KC_NORMAL_SIZE,
+         KC_BOX3_X, KC_BOX3_Y);
     box4_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 30,189,35);
+        (Screen::SUB, bgid_, NORMAL_FONT, KC_NORMAL_SIZE,
+         KC_BOX4_X, KC_BOX4_Y);
     scoreboard_->floats(true);
     accuracy_->floats(true);
     box1_->floats(true);
@@ -144,22 +152,28 @@ void SubScreenHandler::SetMode (SubScreenMode::mode screen_mode,
   {
     scoreboard_  =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::VERA_FONT, 8,154,13);
+        (Screen::SUB, bgid_, CAPTION_FONT, VTBC_CAPTION_SIZE,
+         VTBC_SCOREBOARD_X, VTBC_SCOREBOARD_Y);
     accuracy_  =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::VERA_FONT, 8,23,13);
+        (Screen::SUB, bgid_, CAPTION_FONT, VTBC_CAPTION_SIZE,
+         VTBC_ACCURACY_X, VTBC_ACCURACY_Y);
     box1_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,39);
+        (Screen::SUB, bgid_, NORMAL_FONT, VTBC_NORMAL_SIZE,
+         VTBC_BOX1_X, VTBC_BOX1_Y);
     box2_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,68);
+        (Screen::SUB, bgid_, NORMAL_FONT, VTBC_NORMAL_SIZE,
+         VTBC_BOX2_X, VTBC_BOX2_Y);
     box3_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,97);
+        (Screen::SUB, bgid_, NORMAL_FONT, VTBC_NORMAL_SIZE,
+         VTBC_BOX3_X, VTBC_BOX3_Y);
     box4_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, Types::MONA_FONT, 10,33,129);
+        (Screen::SUB, bgid_, NORMAL_FONT, VTBC_NORMAL_SIZE,
+         VTBC_BOX4_X, VTBC_BOX4_Y);
     scoreboard_->floats(true);
     accuracy_->floats(true);
     box1_->floats(true);
@@ -176,7 +190,7 @@ void SubScreenHandler::PrintCard (const Card& card)
   DrawBgImage();
  	if (screen_mode_ == SubScreenMode::CARDS)
   {
-    char* card_number_text = new char [40];
+    char* card_number_text = new char [MAX_CARD_NUMBER_TEXT_LENGTH];
     sprintf(card_number_text, "Card number: %i",card.index());
     card_number_->text(card_number_text);
     delete card_number_text;
@@ -190,14 +204,14 @@ void SubScreenHandler::PrintBoards (int score, int answers)
       screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
   {
     dmaCopy(GetBitmapPtr(), bgGetGfxPtr(bgid_), 256*33);
-    char* score_text = new char [40];
+    char* score_text = new char [MAX_SCORE_TEXT_LENGTH];
     sprintf(score_text, "Score: %i",score);
     scoreboard_->text(score_text);
     delete score_text;
 
     scoreboard_->Print();
 
-    char* accuracy_text = new char [40];
+    char* accuracy_text = new char [MAX_ACCURACY_TEXT_LENGTH];
     sprintf(accuracy_text, "Accuracy: %i%%",score*100/answers);
     accuracy_->text(accuracy_text);
     delete accuracy_text;
@@ -210,9 +224,9 @@ void SubScreenHandler::PrintTick (int position)
 {
   int x_pos = 0, y_pos = 0;
   if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
-    x_pos = x_position(position), y_pos = 103;
+    x_pos = x_position(position), y_pos = KC_TICK_CROSS_Y;
   else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
-    x_pos = 10 , y_pos = y_position(position);
+    x_pos = KC_TICK_CROSS_X , y_pos = y_position(position);
 
   Graphics::PrintBitmapRegion(x_pos, y_pos, 0, 192, 20, 20, 256, 213,
                               GetBitmapPtr(), RGB15(18,18,28), bgid_,
@@ -223,9 +237,9 @@ void SubScreenHandler::PrintCross (int position)
 {
   int x_pos = 0, y_pos = 0;
   if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
-    x_pos = x_position(position), y_pos = 103;
+    x_pos = x_position(position), y_pos = KC_TICK_CROSS_Y;
   else if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
-    x_pos = 10 , y_pos = y_position(position);
+    x_pos = KC_TICK_CROSS_X , y_pos = y_position(position);
 
   Graphics::PrintBitmapRegion(x_pos, y_pos, 20, 192, 20, 20, 256, 213,
                               GetBitmapPtr(), RGB15(18,18,28), bgid_,
@@ -245,14 +259,14 @@ void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
     box3_->text(kanji3);
     box4_->text(kanji4);
 
-    char* score_text = new char [40];
+    char* score_text = new char [MAX_SCORE_TEXT_LENGTH];
     sprintf(score_text, "Score: %i",score);
     scoreboard_->text(score_text);
     delete score_text;
 
     scoreboard_->Print();
 
-    char* accuracy_text = new char [40];
+    char* accuracy_text = new char [MAX_ACCURACY_TEXT_LENGTH];
     sprintf(accuracy_text, "Accuracy: %i%%",score*100/answers);
     accuracy_->text(accuracy_text);
     delete accuracy_text;
