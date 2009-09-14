@@ -1,4 +1,4 @@
-/// \file main.cpp Main file.
+/// \file soundhandler.h Sound Handling.
 /* Copyright 2009 Diego Barrios Romero
  *
  * This file is part of DSMemorizer.
@@ -17,41 +17,34 @@
  * along with DSMemorizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef SOUNDHANDLER_H_
+#define SOUNDHANDLER_H_
 
-#include <nds.h>
-#include <stdio.h>
-#include <malloc.h>
-#include <fat.h>
-#include <unistd.h>		// filesystem functions
-#include <maxmod9.h>
-
-#include "efs_lib.h"		// include EFS lib
-
-#include <string>
-#include "xmlparser.h"
-#include "screenshandler.h"
-#include "mainscreenhandler.h"
-#include "subscreenhandler.h"
-#include "soundhandler.h"
-#include "dsmemorizer.h"
-
-int main (void)
+/// Game sounds handler
+class SoundHandler
 {
-	fatInitDefault();
-  if (EFS_Init (EFS_AND_FAT | EFS_DEFAULT_DEVICE, NULL))
+public:
+  /// Sound effects available
+  enum SFX
   {
-    DSMemorizer dsmemorizer;
-    dsmemorizer.Init();
-  }
-  else
-  {
-    iprintf ("EFS init error!\n");
-  }
-  while (1)
-  {
-    swiWaitForVBlank ();
-  }
+    ACTION,       ///< Sound played when doing an action
+    THEME         ///< Main theme for the main menu.
+  };
 
-  return 0;
-}
+  SoundHandler () {}
+  void Init ();
+  void PlayEffect (SFX sfx);
+  void StopEffect (SFX sfx);
+  void UnloadEffect (SFX sfx);
+  void UnloadEffects ();
 
+  ~SoundHandler();
+private:
+  mm_sfxhand* sfx_handlers_;
+  bool* loaded_sfx_;
+  mm_sound_effect* sfx_available_;
+};
+
+
+
+#endif // SOUNDHANDLER_H_

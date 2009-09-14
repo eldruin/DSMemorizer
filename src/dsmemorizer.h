@@ -20,6 +20,7 @@
 #ifndef DSMEMORIZER_H_
 #define DSMEMORIZER_H_
 
+class SoundHandler;
 class XMLParser;
 class ScreensHandler;
 class MainScreenHandler;
@@ -53,6 +54,8 @@ private:
   /// Shows a word and its reading and asks for the kanji version.
   void VocabularyQuizMode ();
 
+  /// Sound handler
+  SoundHandler sound_handler_;
   /// XML files parser.
   XMLParser xmlparser_;
   /// Handler for screen common things.

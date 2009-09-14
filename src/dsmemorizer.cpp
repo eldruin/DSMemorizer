@@ -22,11 +22,13 @@
 #include <malloc.h>
 #include <fat.h>
 #include <unistd.h>		// filesystem functions
+#include <maxmod9.h>
 #include <string>
 #include "types.h"
 #include "card.h"
 #include "xmlparser.h"
 #include "graphics.h"
+#include "soundhandler.h"
 #include "screenshandler.h"
 #include "subscreenhandler.h"
 #include "mainscreenhandler.h"
@@ -36,6 +38,8 @@ using namespace Types;
 
 void DSMemorizer::Init ()
 {
+  sound_handler_.Init();
+  sound_handler_.PlayEffect(SoundHandler::THEME);
   screens_handler_.Init();
   main_screen_handler_.Init (MainScreenMode::SPLASH_SCREEN,
                              GameMode::SPLASH_SCREEN, &screens_handler_);
@@ -72,6 +76,9 @@ void DSMemorizer::Init ()
 
       if (selected_button)
       {
+        sound_handler_.PlayEffect(SoundHandler::ACTION);
+        sound_handler_.StopEffect(SoundHandler::THEME);
+        sound_handler_.UnloadEffect(SoundHandler::THEME);
         switch(selected_button)
         {
           case 1: KanjiMode ();
@@ -83,6 +90,7 @@ void DSMemorizer::Init ()
           case 4: VocabularyQuizMode ();
           break;
         }
+        sound_handler_.PlayEffect(SoundHandler::THEME);
         sub_screen_handler_.Fill(0);
         main_screen_handler_.SwitchMode (MainScreenMode::SPLASH_SCREEN,
                                         GameMode::MAIN_MENU);
@@ -118,10 +126,13 @@ void DSMemorizer::KanjiMode ()
 
       touchRead(&touch);
 
-      keys = keysHeld();
+      keys = keysDown();
 
-      if (keys & KEY_UP) sy--;
-      if (keys & KEY_DOWN) sy++;
+      if ((keys & KEY_LEFT) || (keys & KEY_RIGHT) || (keys & KEY_A))
+        sound_handler_.PlayEffect(SoundHandler::ACTION);
+
+      if (keysHeld() & KEY_UP) sy--;
+      if (keysHeld() & KEY_DOWN) sy++;
       if (keys & KEY_LEFT) card--;
       if (keys & KEY_RIGHT) card++;
       if (keys & KEY_A)
@@ -146,6 +157,8 @@ void DSMemorizer::KanjiMode ()
       Card c;
       if (previous_card != card)
       {
+        if (previous_card)
+          sound_handler_.PlayEffect(SoundHandler::ACTION);
         sy = 0;
         main_screen_handler_.Scroll(0,sy);
         c = xmlparser_.card(card);
@@ -208,10 +221,13 @@ void DSMemorizer::KanjiQuizMode ()
 
       touchRead(&touch);
 
-      keys = keysHeld();
+      keys = keysDown();
 
-      if (keys & KEY_UP) sy--;
-      if (keys & KEY_DOWN) sy++;
+      if ((keys & KEY_LEFT) || (keys & KEY_RIGHT) || (keys & KEY_A))
+        sound_handler_.PlayEffect(SoundHandler::ACTION);
+
+      if (keysHeld() & KEY_UP) sy--;
+      if (keysHeld() & KEY_DOWN) sy++;
       if (touch.px > 5 && touch.px < 39 && touch.py > 152 && touch.py < 187)
         done = true;
 
@@ -229,6 +245,7 @@ void DSMemorizer::KanjiQuizMode ()
 
       if (selected_kanji)
       {
+        sound_handler_.PlayEffect(SoundHandler::ACTION);
         ++answers;
         if (selected_kanji == correct)
         {
@@ -300,10 +317,13 @@ void DSMemorizer::VocabularyMode ()
 
       touchRead(&touch);
 
-      keys = keysHeld();
+     keys = keysDown();
 
-      if (keys & KEY_UP) sy--;
-      if (keys & KEY_DOWN) sy++;
+      if ((keys & KEY_LEFT) || (keys & KEY_RIGHT) || (keys & KEY_A))
+        sound_handler_.PlayEffect(SoundHandler::ACTION);
+
+      if (keysHeld() & KEY_UP) sy--;
+      if (keysHeld() & KEY_DOWN) sy++;
       if (keys & KEY_LEFT) card--;
       if (keys & KEY_RIGHT) card++;
       if (keys & KEY_A)
@@ -327,6 +347,8 @@ void DSMemorizer::VocabularyMode ()
 
       if (previous_card != card)
       {
+        if (previous_card)
+          sound_handler_.PlayEffect(SoundHandler::ACTION);
         sy = 0;
         Card c;
         c = xmlparser_.card(card);
@@ -389,10 +411,13 @@ void DSMemorizer::VocabularyQuizMode ()
 
       touchRead(&touch);
 
-      keys = keysHeld();
+      keys = keysDown();
 
-      if (keys & KEY_UP) sy--;
-      if (keys & KEY_DOWN) sy++;
+      if ((keys & KEY_LEFT) || (keys & KEY_RIGHT) || (keys & KEY_A))
+        sound_handler_.PlayEffect(SoundHandler::ACTION);
+
+      if (keysHeld() & KEY_UP) sy--;
+      if (keysHeld() & KEY_DOWN) sy++;
       if (touch.px > 5 && touch.px < 39 && touch.py > 152 && touch.py < 187)
         done = true;
 
@@ -410,6 +435,7 @@ void DSMemorizer::VocabularyQuizMode ()
 
       if (selected_kanji)
       {
+        sound_handler_.PlayEffect(SoundHandler::ACTION);
         ++answers;
         if (selected_kanji == correct)
         {
