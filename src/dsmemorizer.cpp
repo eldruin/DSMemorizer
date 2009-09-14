@@ -138,6 +138,9 @@ void DSMemorizer::KanjiMode ()
       if (keys & KEY_A)
         if (main_screen_handler_.ViewNext())
           ++card;
+      if (keys & KEY_X)
+        card = rand()%xmlparser_.package_records() + 1;
+
       if (touch.px > 5 && touch.px < 39 && touch.py > 152 && touch.py < 187)
         done = true;
 
@@ -145,8 +148,10 @@ void DSMemorizer::KanjiMode ()
       // needs to be changed if the image changes
       if (touch.px > 36 && touch.px < 102 && touch.py > 40 && touch.py < 146)
         card--;
-      if (touch.px > 156 && touch.px < 224 && touch.py > 40 && touch.py < 146)
+      if (touch.px > 156 && touch.px < 224 && touch.py > 40 && touch.py < 90)
         card++;
+      if (touch.px > 156 && touch.px < 224 && touch.py > 40 && touch.py < 146)
+        card = rand()%xmlparser_.package_records() + 1;
 
       if (card < 1) card = 1;
       if (card > xmlparser_.package_records())
@@ -329,6 +334,9 @@ void DSMemorizer::VocabularyMode ()
       if (keys & KEY_A)
         if (main_screen_handler_.ViewNext())
           ++card;
+      if (keys & KEY_X)
+        card = rand()%xmlparser_.package_records() + 1;
+
       if (touch.px > 5 && touch.px < 39 && touch.py > 152 && touch.py < 187)
         done = true;
 
@@ -336,8 +344,10 @@ void DSMemorizer::VocabularyMode ()
       // needs to be changed if the image changes
       if (touch.px > 36 && touch.px < 102 && touch.py > 40 && touch.py < 146)
         card--;
-      if (touch.px > 156 && touch.px < 224 && touch.py > 40 && touch.py < 146)
+      if (touch.px > 156 && touch.px < 224 && touch.py > 40 && touch.py < 90)
         card++;
+      if (touch.px > 156 && touch.px < 224 && touch.py > 90 && touch.py < 146)
+        card = rand()%xmlparser_.package_records() + 1;
 
       if (card < 1) card = 1;
       if (card > xmlparser_.package_records())

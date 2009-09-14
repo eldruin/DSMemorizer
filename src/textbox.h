@@ -68,6 +68,8 @@ public:
   /// Get the background id
   int bgid () const;
 
+  /// Set the position and dimensions of a TextBox
+  void SetProperties (int x, int y, int width, int height);
   /// Set the text
   void text (const std::string& str);
   /// Set whether the text box floats or not \sa floats_

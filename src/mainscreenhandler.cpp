@@ -193,6 +193,7 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
 void MainScreenHandler::PrintCard (const Card& card)
 {
   DrawBgImage ();
+  ResetTextBoxesPositions ();
  	if (screen_mode_ == MainScreenMode::KANJI)
   {
     kanji_->text(card.symbol());
@@ -380,6 +381,58 @@ void MainScreenHandler::DrawBgImage ()
 void MainScreenHandler::Fill (unsigned short color)
 {
   Graphics::Fill (color, Screen::MAIN);
+}
+
+void MainScreenHandler::ResetTextBoxesPositions ()
+{
+  if (screens_handler_)
+  {
+    if (screen_mode_ == MainScreenMode::KANJI)
+    {
+      caption_kanji_->SetProperties(KM_CAPTION_KANJI_X,
+                                    KM_CAPTION_KANJI_Y, 0, 0);
+      kanji_->SetProperties(KM_KANJI_X, KM_KANJI_Y, 0, 0);
+      caption_on_reading_->SetProperties(KM_CAPTION_ON_READING_X,
+                                         KM_CAPTION_ON_READING_Y, 0, 0);
+      on_reading_->SetProperties(KM_ON_READING_X, KM_ON_READING_Y, 0, 0);
+      caption_kun_reading_->SetProperties(KM_CAPTION_KUN_READING_X,
+                                          KM_CAPTION_KUN_READING_Y, 0, 0);
+      kun_reading_->SetProperties(KM_KUN_READING_X, KM_KUN_READING_Y, 0, 0);
+      caption_translation_->SetProperties(KM_CAPTION_TRANSLATION_X,
+                                          KM_CAPTION_TRANSLATION_Y, 0, 0);
+      translation_->SetProperties(KM_TRANSLATION_X, KM_TRANSLATION_Y, 0, 0);
+      caption_example_->SetProperties(KM_CAPTION_EXAMPLE_X,
+                                      KM_CAPTION_EXAMPLE_Y, 0, 0);
+      example_kanji_->SetProperties(KM_EXAMPLE_KANJI_X,
+                                    KM_EXAMPLE_KANJI_Y, 0, 0);
+      example_reading_->SetProperties(KM_EXAMPLE_READING_X,
+                                      KM_EXAMPLE_READING_Y, 0, 0);
+      example_translation_->SetProperties(KM_EXAMPLE_TRANSLATION_X,
+                                          KM_EXAMPLE_TRANSLATION_Y, 0, 0);
+    }
+    else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
+             screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
+    {
+      if (boxes_number_ >= 1)
+      {
+        caption_box1_->SetProperties(VTB_CAPTION_BOX1_X,
+                                     VTB_CAPTION_BOX1_Y, 0, 0);
+        box1_->SetProperties(VTB_BOX1_X, VTB_BOX1_Y, 0, 0);
+        if (boxes_number_ >= 2)
+        {
+          caption_box2_->SetProperties(VTB_CAPTION_BOX2_X,
+                                       VTB_CAPTION_BOX2_Y, 0, 0);
+          box2_->SetProperties(VTB_BOX2_X, VTB_BOX2_Y, 0, 0);
+          if (boxes_number_ >= 3)
+          {
+            caption_box3_->SetProperties(VTB_CAPTION_BOX3_X,
+                                         VTB_CAPTION_BOX3_Y, 0, 0);
+            box3_->SetProperties(VTB_BOX3_X, VTB_BOX3_Y, 0, 0);
+          }
+        }
+      }
+    }
+  }
 }
 
 void MainScreenHandler::ClearMembers ()

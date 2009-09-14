@@ -1,9 +1,23 @@
 <?xml version="1.0"?>
-<package name="Kanjis" records="6" format="DSMemorizer-kanji-1.0" license="Creative Commons Reconocimiento-No comercial-Compartir bajo la misma licencia 3.0 Unported"/>
-  <card symbol="山" reading="サン、セン" reading2="やま" translation="Montaña" example_symbol="富士山" example_reading="ふじさん" example_translation="Monte Fuji"/>
-  <card symbol="日" reading="ジツ、ニチ" reading2="ひ"  translation="Día, Sol" example_symbol="あの日は月曜日でした" example_reading="あのひはげつようびでした" example_translation="Aquel día fue lunes"/>
-  <card symbol="木" reading="ボク、モク" reading2="き" translation="Árbol" example_symbol="この木はとても大きいです" example_reading="このきはとてもおおきいです" example_translation="Este árbol es muy grande"/>
-  <card symbol="人" reading="ジン、ニン" reading2="ひと" translation="Persona" example_symbol="この人は田中さんです" example_reading="このひとはたなかさんです" example_translation="Esta persona es el señor Tanaka"/>
-  <card symbol="火" reading="カ" reading2="ひ" translation="Fuego" example_symbol="火は暑いです" example_reading="ひはあついです" example_translation="El fuego está caliente"/>
-  <card symbol="面" reading="ベン、 メン" reading2="おも、 おもて、 つら" translation="Cara, semblante, superficie" example_symbol="日本人はとても面白い人です" example_reading="にほんじんはとてもおもしろいひとです" example_translation="Los japoneses son gente muy interesante."/>
+<package name="Kanjis" records="20" format="DSMemorizer-kanji-1.0" license="Creative Commons Reconocimiento-No comercial-Compartir bajo la misma licencia 3.0 Unported"/>
+  <card symbol="山" reading="サン、セン" reading2="やま" translation="Montaña" example_symbol="富士山" example_reading="ふじさん" example_translation="Monte Fuji" grade="1" strokes="3"/>
+  <card symbol="日" reading="ジツ、ニチ" reading2="-か、 ひ、 -び "  translation="Día, Japón, rayo de sol, sol, solar" example_symbol="あの日は月曜日でした" example_reading="あのひはげつようびでした" example_translation="Aquel día fue lunes" grade="1" strokes="4"/>
+  <card symbol="木" reading="ボク、モク" reading2="き、 こ-" translation="Árbol, madera" example_symbol="この木はとても大きいです" example_reading="このきはとてもおおきいです" example_translation="Este árbol es muy grande" grade="1" strokes="4"/>
+  <card symbol="人" reading="ジン、ニン" reading2="-と、 ひと、 -り" translation="Persona" example_symbol="この人は田中さんです" example_reading="このひとはたなかさんです" example_translation="Esta persona es el señor Tanaka" grade="1" strokes="2"/>
+  <card symbol="火" reading="カ" reading2="ひ、 -び、 ほ-" translation="Flama, fuego, llama" example_symbol="火は暑いです" example_reading="ひはあついです" example_translation="El fuego está caliente" grade="1" strokes="4"/>
+  <card symbol="引" reading="イン" reading2="ひ.き、 ひ.き-、 ひ.く、 ひ.ける、 -び.き" translation="Arrastrar, remolcar, retroceder, ser guiado, tirar, tocar (instrumento de cuerda)" example_symbol="ギターを引けますか" example_reading="愚ギターをひけますか" example_translation="¿Puedes tocar la guitarra?" grade="2" strokes="4"/>
+  <card symbol="雲" reading="ウン" reading2="くも、 -ぐも" translation="Nube" example_symbol="雲は白いです" example_reading="くもはしろいです" example_translation="Las nubes son blancas" grade="2" strokes="12"/>
+  <card symbol="遠" reading="エン、オン" reading2="とお.い" translation="Distante, lejos" example_symbol="月は遠いです" example_reading="つきはとおいです" example_translation="La luna está lejos" grade="2" strokes="12"/>
+  <card symbol="夏" reading="カ、ガ、ゲ" reading2="なつ" translation="Verano" example_symbol="夏が好きですか" example_reading="なつがすきですか" example_translation="¿Te gusta el verano?" grade="2" strokes="10"/>
+  <card symbol="家" reading="カ、ケ" reading2="いえ、うち、や" translation="Casa, especialista, hogar" example_symbol="私の家は大きいです" example_reading="わたしのいえはおおきいです" example_translation="Mi casa es grande" grade="2" strokes="10"/>
+  <card symbol="安" reading="アン" reading2="やす、やす.い、やす.まる、やす.らか" translation="Barato, pacífico, tranquilo" example_symbol="新聞は安いです" example_reading="しんぶんはやすいです" example_translation="El periódico es barato" grade="3" strokes="6"/>
+  <card symbol="暗" reading="アン" reading2="くら.い、くら.む、くれ.る" translation="Memorizar, oscuro, poco claro, sombrío" example_symbol="とても暗かった" example_reading="とてもくらかった" example_translation="Estaba muy oscuro" grade="3" strokes="13"/>
+  <card symbol="飲" reading="イン、オン" reading2="-の.み、の.む" translation="Beber" example_symbol="何を飲みたいですか" example_reading="なにをのみたいですか" example_translation="¿Qué quieres beber?" grade="3" strokes="12"/>
+  <card symbol="泳" reading="エイ" reading2="およ.ぐ" translation="Nadar" example_symbol="私は毎日泳ぎます" example_reading="わたしはまいにちおよぎます" example_translation="Nado todos los días" grade="3" strokes="8"/>
+  <card symbol="面" reading="ベン、 メン" reading2="おも、 おもて、 つら" translation="Cara, semblante, superficie" example_symbol="日本人はとても面白い人です" example_reading="にほんじんはとてもおもしろいひとです" example_translation="Los japoneses son gente muy interesante." grade="3" strokes="9"/>
+  <card symbol="愛" reading="アイ" reading2="いと.しい" translation="Afecto, amor, favorito" example_symbol="愛してる" example_reading="あいしてる" example_translation="Te quiero" grade="4" strokes="13"/>
+  <card symbol="完" reading="カン" reading2="" translation="Conclusión, final, perfección" example_symbol="任務を完了する" example_reading="にんむをかんりょうする" example_translation="Cumplir una misión" grade="4" strokes="7"/>
+  <card symbol="好" reading="コウ" reading2="い.い、 この.む、 す.く、 よ.い" translation="Agradable, gustar, gustar algo, preferir" example_symbol="この本が好きです" example_reading="このほんがすきです" example_translation="Me gusta este libro" grade="4" strokes="6"/>
+  <card symbol="象" reading="ショウ、ゾウ" reading2="かたど.る" translation="Elefante, figura, forma, imagen, imitar" example_symbol="象は鼻が長い" example_reading="ぞうのはなはながいです" example_translation="La trompa del elefante es larga" grade="4" strokes="9"/>
+  <card symbol="笑" reading="ショウ" reading2="え.む、わら.う" translation="Reír, risa, sonreír, sonrisa" example_symbol="皆が笑った" example_reading="みながわらった" example_translation="Todo el mundo se rió" grade="4" strokes="10"/>
 </package>

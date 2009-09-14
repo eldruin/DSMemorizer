@@ -66,6 +66,8 @@ private:
   void SetMode (Types::MainScreenMode::mode screen_mode,
                 GameMode::mode game_mode, ScreensHandler* screens_handler,
                 int boxes_number);
+  /// Reset all the textboxes positions
+  void ResetTextBoxesPositions ();
   /// Delete all members
   void ClearMembers ();
   /// Base screens handler

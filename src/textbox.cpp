@@ -38,7 +38,7 @@ void TextBox::Init (Types::Screen::selector screen, int bgid, FT_Face face,
   size_ = size;
   x_ = x;
   y_ = y;
-  width_ = (width==0) ? SCREEN_WIDTH - x - 5 : width;
+  width_ = (width==0) ? SCREEN_WIDTH - x - 10 : width;
   height_ = (height==0) ? ((size_*3)>>1) : height;
   mutable_height_ = (height == 0);
   floats_ = independent_ = false;
@@ -115,6 +115,13 @@ void TextBox::visible (bool v)
   visible_ = v;
 }
 
+void TextBox::SetProperties (int x, int y, int width, int height)
+{
+  Move(x,y);
+  width_ = (width==0) ? SCREEN_WIDTH - x - 10 : width;
+  height_ = (height==0) ? ((size_*3)>>1) : height;
+}
+
 void TextBox::text (const std::string& str)
 {
   text_ = str;
@@ -174,9 +181,9 @@ void TextBox::Print ()
       // Renders in 256 level gray
       FT_Load_Glyph (face_,	glyph_index, FT_LOAD_RENDER);
 
+      pen_x += face_->glyph->metrics.horiBearingX>>6;
       if (visible_)
       {
-        pen_x += face_->glyph->metrics.horiBearingX>>6;
         // Copy the image from the rendered glyph bitmap to the video buffer
         Graphics::PrintBitmap (pen_x,
                                pen_y - (face_->glyph->metrics.horiBearingY>>6),
