@@ -23,14 +23,15 @@
 #include "utf8.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include "textbox.h"
 #include "types.h"
+#include "textbox.h"
 #include "graphics.h"
 
 using std::string;
 
-void TextBox::Init (Types::Screen::selector screen, int bgid, FT_Face face,
-                    int size, int x, int y, int width, int height)
+void TextBox::Init (Types::Screen::selector screen,
+                    int bgid, FT_Face face, int size, int x, int y,
+                    int width, int height)
 {
   screen_ = screen;
   bgid_ = bgid;

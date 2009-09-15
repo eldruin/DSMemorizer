@@ -31,17 +31,29 @@ public:
     THEME         ///< Main theme for the main menu.
   };
 
+  /// Default constructor
   SoundHandler () {}
+  /// Initializer
   void Init ();
+  /// Load an effect in memory if it's not loaded and then play it.
   void PlayEffect (SFX sfx);
+  /// Stop playing an effect.
   void StopEffect (SFX sfx);
+  /// Unload an specific effect from memory. Will stop playing before unload in
+  /// case it were being played.
   void UnloadEffect (SFX sfx);
+  /// Unload all the effects. Will stop playing before unload in case any were
+  /// being played.
   void UnloadEffects ();
 
+  /// Destructor
   ~SoundHandler();
 private:
+  /// SFX handler vector
   mm_sfxhand* sfx_handlers_;
+  /// SFX loaded or not vector.
   bool* loaded_sfx_;
+  /// Structures for all the sound effects available in the sound bank.
   mm_sound_effect* sfx_available_;
 };
 

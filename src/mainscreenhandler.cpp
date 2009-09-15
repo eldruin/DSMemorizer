@@ -27,10 +27,6 @@
 #include "screenshandler.h"
 #include "mainscreenhandler.h"
 
-#include "kanjibg.h"
-#include "goibg.h"
-#include "splash_main_bg.h"
-
 using namespace Types;
 
 MainScreenHandler::MainScreenHandler()
@@ -134,7 +130,11 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
     caption_translation_->text("Translation");
     caption_example_->text("Example");
 
-    // Make all but the kanji and captions invisible.
+    // Make all but the kanji and its caption invisible.
+    caption_on_reading_->visible(false);
+    caption_kun_reading_->visible(false);
+    caption_translation_->visible(false);
+    caption_example_->visible(false);
     on_reading_->visible(false);
     kun_reading_->visible(false);
     translation_->visible(false);
@@ -181,9 +181,13 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
   {
     if (boxes_number_ >= 2)
     {
+      caption_box2_->visible(false);
       box2_->visible(false);
       if (boxes_number_>= 3)
+      {
+        caption_box3_->visible(false);
         box3_->visible(false);
+      }
     }
   }
 
@@ -204,7 +208,11 @@ void MainScreenHandler::PrintCard (const Card& card)
     example_reading_->text(card.example_reading());
     example_translation_->text(card.example_translation());
 
-    // Make all but the kanji and captions invisible.
+    // Make all but the kanji and its caption invisible.
+    caption_on_reading_->visible(false);
+    caption_kun_reading_->visible(false);
+    caption_translation_->visible(false);
+    caption_example_->visible(false);
     on_reading_->visible(false);
     kun_reading_->visible(false);
     translation_->visible(false);
@@ -251,9 +259,13 @@ void MainScreenHandler::PrintCard (const Card& card)
     {
       if (boxes_number_ >= 2)
       {
+        caption_box2_->visible(false);
         box2_->visible(false);
         if (boxes_number_>= 3)
+        {
+          caption_box3_->visible(false);
           box3_->visible(false);
+        }
       }
     }
 
@@ -294,6 +306,8 @@ bool MainScreenHandler::ViewNext ()
     if (boxes_number_ >= 2 && box2_->visible())
       if (boxes_number_ >= 3 && !box3_->visible())
       {
+        caption_box3_->visible(true);
+        caption_box3_->Print();
         box3_->visible(true);
         box3_->Print();
       }
@@ -301,6 +315,8 @@ bool MainScreenHandler::ViewNext ()
           all_visible = true;
     else if (boxes_number_ >= 2)
     {
+      caption_box2_->visible(true);
+      caption_box2_->Print();
       box2_->visible(true);
       box2_->Print();
     }
@@ -319,30 +335,38 @@ bool MainScreenHandler::ViewNext ()
             all_visible = true;
           else
           {
+            caption_example_->visible(true);
             example_kanji_->visible(true);
             example_reading_->visible(true);
             example_translation_->visible(true);
-            example_kanji_->Print();
-            example_reading_->Print();
-            example_translation_->Print();
+            screens_handler_->tbh()->PrintTextBox(caption_example_);
+            screens_handler_->tbh()->PrintTextBox(example_kanji_);
+            screens_handler_->tbh()->PrintTextBox(example_reading_);
+            screens_handler_->tbh()->PrintTextBox(example_translation_);
           }
         }
         else
         {
+          caption_translation_->visible(true);
+          screens_handler_->tbh()->PrintTextBox(caption_translation_);
           translation_->visible(true);
-          translation_->Print();
+          screens_handler_->tbh()->PrintTextBox(translation_);
         }
       }
       else
       {
+        caption_kun_reading_->visible(true);
+        screens_handler_->tbh()->PrintTextBox(caption_kun_reading_);
         kun_reading_->visible(true);
-        kun_reading_->Print();
+        screens_handler_->tbh()->PrintTextBox(kun_reading_);
       }
     }
     else
     {
+      caption_on_reading_->visible(true);
+      screens_handler_->tbh()->PrintTextBox(caption_on_reading_);
       on_reading_->visible(true);
-      on_reading_->Print();
+      screens_handler_->tbh()->PrintTextBox(on_reading_);
     }
   }
   return all_visible;
@@ -353,29 +377,15 @@ void MainScreenHandler::DrawBgImage ()
 {
   Scroll(0,0);
   scroll_y_ = 0;
-  if (screen_mode_ == MainScreenMode::KANJI)
-  {
-    dmaCopy(kanjibgBitmap, bgGetGfxPtr(bgid_), 256*256);
-    dmaCopy(kanjibgPal, BG_PALETTE, 256*2);
-  }
-  else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
-           screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
-  {
-    if (game_mode_ == GameMode::KANJI_QUIZ)
-    {
-      dmaCopy(kanjibgBitmap, bgGetGfxPtr(bgid_), 256*256);
-      dmaCopy(kanjibgPal, BG_PALETTE, 256*2);
-    }
-    else if (game_mode_ == GameMode::VOCABULARY ||
-             game_mode_ == GameMode::VOCABULARY_QUIZ)
-    {
-      dmaCopy(goibgBitmap, bgGetGfxPtr(bgid_), 256*256);
-      dmaCopy(goibgPal, BG_PALETTE, 256*2);
-    }
-  }
-  else if (screen_mode_ == MainScreenMode::SPLASH_SCREEN)
-    Graphics::SplashImage(splash_main_bgBitmap, splash_main_bgPal,
+  if (screen_mode_ == MainScreenMode::SPLASH_SCREEN)
+    Graphics::SplashImage(Graphics::GetBitmapPtr(screen_mode_),
+                          Graphics::GetPalPtr(screen_mode_),
                           Screen::MAIN, bgid_, Graphics::SplashEffect::APPEAR);
+  else
+  {
+    dmaCopy(Graphics::GetBitmapPtr(screen_mode_), bgGetGfxPtr(bgid_), 256*256);
+    dmaCopy(Graphics::GetPalPtr(screen_mode_), BG_PALETTE, 256*2);
+  }
 }
 
 void MainScreenHandler::Fill (unsigned short color)

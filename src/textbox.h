@@ -42,7 +42,8 @@ public:
   /// \param width Width of the box in pixels
   /// \param height Maximum height of the box. By default is 0 which means
   /// infinite
-  void Init (Types::Screen::selector screen, int bgid, FT_Face face, int size,
+  void Init (Types::Screen::selector screen,
+             int bgid, FT_Face face, int size,
              int x, int y, int width = 0, int height = 0);
 
   /// Get the font size

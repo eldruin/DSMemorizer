@@ -79,6 +79,19 @@ namespace Graphics
                             unsigned short offset = 0);
   /// Set black and gray colors variables to render fonts
   void SetColors ();
+
+  /// Get the direction of the background bitmap for the screen mode for the
+  /// main screen.
+  const unsigned int* GetBitmapPtr (Types::MainScreenMode::mode screen_mode);
+  /// Get the direction of the background palette for the screen mode for the
+  /// main screen.
+  const unsigned short* GetPalPtr (Types::MainScreenMode::mode screen_mode);
+  /// Get the direction of the background bitmap for the screen mode for the
+  /// sub screen.
+  const unsigned int* GetSubBitmapPtr (Types::SubScreenMode::mode screen_mode);
+  /// Get the direction of the background palette for the screen mode for the
+  /// sub screen.
+  const unsigned short* GetSubPalPtr (Types::SubScreenMode::mode screen_mode);
 }
 
 #endif // GRAPHICS_H_

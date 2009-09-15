@@ -21,8 +21,16 @@
 #include "types.h"
 #include "graphics.h"
 
-using namespace Graphics;
+#include "kanjibg.h"
+#include "goibg.h"
+#include "splash_main_bg.h"
+#include "kanjisubbg.h"
+#include "kanjiquizsubbg.h"
+#include "vertical_textboxes_choose_bg.h"
+#include "main_menu_bg.h"
+
 using namespace Types;
+using namespace Graphics;
 
 static const u16 rmask = BIT(0) | BIT(1) | BIT(2) | BIT(3) | BIT(4);
 static const u16 gmask = BIT(5) | BIT(6) | BIT(7) | BIT(8) | BIT(9);
@@ -369,4 +377,60 @@ void Graphics::SetColors ()
   gray_color_main = FindColor (RGB15(15,15,15), Screen::MAIN);
   black_color_sub = FindColor (RGB15(0,0,0), Screen::SUB);
   gray_color_sub = FindColor (RGB15(15,15,15), Screen::SUB);
+}
+
+const unsigned int* Graphics::GetBitmapPtr (MainScreenMode::mode screen_mode)
+{
+  if (screen_mode == MainScreenMode::KANJI)
+    return kanjibgBitmap;
+  if (screen_mode == MainScreenMode::SPLASH_SCREEN)
+    return splash_main_bgBitmap;
+  if (screen_mode == MainScreenMode::VERTICAL_TEXTBOXES)
+    return kanjibgBitmap;
+  if (screen_mode == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
+    return goibgBitmap;
+
+  return NULL;
+}
+
+const unsigned short* Graphics::GetPalPtr (MainScreenMode::mode screen_mode)
+{
+  if (screen_mode == MainScreenMode::KANJI)
+    return kanjibgPal;
+  if (screen_mode == MainScreenMode::SPLASH_SCREEN)
+    return splash_main_bgPal;
+  if (screen_mode == MainScreenMode::VERTICAL_TEXTBOXES)
+    return kanjibgPal;
+  if (screen_mode == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
+    return goibgPal;
+
+  return NULL;
+}
+
+const unsigned int* Graphics::GetSubBitmapPtr (SubScreenMode::mode screen_mode)
+{
+  if (screen_mode == SubScreenMode::CARDS)
+    return kanjisubbgBitmap;
+  if (screen_mode == SubScreenMode::KANJI_CHOOSE)
+    return kanjiquizsubbgBitmap;
+  if (screen_mode == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
+    return vertical_textboxes_choose_bgBitmap;
+  if (screen_mode == SubScreenMode::MAIN_MENU)
+    return main_menu_bgBitmap;
+
+  return NULL;
+}
+
+const unsigned short* Graphics::GetSubPalPtr (SubScreenMode::mode screen_mode)
+{
+  if (screen_mode == SubScreenMode::CARDS)
+    return kanjisubbgPal;
+  if (screen_mode == SubScreenMode::KANJI_CHOOSE)
+    return kanjiquizsubbgPal;
+  if (screen_mode == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
+    return vertical_textboxes_choose_bgPal;
+  if (screen_mode == SubScreenMode::MAIN_MENU)
+    return main_menu_bgPal;
+
+  return NULL;
 }

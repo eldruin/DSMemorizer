@@ -26,11 +26,6 @@
 #include "subscreenhandler.h"
 #include "graphics.h"
 
-#include "kanjisubbg.h"
-#include "kanjiquizsubbg.h"
-#include "vertical_textboxes_choose_bg.h"
-#include "main_menu_bg.h"
-
 using namespace Types;
 
 /// Returns the position for the tick or cross on the kanji number 'position'
@@ -203,7 +198,8 @@ void SubScreenHandler::PrintBoards (int score, int answers)
   if (screen_mode_ == SubScreenMode::KANJI_CHOOSE ||
       screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
   {
-    dmaCopy(GetBitmapPtr(), bgGetGfxPtr(bgid_), 256*33);
+    dmaCopy(Graphics::GetSubBitmapPtr(screen_mode_),
+            bgGetGfxPtr(bgid_), 256*33);
     char* score_text = new char [MAX_SCORE_TEXT_LENGTH];
     sprintf(score_text, "Score: %i",score);
     scoreboard_->text(score_text);
@@ -229,8 +225,8 @@ void SubScreenHandler::PrintTick (int position)
     x_pos = KC_TICK_CROSS_X , y_pos = y_position(position);
 
   Graphics::PrintBitmapRegion(x_pos, y_pos, 0, 192, 20, 20, 256, 213,
-                              GetBitmapPtr(), RGB15(18,18,28), bgid_,
-                              Screen::SUB);
+                              Graphics::GetSubBitmapPtr(screen_mode_),
+                              RGB15(18,18,28), bgid_, Screen::SUB);
 }
 
 void SubScreenHandler::PrintCross (int position)
@@ -242,8 +238,8 @@ void SubScreenHandler::PrintCross (int position)
     x_pos = KC_TICK_CROSS_X , y_pos = y_position(position);
 
   Graphics::PrintBitmapRegion(x_pos, y_pos, 20, 192, 20, 20, 256, 213,
-                              GetBitmapPtr(), RGB15(18,18,28), bgid_,
-                              Screen::SUB);
+                              Graphics::GetSubBitmapPtr(screen_mode_),
+                              RGB15(18,18,28), bgid_, Screen::SUB);
 }
 
 void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
@@ -277,36 +273,9 @@ void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
 
 void SubScreenHandler::DrawBgImage ()
 {
-    dmaCopy(GetBitmapPtr(), bgGetGfxPtr(bgid_), 256*256);
-    dmaCopy(GetPalPtr(), BG_PALETTE_SUB, 256*2);
-}
-
-const unsigned int* SubScreenHandler::GetBitmapPtr ()
-{
-  if (screen_mode_ == SubScreenMode::CARDS)
-    return kanjisubbgBitmap;
-  if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
-    return kanjiquizsubbgBitmap;
-  if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
-    return vertical_textboxes_choose_bgBitmap;
-  if (screen_mode_ == SubScreenMode::MAIN_MENU)
-    return main_menu_bgBitmap;
-
-  return NULL;
-}
-
-const unsigned short* SubScreenHandler::GetPalPtr ()
-{
-  if (screen_mode_ == SubScreenMode::CARDS)
-    return kanjisubbgPal;
-  if (screen_mode_ == SubScreenMode::KANJI_CHOOSE)
-    return kanjiquizsubbgPal;
-  if (screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
-    return vertical_textboxes_choose_bgPal;
-  if (screen_mode_ == SubScreenMode::MAIN_MENU)
-    return main_menu_bgPal;
-
-  return NULL;
+    dmaCopy(Graphics::GetSubBitmapPtr(screen_mode_),
+            bgGetGfxPtr(bgid_), 256*256);
+    dmaCopy(Graphics::GetSubPalPtr(screen_mode_), BG_PALETTE_SUB, 256*2);
 }
 
 void SubScreenHandler::Fill (unsigned short color)

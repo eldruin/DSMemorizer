@@ -46,8 +46,8 @@ void TextBoxHandler::Init()
   faces_[Types::VERA_FONT] = NULL;
 }
 
-TextBox* TextBoxHandler::NewTextBox (Types::Screen::selector screen, int bgid,
-                                     Types::Font font, int size,
+TextBox* TextBoxHandler::NewTextBox (Types::Screen::selector screen,
+                                     int bgid, Types::Font font, int size,
                                      int x, int y, int width, int height)
 {
   if (faces_[font] == NULL)
@@ -85,11 +85,28 @@ void TextBoxHandler::DestroyTextBox (TextBox* tb)
   }
 }
 
+void TextBoxHandler::PrintTextBox (TextBox* tb)
+{
+  size_t i = 0;
+  for (; text_boxes_[i] != tb && i < text_boxes_.size(); ++i);
+  if (text_boxes_[i] == tb)
+  {
+    // Adjust to the previous box if there was any
+    if (i > 0)
+        if (!text_boxes_[i]->independent() && !text_boxes_[i-1]->independent() &&
+            !text_boxes_[i]->floats() && !text_boxes_[i-1]->floats() &&
+            text_boxes_[i]->bgid() == text_boxes_[i-1]->bgid())
+          text_boxes_[i]->Adjust(text_boxes_[i-1]->y() + text_boxes_[i-1]->height());
+
+    text_boxes_[i]->Print();
+  }
+}
+
 void TextBoxHandler::PrintAll (Types::Screen::selector screen)
 {
   for (size_t i = 0; i < text_boxes_.size(); ++i)
   {
-    if (screen == text_boxes_[i]->screen())
+    if (screen == text_boxes_[i]->screen() && text_boxes_[i]->visible())
     {
       text_boxes_[i]->Print();
       if (i < text_boxes_.size()-1)

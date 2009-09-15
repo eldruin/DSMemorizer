@@ -40,8 +40,8 @@ void SoundHandler::Init()
   sfx_available_[ACTION].id = SFX_DEERCHASER;
 	sfx_available_[ACTION].rate = 1024;
   sfx_available_[ACTION].handle = 0;
-  sfx_available_[ACTION].volume = 60;
-  sfx_available_[ACTION].panning = 150;
+  sfx_available_[ACTION].volume = 128;
+  sfx_available_[ACTION].panning = 128;
 
 	sfx_available_[THEME].id = SFX_FLUTE;
   sfx_available_[THEME].rate = 1024;
