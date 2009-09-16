@@ -34,13 +34,18 @@ public:
 	void Init(const std::string& file_path);
 
 	/// Get a card determined by its index
-	Card card(int index);
+	Card card(unsigned index, unsigned grade = 0, unsigned strokes = 0);
 
 	/// Get the number of records in the package
 	int package_records () const;
 
   ~XMLParser ();
 private:
+  enum mode
+  {
+    XML_KANJI,
+    XML_VOCABULARY
+  };
   // Data members
   /// XML file
 	FILE* file_;
@@ -56,6 +61,15 @@ private:
 	std::string package_format_;
 	/// License of the package
 	std::string package_license_;
+	/// File format
+	mode file_format_;
+
+  /// File cards positions vector
+  fpos_t* file_cursor_;
+  /// Vector of cards numbers organized by grade
+  std::vector< int >* grade_;
+  /// Vector of cards numbers organized by strokes
+  std::vector< int >* strokes_;
 
 	/// Temporal reading buffer size
   static const int BUFFER_SIZE = 512;
@@ -65,6 +79,16 @@ private:
 	inline bool compare (const char* s1, const char* s2);
 	/// Simple finding function
 	inline bool find(const char* s, const char* buffer, int& position);
+	/// Fill the indexes file_cursor_ , grade_ and strokes_
+	void GenerateIndexes();
+  /// Gets the package card index acording to the grade and strokes if given.
+  /// \param index Number of the card to retrieve regarding given grade and
+  /// strokes
+  /// \param grade Grade of the kanji to retrieve. 0 not to use.
+  /// \param strokes Strokes of the kanji to retrieve. 0 not to use.
+  /// \return A number [1 - package_records_] if the kanji could be found.
+  /// \return 0 if wasn't found any kanji regarding the parameters.
+	unsigned GetIndex(unsigned index, unsigned grade, unsigned strokes) const;
 
 	/// Gives the value of an attribute in a XML formatted line
 	/// \param name Name of the attribute
@@ -114,4 +138,3 @@ inline bool XMLParser::find(const char* s, const char* buffer, int& position)
 }
 
 #endif // XMLPARSER_H_
-

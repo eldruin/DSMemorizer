@@ -26,6 +26,7 @@
 #include "efs_lib.h"
 
 #include <string>
+#include <vector>
 #include <cstring>
 #include <cstdlib> // for atoi
 
@@ -75,6 +76,19 @@ void XMLParser::Init(const string& file_path)
           package_records_ = atoi(attribute_value("records", buff, position).c_str());
           package_format_ = attribute_value ("format", buff, position);
           package_license_ = attribute_value ("license", buff, position);
+
+          file_cursor_ = new fpos_t [package_records_];
+          int auxpos = 0;
+          if (find("kanji", package_format_.c_str(), auxpos))
+            file_format_ = XML_KANJI;
+          if (find("vocabulary", package_format_.c_str(), auxpos))
+            file_format_ = XML_VOCABULARY;
+          if (file_format_ == XML_KANJI)
+          {
+            grade_ = new std::vector<int> [9];
+            strokes_ = new std::vector<int> [25];
+          }
+          GenerateIndexes();
         }
         // else bad file error
       }
@@ -85,23 +99,22 @@ void XMLParser::Init(const string& file_path)
   // else bad file error
 }
 
-Card XMLParser::card (int index)
+Card XMLParser::card (unsigned index, unsigned grade, unsigned strokes)
 {
   Card read_card;
-  if (index && index <= package_records_)
+  int file_index = GetIndex(index, grade, strokes);
+  if (file_index && file_index <= package_records_)
   {
     char buff [BUFFER_SIZE];
-    // Reads from the beginning. Index file could be generated and used here.
-    fseek(file_, 0, SEEK_SET);
-    // Reads "index" number of lines from the file plus 2 more of the heading.
+    fpos_t fposition = file_cursor_[file_index-1];
+    fsetpos(file_, &fposition);
     // Each card record MUST be in one line.
     // Lines must not be longer than 511 bytes
-    for (int i = 0; i < index+2 && !feof(file_); ++i)
-      fgets(buff, BUFFER_SIZE, file_);
+    fgets(buff, BUFFER_SIZE, file_);
 
     int position = 0;
     // Parse the string and create the card
-    read_card.Init(index,
+    read_card.Init(file_index,
                    attribute_value(" symbol",buff, position),
                    attribute_value(" reading",buff, position),
                    attribute_value(" reading2",buff, position),
@@ -142,9 +155,83 @@ string XMLParser::attribute_value(const char* name, const char* buffer, int& pos
   return result;
 }
 
+void XMLParser::GenerateIndexes()
+{
+  char buff [BUFFER_SIZE];
+  fseek(file_, 0, SEEK_SET);
+  fgets(buff, BUFFER_SIZE, file_);
+  fgets(buff, BUFFER_SIZE, file_);
+  for (int i = 0; i < package_records_ && !feof(file_); ++i)
+  {
+    fpos_t position;
+    int auxpos = 0;
+    fgetpos(file_, &position);
+    fgets(buff, BUFFER_SIZE, file_);
+    file_cursor_[i] = position;
+    if (file_format_ == XML_KANJI)
+    {
+      grade_[atoi(attribute_value(" grade", buff, auxpos).c_str())-1].
+        push_back(i);
+      strokes_[atoi(attribute_value(" strokes", buff, auxpos).c_str())-1].
+        push_back(i);
+    }
+  }
+}
+
+unsigned XMLParser::GetIndex(unsigned index, unsigned grade, unsigned strokes) const
+{
+  unsigned final_index;
+  if (file_format_ == XML_KANJI)
+  {
+    std::vector<int> result;
+    if (grade && strokes)
+    {
+      --grade;
+      --strokes;
+      --index;
+      for (unsigned i = 0; i < grade_[grade].size(); ++i)
+      {
+        unsigned j = 0;
+        for (; j < strokes_[strokes].size() &&
+             strokes_[strokes][j] != grade_[grade][i]; ++j);
+
+        if (j < strokes_[strokes].size())
+          result.push_back(grade_[grade][i]);
+      }
+      if (index < result.size())
+        final_index = result[index]+1;
+      else
+        final_index = 0;
+    }
+    else if (grade)
+    {
+      --grade;
+      --index;
+      if (index < grade_[grade].size())
+        final_index = grade_[grade][index]+1;
+      else
+        final_index = 0;
+    }
+    else if (strokes)
+    {
+      --strokes;
+      --index;
+      if (index < strokes_[strokes].size())
+        final_index = strokes_[strokes][index]+1;
+      else
+        final_index = 0;
+    }
+    else
+      final_index = index;
+  }
+  else
+    final_index = index;
+
+  return final_index;
+}
+
 XMLParser::~XMLParser ()
 {
   fclose(file_);
 }
-
 

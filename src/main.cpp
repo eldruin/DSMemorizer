@@ -28,6 +28,7 @@
 #include "efs_lib.h"		// include EFS lib
 
 #include <string>
+#include <vector>
 #include "xmlparser.h"
 #include "screenshandler.h"
 #include "mainscreenhandler.h"

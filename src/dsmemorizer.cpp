@@ -24,6 +24,8 @@
 #include <unistd.h>		// filesystem functions
 #include <maxmod9.h>
 #include <string>
+#include <vector>
+
 #include "types.h"
 #include "card.h"
 #include "xmlparser.h"
