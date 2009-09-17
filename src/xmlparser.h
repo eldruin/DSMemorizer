@@ -27,14 +27,6 @@ class Card;
 class XMLParser
 {
 public:
-	enum Relation
-	{
-		REL_LESS,
-		REL_LESSEQ,
-		REL_EQ,
-		REL_GTEQ,
-		REL_GT
-	};
   /// Default constructor
 	XMLParser();
 	/// Initializer
@@ -42,12 +34,14 @@ public:
 	void Init(const std::string& file_path);
 
 	/// Get a card determined by its index
-	Card card(unsigned index, unsigned grade = 0,
-		Relation grade_rel = REL_LESS, unsigned strokes = 0,
-		Relation strokes_rel = REL_LESS);
+	Card card(unsigned index, unsigned grade_min = 0, unsigned grade_max = 0,
+            unsigned strokes_min = 0, unsigned strokes_max = 0);
 
 	/// Get the number of records in the package
 	int package_records () const;
+
+	int QueryResultSize (unsigned grade_min, unsigned grade_max,
+                       unsigned strokes_min, unsigned strokes_max);
 
   ~XMLParser ();
 private:
@@ -81,6 +75,12 @@ private:
   /// Vector of cards numbers organized by strokes
   std::vector< int >* strokes_;
 
+  /// Vector of the results of the query in the database for the selected
+  /// grades and strokes range
+  std::vector<int> query_result_;
+
+  unsigned q_grade_min, q_grade_max, q_strokes_min, q_strokes_max;
+
 	/// Temporal reading buffer size
   static const int BUFFER_SIZE = 512;
 
@@ -89,21 +89,22 @@ private:
 	inline bool compare (const char* s1, const char* s2);
 	/// Simple finding function
 	inline bool find(const char* s, const char* buffer, int& position);
-	/// Fill a vector with the intersection of grades and strokes
-	void FillVector (std::vector<int> & result, unsigned i, unsigned j) const;
 	/// Fill the indexes file_cursor_ , grade_ and strokes_
 	void GenerateIndexes();
   /// Gets the package card index acording to the grade and strokes if given.
   /// \param index Number of the card to retrieve regarding given grade and
   /// strokes
-  /// \param grade Grade of the kanji to retrieve. 0 not to use.
-  /// \param grade_rel Relation with the strokes
-  /// \param strokes Strokes of the kanji to retrieve. 0 not to use.
-  /// \param strokes_rel Relation with the strokes
+  /// \param grade_min Minimum grade of the kanji to retrieve.
+  /// \param grade_max Maximum grade of the kanji to retrieve.
+  /// \param strokes_min Minimum number of strokes of the kanji to retrieve.
+  /// \param strokes_max Maximum number of strokes of the kanji to retrieve.
   /// \return A number [1 - package_records_] if the kanji could be found.
   /// \return 0 if wasn't found any kanji regarding the parameters.
-	unsigned GetIndex(unsigned index, unsigned grade,
-				Relation grade_rel, unsigned strokes, Relation strokes_rel) const;
+	unsigned GetIndex(unsigned index, unsigned grade_min, unsigned grade_max,
+                    unsigned strokes_min, unsigned strokes_max);
+  /// Generate the result vector for the given grades and strokes ranges
+  void QueryResult (unsigned grade_min, unsigned grade_max,
+                    unsigned strokes_min, unsigned strokes_max);
 
 	/// Gives the value of an attribute in a XML formatted line
 	/// \param name Name of the attribute

@@ -192,6 +192,7 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
   }
 
   DrawBgImage ();
+  Graphics::SetColors();
 }
 
 void MainScreenHandler::PrintCard (const Card& card)

@@ -21,13 +21,15 @@
 #include "types.h"
 #include "graphics.h"
 
-#include "kanjibg.h"
-#include "goibg.h"
+#include "kanji_bg.h"
+#include "goi_bg.h"
 #include "splash_main_bg.h"
-#include "kanjisubbg.h"
-#include "kanjiquizsubbg.h"
+#include "cards_sub_bg.h"
+#include "cards_options_sub_bg.h"
+#include "kanji_choose_options_sub_bg.h"
 #include "vertical_textboxes_choose_bg.h"
 #include "main_menu_bg.h"
+#include "options_grade_strokes_bg.h"
 
 using namespace Types;
 using namespace Graphics;
@@ -382,13 +384,13 @@ void Graphics::SetColors ()
 const unsigned int* Graphics::GetBitmapPtr (MainScreenMode::mode screen_mode)
 {
   if (screen_mode == MainScreenMode::KANJI)
-    return kanjibgBitmap;
+    return kanji_bgBitmap;
   if (screen_mode == MainScreenMode::SPLASH_SCREEN)
     return splash_main_bgBitmap;
   if (screen_mode == MainScreenMode::VERTICAL_TEXTBOXES)
-    return kanjibgBitmap;
+    return kanji_bgBitmap;
   if (screen_mode == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
-    return goibgBitmap;
+    return goi_bgBitmap;
 
   return NULL;
 }
@@ -396,41 +398,57 @@ const unsigned int* Graphics::GetBitmapPtr (MainScreenMode::mode screen_mode)
 const unsigned short* Graphics::GetPalPtr (MainScreenMode::mode screen_mode)
 {
   if (screen_mode == MainScreenMode::KANJI)
-    return kanjibgPal;
+    return kanji_bgPal;
   if (screen_mode == MainScreenMode::SPLASH_SCREEN)
     return splash_main_bgPal;
   if (screen_mode == MainScreenMode::VERTICAL_TEXTBOXES)
-    return kanjibgPal;
+    return kanji_bgPal;
   if (screen_mode == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
-    return goibgPal;
+    return goi_bgPal;
 
   return NULL;
 }
 
-const unsigned int* Graphics::GetSubBitmapPtr (SubScreenMode::mode screen_mode)
+const unsigned int* Graphics::GetSubBitmapPtr (SubScreenMode::mode screen_mode,
+                                               GameMode::mode game_mode)
 {
   if (screen_mode == SubScreenMode::CARDS)
-    return kanjisubbgBitmap;
+  {
+    if (game_mode == GameMode::KANJI)
+      return cards_options_sub_bgBitmap;
+    if (game_mode == GameMode::VOCABULARY)
+      return cards_sub_bgBitmap;
+  }
   if (screen_mode == SubScreenMode::KANJI_CHOOSE)
-    return kanjiquizsubbgBitmap;
+    return kanji_choose_options_sub_bgBitmap;
   if (screen_mode == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
     return vertical_textboxes_choose_bgBitmap;
   if (screen_mode == SubScreenMode::MAIN_MENU)
     return main_menu_bgBitmap;
+  if (screen_mode == SubScreenMode::OPTIONS_GRADE_STROKES)
+    return options_grade_strokes_bgBitmap;
 
   return NULL;
 }
 
-const unsigned short* Graphics::GetSubPalPtr (SubScreenMode::mode screen_mode)
+const unsigned short* Graphics::GetSubPalPtr (SubScreenMode::mode screen_mode,
+                                              GameMode::mode game_mode)
 {
   if (screen_mode == SubScreenMode::CARDS)
-    return kanjisubbgPal;
+  {
+    if (game_mode == GameMode::KANJI)
+      return cards_options_sub_bgPal;
+    if (game_mode == GameMode::VOCABULARY)
+      return cards_sub_bgPal;
+  }
   if (screen_mode == SubScreenMode::KANJI_CHOOSE)
-    return kanjiquizsubbgPal;
+    return kanji_choose_options_sub_bgPal;
   if (screen_mode == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
     return vertical_textboxes_choose_bgPal;
   if (screen_mode == SubScreenMode::MAIN_MENU)
     return main_menu_bgPal;
+  if (screen_mode == SubScreenMode::OPTIONS_GRADE_STROKES)
+    return options_grade_strokes_bgPal;
 
   return NULL;
 }

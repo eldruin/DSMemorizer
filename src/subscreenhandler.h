@@ -35,9 +35,11 @@ public:
 
   /// Set the screen mode
   void Init (Types::SubScreenMode::mode screen_mode,
+             GameMode::mode game_mode,
              ScreensHandler* screens_handler);
   /// Switch mode
-  void SwitchMode (Types::SubScreenMode::mode screen_mode);
+  void SwitchMode (Types::SubScreenMode::mode screen_mode,
+                   GameMode::mode game_mode);
 
   /// Print a card
   void PrintCard (const Card& card);
@@ -51,6 +53,9 @@ public:
   void PrintScreen (std::string kanji1, std::string kanji2,
                     std::string kanji3, std::string kanji4,
                     int score, int answers);
+  /// Print the number of grades and strokes
+  void PrintOptions(unsigned grade_min, unsigned grade_max,
+                    unsigned strokes_min, unsigned strokes_max);
   /// Shows the background image of the screen in the current mode
   void DrawBgImage ();
   /// Fill the screen with a color
@@ -62,6 +67,7 @@ public:
 private:
   /// Set the mode
   void SetMode (Types::SubScreenMode::mode screen_mode,
+                GameMode::mode game_mode,
                 ScreensHandler* screens_handler);
   /// Get actual mode bitmap image pointer
   const unsigned int* GetBitmapPtr ();
@@ -79,7 +85,14 @@ private:
           *box1_,             ///< Box 1
           *box2_,             ///< Box 2
           *box3_,             ///< Box 3
-          *box4_;             ///< Box 4
+          *box4_,             ///< Box 4
+          *mode_title_,       ///< Mode title
+          *caption_grade_,
+          *caption_strokes_,
+          *grade_min_,
+          *grade_max_,
+          *strokes_min_,
+          *strokes_max_;
   /// Game mode
   GameMode::mode game_mode_;
   /// Background id

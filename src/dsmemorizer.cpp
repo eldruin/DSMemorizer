@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 
+#include "definitions.h"
 #include "types.h"
 #include "card.h"
 #include "xmlparser.h"
@@ -45,7 +46,8 @@ void DSMemorizer::Init ()
   screens_handler_.Init();
   main_screen_handler_.Init (MainScreenMode::SPLASH_SCREEN,
                              GameMode::SPLASH_SCREEN, &screens_handler_);
-  sub_screen_handler_.Init (SubScreenMode::MAIN_MENU, &screens_handler_);
+  sub_screen_handler_.Init (SubScreenMode::MAIN_MENU, GameMode::MAIN_MENU,
+                            &screens_handler_);
 
   // Vertical scroll
   int sy = 0;
@@ -95,8 +97,9 @@ void DSMemorizer::Init ()
         sound_handler_.PlayEffect(SoundHandler::THEME);
         sub_screen_handler_.Fill(0);
         main_screen_handler_.SwitchMode (MainScreenMode::SPLASH_SCREEN,
+                                         GameMode::MAIN_MENU);
+        sub_screen_handler_.SwitchMode (SubScreenMode::MAIN_MENU,
                                         GameMode::MAIN_MENU);
-        sub_screen_handler_.SwitchMode (SubScreenMode::MAIN_MENU);
       }
       swiWaitForVBlank();
    }
@@ -108,8 +111,7 @@ void DSMemorizer::KanjiMode ()
   xmlparser_.Init("/db/kanjis.xml");
 
   main_screen_handler_.SwitchMode (MainScreenMode::KANJI, GameMode::KANJI);
-  sub_screen_handler_.SwitchMode (SubScreenMode::CARDS);
-  Graphics::SetColors();
+  sub_screen_handler_.SwitchMode (SubScreenMode::CARDS, GameMode::KANJI);
 
   int sy = 0;
   // Shown card
@@ -120,6 +122,11 @@ void DSMemorizer::KanjiMode ()
   int height = 256;
   int keys = 0;
   touchPosition touch;
+  unsigned grade_min, grade_max, strokes_min, strokes_max;
+  // By default: all the kanjis
+  grade_min = 1, grade_max = 9;
+  strokes_min = 1, strokes_max = 25;
+
   // Loop
   bool done = false;
   while(!(keys & KEY_B) && !done)
@@ -130,7 +137,8 @@ void DSMemorizer::KanjiMode ()
 
       keys = keysDown();
 
-      if ((keys & KEY_LEFT) || (keys & KEY_RIGHT) || (keys & KEY_A))
+      if ((keys & KEY_LEFT) || (keys & KEY_RIGHT) || (keys & KEY_A) ||
+          (keys & KEY_X) || (keys & KEY_Y))
         sound_handler_.PlayEffect(SoundHandler::ACTION);
 
       if (keysHeld() & KEY_UP) sy--;
@@ -141,23 +149,49 @@ void DSMemorizer::KanjiMode ()
         if (main_screen_handler_.ViewNext())
           ++card;
       if (keys & KEY_X)
-        card = rand()%xmlparser_.package_records() + 1;
+        card = rand()%xmlparser_.QueryResultSize(grade_min, grade_max,
+                                                 strokes_min, strokes_max) + 1;
+      if (keys & KEY_Y)
+      {
+        SetOptions(grade_min, grade_max, strokes_min, strokes_max);
+        card = 1;
+        previous_card = 0;
+        sub_screen_handler_.SwitchMode (SubScreenMode::CARDS, GameMode::KANJI);
+      }
 
-      if (touch.px > 5 && touch.px < 39 && touch.py > 152 && touch.py < 187)
+      if (touch.px > TP_LEFT_BOTTOM_IMAGE_X1 &&
+          touch.px < TP_LEFT_BOTTOM_IMAGE_X2 &&
+          touch.py > TP_LEFT_BOTTOM_IMAGE_Y1 &&
+          touch.py < TP_LEFT_BOTTOM_IMAGE_Y2)
         done = true;
 
-      // WARNING: This is related to the image displayed in the sub screen and
-      // needs to be changed if the image changes
-      if (touch.px > 36 && touch.px < 102 && touch.py > 40 && touch.py < 146)
+      if (touch.px > TP_RIGHT_BOTTOM_IMAGE_X1 &&
+          touch.px < TP_RIGHT_BOTTOM_IMAGE_X2 &&
+          touch.py > TP_RIGHT_BOTTOM_IMAGE_Y1 &&
+          touch.py < TP_RIGHT_BOTTOM_IMAGE_Y2)
+      {
+        SetOptions(grade_min, grade_max, strokes_min, strokes_max);
+        card = 1;
+        previous_card = 0;
+        sub_screen_handler_.SwitchMode (SubScreenMode::CARDS, GameMode::KANJI);
+      }
+
+      if (touch.px > TP_CARD1_X1 && touch.px < TP_CARD1_X2 &&
+          touch.py > TP_CARD_Y1 && touch.py < TP_CARD_Y2)
         card--;
-      if (touch.px > 156 && touch.px < 224 && touch.py > 40 && touch.py < 90)
+      if (touch.px > TP_CARD2_X1 && touch.px < TP_CARD2_X2 &&
+          touch.py > TP_CARD_Y1 && touch.py < TP_CARD_MIDDLE_Y)
         card++;
-      if (touch.px > 156 && touch.px < 224 && touch.py > 40 && touch.py < 146)
-        card = rand()%xmlparser_.package_records() + 1;
+      if (touch.px > TP_CARD2_X1 && touch.px < TP_CARD2_X2 &&
+        touch.py > TP_CARD_MIDDLE_Y && touch.py < TP_CARD_Y2)
+        card = rand()%xmlparser_.QueryResultSize(grade_min, grade_max,
+                                                 strokes_min, strokes_max) + 1;
 
       if (card < 1) card = 1;
-      if (card > xmlparser_.package_records())
-        card = xmlparser_.package_records();
+      if (card > xmlparser_.QueryResultSize(grade_min, grade_max,
+                                            strokes_min, strokes_max))
+        card = xmlparser_.QueryResultSize(grade_min, grade_max,
+                                          strokes_min, strokes_max);
       if(sy < 0) sy = 0;
       if(sy >= height - 192) sy = height - 1 - 192;
 
@@ -168,7 +202,8 @@ void DSMemorizer::KanjiMode ()
           sound_handler_.PlayEffect(SoundHandler::ACTION);
         sy = 0;
         main_screen_handler_.Scroll(0,sy);
-        c = xmlparser_.card(card);
+        c = xmlparser_.card(card, grade_min, grade_max,
+                            strokes_min, strokes_max);
         sub_screen_handler_.PrintCard(c);
         main_screen_handler_.PrintCard(c);
         previous_card = card;
@@ -184,9 +219,9 @@ void DSMemorizer::KanjiQuizMode ()
 
   main_screen_handler_.SwitchMode (MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE,
                                    GameMode::KANJI_QUIZ, 3);
-  sub_screen_handler_.SwitchMode (SubScreenMode::KANJI_CHOOSE);
+  sub_screen_handler_.SwitchMode (SubScreenMode::KANJI_CHOOSE,
+                                  GameMode::KANJI_QUIZ);
   main_screen_handler_.Captions("Translation", "on reading", "kun reading");
-  Graphics::SetColors();
 
 
   // player score
@@ -202,23 +237,34 @@ void DSMemorizer::KanjiQuizMode ()
   int keys = 0;
   touchPosition touch;
 
+  unsigned grade_min, grade_max, strokes_min, strokes_max;
+  // By default: all the kanjis
+  grade_min = 1, grade_max = 9;
+  strokes_min = 1, strokes_max = 25;
 
-  int card_number = rand()%xmlparser_.package_records() + 1;
+  int card = rand()%xmlparser_.QueryResultSize(grade_min, grade_max,
+                                               strokes_min, strokes_max) + 1;
   int selected_card [4];
   // Correct kanji position [1-4]
-  int correct = randomize_positions (card_number,
-                                     xmlparser_.package_records(),
+  int correct = randomize_positions (card,
+                                     xmlparser_.QueryResultSize(grade_min, grade_max,
+                                               strokes_min, strokes_max),
                                      selected_card[0], selected_card[1],
                                      selected_card[2], selected_card[3]);
   Card c;
-  c = xmlparser_.card(card_number);
+  c = xmlparser_.card(card, grade_min, grade_max, strokes_min, strokes_max);
   main_screen_handler_.PrintCard(c);
 
-  sub_screen_handler_.PrintScreen(xmlparser_.card(selected_card[0]).symbol(),
-                                  xmlparser_.card(selected_card[1]).symbol(),
-                                  xmlparser_.card(selected_card[2]).symbol(),
-                                  xmlparser_.card(selected_card[3]).symbol(),
-                                  score, answers);
+  sub_screen_handler_.PrintScreen(
+          xmlparser_.card(selected_card[0], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          xmlparser_.card(selected_card[1], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          xmlparser_.card(selected_card[2], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          xmlparser_.card(selected_card[3], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          score, answers);
 
   // Loop
   bool done = false;
@@ -230,21 +276,75 @@ void DSMemorizer::KanjiQuizMode ()
 
       keys = keysDown();
 
-      if ((keys & KEY_LEFT) || (keys & KEY_RIGHT) || (keys & KEY_A))
+      if ((keys & KEY_A) || (keys & KEY_Y) || (keys & KEY_X))
         sound_handler_.PlayEffect(SoundHandler::ACTION);
 
       if (keysHeld() & KEY_UP) sy--;
       if (keysHeld() & KEY_DOWN) sy++;
-      if (touch.px > 5 && touch.px < 39 && touch.py > 152 && touch.py < 187)
+      if (keys & KEY_Y)
+      {
+        SetOptions(grade_min, grade_max, strokes_min, strokes_max);
+        card = 1;
+        sub_screen_handler_.SwitchMode (SubScreenMode::KANJI_CHOOSE,
+                                        GameMode::KANJI_QUIZ);
+        sub_screen_handler_.PrintScreen(
+          xmlparser_.card(selected_card[0], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          xmlparser_.card(selected_card[1], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          xmlparser_.card(selected_card[2], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          xmlparser_.card(selected_card[3], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          score, answers);
+      }
+
+      if (touch.px > TP_LEFT_BOTTOM_IMAGE_X1 &&
+          touch.px < TP_LEFT_BOTTOM_IMAGE_X2 &&
+          touch.py > TP_LEFT_BOTTOM_IMAGE_Y1 &&
+          touch.py < TP_LEFT_BOTTOM_IMAGE_Y2)
         done = true;
 
-      if (touch.px > 33 && touch.px < 63 && touch.py > 50 && touch.py < 80)
+      if (touch.px > TP_RIGHT_BOTTOM_IMAGE_X1 &&
+          touch.px < TP_RIGHT_BOTTOM_IMAGE_X2 &&
+          touch.py > TP_RIGHT_BOTTOM_IMAGE_Y1 &&
+          touch.py < TP_RIGHT_BOTTOM_IMAGE_Y2)
+      {
+        SetOptions(grade_min, grade_max, strokes_min, strokes_max);
+        card = 1;
+        sub_screen_handler_.SwitchMode (SubScreenMode::KANJI_CHOOSE,
+                                        GameMode::KANJI_QUIZ);
+        sub_screen_handler_.PrintScreen(
+          xmlparser_.card(selected_card[0], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          xmlparser_.card(selected_card[1], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          xmlparser_.card(selected_card[2], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          xmlparser_.card(selected_card[3], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          score, answers);
+      }
+
+      if (touch.px > KC_BOX1_X &&
+          touch.px < (KC_BOX1_X + (KC_NORMAL_SIZE * 3 >> 1)) &&
+          touch.py > KC_BOX1_Y &&
+          touch.py < (KC_BOX1_Y + (KC_NORMAL_SIZE * 3 >> 1)))
         selected_kanji = 1;
-      if (touch.px > 85 && touch.px < 115 && touch.py > 50 && touch.py < 80)
+      if (touch.px > KC_BOX2_X &&
+          touch.px < (KC_BOX2_X + (KC_NORMAL_SIZE * 3 >> 1)) &&
+          touch.py > KC_BOX2_Y &&
+          touch.py < (KC_BOX2_Y + (KC_NORMAL_SIZE * 3 >> 1)))
         selected_kanji = 2;
-      if (touch.px > 137 && touch.px < 167 && touch.py > 50 && touch.py < 80)
+      if (touch.px > KC_BOX3_X &&
+          touch.px < (KC_BOX3_X + (KC_NORMAL_SIZE * 3 >> 1)) &&
+          touch.py > KC_BOX3_Y &&
+          touch.py < (KC_BOX3_Y + (KC_NORMAL_SIZE * 3 >> 1)))
         selected_kanji = 3;
-      if (touch.px > 189 && touch.px < 219 && touch.py > 50 && touch.py < 80)
+      if (touch.px > KC_BOX4_X &&
+          touch.px < (KC_BOX4_X + (KC_NORMAL_SIZE * 3 >> 1)) &&
+          touch.py > KC_BOX4_Y &&
+          touch.py < (KC_BOX4_Y + (KC_NORMAL_SIZE * 3 >> 1)))
         selected_kanji = 4;
 
       if (sy < 0) sy = 0;
@@ -274,19 +374,25 @@ void DSMemorizer::KanjiQuizMode ()
         sy = 0;
         main_screen_handler_.Scroll(0,sy);
 
-        card_number = rand()%xmlparser_.package_records() + 1;
-        correct = randomize_positions (card_number,
-                                       xmlparser_.package_records(),
+        card = rand()%xmlparser_.QueryResultSize(grade_min, grade_max,
+                                                 strokes_min, strokes_max) + 1;
+        correct = randomize_positions (card,
+                                       xmlparser_.QueryResultSize(grade_min, grade_max,
+                                               strokes_min, strokes_max),
                                        selected_card[0], selected_card[1],
                                        selected_card[2], selected_card[3]);
-        c = xmlparser_.card(card_number);
+        c = xmlparser_.card(card, grade_min, grade_max, strokes_min, strokes_max);
         main_screen_handler_.PrintCard(c);
 
         sub_screen_handler_.PrintScreen(
-          xmlparser_.card(selected_card[0]).symbol(),
-          xmlparser_.card(selected_card[1]).symbol(),
-          xmlparser_.card(selected_card[2]).symbol(),
-          xmlparser_.card(selected_card[3]).symbol(),
+          xmlparser_.card(selected_card[0], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          xmlparser_.card(selected_card[1], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          xmlparser_.card(selected_card[2], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
+          xmlparser_.card(selected_card[3], grade_min, grade_max,
+                          strokes_min, strokes_max).symbol(),
           score, answers);
 
         selected_kanji = 0;
@@ -303,7 +409,7 @@ void DSMemorizer::VocabularyMode ()
 
   main_screen_handler_.SwitchMode (MainScreenMode::VERTICAL_TEXTBOXES,
                                    GameMode::VOCABULARY, 3);
-  sub_screen_handler_.SwitchMode (SubScreenMode::CARDS);
+  sub_screen_handler_.SwitchMode (SubScreenMode::CARDS, GameMode::VOCABULARY);
   main_screen_handler_.Captions("Kanji", "Reading", "Translation");
   Graphics::SetColors();
 
@@ -380,7 +486,8 @@ void DSMemorizer::VocabularyQuizMode ()
 
   main_screen_handler_.SwitchMode (MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE,
                                    GameMode::VOCABULARY_QUIZ, 2);
-  sub_screen_handler_.SwitchMode (SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE);
+  sub_screen_handler_.SwitchMode (SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE,
+                                  GameMode::VOCABULARY_QUIZ);
   main_screen_handler_.Captions("Translation", "Reading", "");
   Graphics::SetColors();
 
@@ -491,4 +598,69 @@ void DSMemorizer::VocabularyQuizMode ()
    }
 }
 
+void DSMemorizer::SetOptions (unsigned& grade_min, unsigned& grade_max,
+                              unsigned& strokes_min, unsigned& strokes_max)
+{
+  sub_screen_handler_.SwitchMode (SubScreenMode::OPTIONS_GRADE_STROKES,
+                                  GameMode::NONE);
+  Graphics::SetColors();
+  unsigned prev_grade_min, prev_grade_max, prev_strokes_min, prev_strokes_max;
+  prev_grade_min = prev_grade_max = prev_strokes_min = prev_strokes_max = 0;
 
+  int keys = 0;
+  touchPosition touch;
+
+  // Loop
+  bool done = false;
+  while(!(keys & KEY_B) && !done)
+  {
+    scanKeys();
+
+    touchRead(&touch);
+
+    keys = keysDown();
+
+    if (touch.px > 210 && touch.px < 250 && touch.py > 146 && touch.py < 187)
+      done = true;
+
+    if (touch.px > 84 && touch.px < 101 && touch.py > 70 && touch.py < 87)
+      --grade_min;
+    if (touch.px > 132 && touch.px < 154 && touch.py > 70 && touch.py < 87)
+      ++grade_min;
+    if (touch.px > 160 && touch.px < 180 && touch.py > 70 && touch.py < 87)
+      --grade_max;
+    if (touch.px > 208 && touch.px < 230 && touch.py > 70 && touch.py < 87)
+      ++grade_max;
+
+    if (touch.px > 84 && touch.px < 101 && touch.py > 96 && touch.py < 115)
+      --strokes_min;
+    if (touch.px > 132 && touch.px < 154 && touch.py > 96 && touch.py < 115)
+      ++strokes_min;
+    if (touch.px > 160 && touch.px < 180 && touch.py > 96 && touch.py < 115)
+      --strokes_max;
+    if (touch.px > 208 && touch.px < 230 && touch.py > 96 && touch.py < 115)
+      ++strokes_max;
+
+    if (grade_min < 1) grade_min = 1;
+    if (grade_min > 9) grade_min = 9;
+    if (grade_max > 9) grade_max = 9;
+    if (grade_max < 1) grade_max = 1;
+    if (strokes_min < 1) strokes_min = 1;
+    if (strokes_min > 25) strokes_min = 25;
+    if (strokes_max > 25) strokes_max = 25;
+    if (strokes_max < 1) strokes_max = 1;
+
+    if (prev_grade_min != grade_min || prev_grade_max != grade_max ||
+        prev_strokes_min != strokes_min || prev_strokes_max != strokes_max)
+    {
+      sound_handler_.PlayEffect(SoundHandler::ACTION);
+      sub_screen_handler_.PrintOptions(grade_min, grade_max,
+                                       strokes_min, strokes_max);
+
+      prev_grade_min = grade_min, prev_grade_max = grade_max;
+      prev_strokes_min = strokes_min, prev_strokes_max = strokes_max;
+    }
+    swiWaitForVBlank();
+  }
+  sound_handler_.PlayEffect(SoundHandler::ACTION);
+}

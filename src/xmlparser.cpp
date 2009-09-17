@@ -89,6 +89,7 @@ void XMLParser::Init(const string& file_path)
             strokes_ = new std::vector<int> [25];
           }
           GenerateIndexes();
+          q_grade_min = q_grade_max = q_strokes_min = q_strokes_max = 0;
         }
         // else bad file error
       }
@@ -99,10 +100,11 @@ void XMLParser::Init(const string& file_path)
   // else bad file error
 }
 
-Card XMLParser::card (unsigned index, unsigned grade, Relation grade_rel, unsigned strokes, Relation strokes_rel)
+Card XMLParser::card (unsigned index, unsigned grade_min, unsigned grade_max,
+                      unsigned strokes_min, unsigned strokes_max)
 {
   Card read_card;
-  int file_index = GetIndex(index, grade, grade_rel, strokes, strokes_rel);
+  int file_index = GetIndex(index, grade_min, grade_max, strokes_min, strokes_max);
   if (file_index && file_index <= package_records_)
   {
     char buff [BUFFER_SIZE];
@@ -131,6 +133,14 @@ Card XMLParser::card (unsigned index, unsigned grade, Relation grade_rel, unsign
 int XMLParser::package_records () const
 {
   return package_records_;
+}
+
+int XMLParser::QueryResultSize (unsigned grade_min, unsigned grade_max,
+                                unsigned strokes_min, unsigned strokes_max)
+{
+  QueryResult(grade_min, grade_max, strokes_min, strokes_max);
+
+  return query_result_.size();
 }
 
 string XMLParser::attribute_value(const char* name, const char* buffer, int& position)
@@ -178,259 +188,52 @@ void XMLParser::GenerateIndexes()
   }
 }
 
-void XMLParser::FillVector (std::vector<int> & result, unsigned i, unsigned j) const
-{
-	for (unsigned k = 0; k < grade_[i].size(); ++k)
-	{
-	  unsigned l = 0;
-	  for (; l < strokes_[j].size() &&
-	       strokes_[j][l] != grade_[i][k]; ++l);
-
-	  if (l < strokes_[j].size())
-	    result.push_back(grade_[i][k]);
-	}
-}
-
-unsigned XMLParser::GetIndex(unsigned index, unsigned grade,
-				Relation grade_rel, unsigned strokes, Relation strokes_rel) const
+unsigned XMLParser::GetIndex(unsigned index, unsigned grade_min,
+                             unsigned grade_max, unsigned strokes_min,
+                             unsigned strokes_max)
 {
   unsigned final_index;
   if (file_format_ == XML_KANJI)
   {
-    std::vector<int> result;
-    if (grade && strokes)
-    {
-      --grade;
-      --strokes;
-      --index;
-      if (grade_rel == REL_LESS && strokes_rel == REL_LESS)
-      {
-      	for (unsigned i = 0; i < grade; ++i)
-      		for (unsigned j = 0; j < strokes; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_LESS && strokes_rel == REL_LESSEQ)
-      {
-      	for (unsigned i = 0; i < grade; ++i)
-      		for (unsigned j = 0; j <= strokes; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_LESS && strokes_rel == REL_EQ)
-      {
-      	for (unsigned i = 0; i < grade; ++i)
-     			FillVector(result, i, strokes);
-      }
-      else if (grade_rel == REL_LESS && strokes_rel == REL_GTEQ)
-      {
-      	for (unsigned i = 0; i < grade; ++i)
-      		for (unsigned j = strokes; j < 25; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_LESS && strokes_rel == REL_GT)
-      {
-      	for (unsigned i = 0; i < grade; ++i)
-      		for (unsigned j = strokes+1; j < 25; ++j)
-      			FillVector(result, i, j);
-      }
-			else if (grade_rel == REL_LESSEQ && strokes_rel == REL_LESS)
-      {
-      	for (unsigned i = 0; i <= grade; ++i)
-      		for (unsigned j = 0; j < strokes; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_LESSEQ && strokes_rel == REL_LESSEQ)
-      {
-      	for (unsigned i = 0; i <= grade; ++i)
-      		for (unsigned j = 0; j <= strokes; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_LESSEQ && strokes_rel == REL_EQ)
-      {
-      	for (unsigned i = 0; i <= grade; ++i)
-     			FillVector(result, i, strokes);
-      }
-      else if (grade_rel == REL_LESSEQ && strokes_rel == REL_GTEQ)
-      {
-      	for (unsigned i = 0; i <= grade; ++i)
-      		for (unsigned j = strokes; j < 25; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_LESSEQ && strokes_rel == REL_GT)
-      {
-      	for (unsigned i = 0; i <= grade; ++i)
-      		for (unsigned j = strokes+1; j < 25; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_EQ && strokes_rel == REL_LESS)
-      {
-      	for (unsigned j = 0; j < strokes; ++j)
-      		FillVector(result, grade, j);
-      }
-      else if (grade_rel == REL_EQ && strokes_rel == REL_LESSEQ)
-      {
-      	for (unsigned j = 0; j <= strokes; ++j)
-      		FillVector(result, grade, j);
-      }
-      else if (grade_rel == REL_EQ && strokes_rel == REL_EQ)
-      {
-     		FillVector(result, grade, strokes);
-      }
-      else if (grade_rel == REL_EQ && strokes_rel == REL_GTEQ)
-      {
-      	for (unsigned j = strokes; j < 25; ++j)
-      		FillVector(result, grade, j);
-      }
-      else if (grade_rel == REL_EQ && strokes_rel == REL_GT)
-      {
-      	for (unsigned j = strokes+1; j < 25; ++j)
-      		FillVector(result, grade, j);
-      }
-      else if (grade_rel == REL_GTEQ && strokes_rel == REL_LESS)
-      {
-      	for (unsigned i = grade; i < 9; ++i)
-      		for (unsigned j = 0; j < strokes; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_GTEQ && strokes_rel == REL_LESSEQ)
-      {
-      	for (unsigned i = grade; i < 9; ++i)
-      		for (unsigned j = 0; j <= strokes; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_GTEQ && strokes_rel == REL_EQ)
-      {
-      	for (unsigned i = grade; i < 9; ++i)
-     			FillVector(result, i, strokes);
-      }
-      else if (grade_rel == REL_GTEQ && strokes_rel == REL_GTEQ)
-      {
-      	for (unsigned i = grade; i < 9; ++i)
-      		for (unsigned j = strokes; j < 25; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_GTEQ && strokes_rel == REL_GT)
-      {
-      	for (unsigned i = grade; i < 9; ++i)
-      		for (unsigned j = strokes+1; j < 25; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_GT && strokes_rel == REL_LESS)
-      {
-      	for (unsigned i = grade+1; i < 9; ++i)
-      		for (unsigned j = 0; j < strokes; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_GT && strokes_rel == REL_LESSEQ)
-      {
-      	for (unsigned i = grade+1; i < 9; ++i)
-      		for (unsigned j = 0; j <= strokes; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_GT && strokes_rel == REL_EQ)
-      {
-      	for (unsigned i = grade+1; i < 9; ++i)
-     			FillVector(result, i, strokes);
-      }
-      else if (grade_rel == REL_GT && strokes_rel == REL_GTEQ)
-      {
-      	for (unsigned i = grade+1; i < 9; ++i)
-      		for (unsigned j = strokes; j < 25; ++j)
-      			FillVector(result, i, j);
-      }
-      else if (grade_rel == REL_GT && strokes_rel == REL_GT)
-      {
-      	for (unsigned i = grade+1; i < 9; ++i)
-      		for (unsigned j = strokes+1; j < 25; ++j)
-      			FillVector(result, i, j);
-      }
+    QueryResult(grade_min, grade_max, strokes_min, strokes_max);
 
-		    if (index < result.size())
-		      final_index = result[index]+1;
-		    else
-		      final_index = 0;
-
-    }
-    else if (grade)
-    {
-      --grade;
-      --index;
-      switch(grade_rel)
-      {
-      	case REL_LESS:
-      		for (unsigned i = 0; i < grade; ++i)
-		      	for (unsigned j = 0; j < grade_[i].size(); ++j)
-							result.push_back(grade_[i][j]);
-				break;
-				case REL_LESSEQ:
-      		for (unsigned i = 0; i <= grade; ++i)
-		      	for (unsigned j = 0; j < grade_[i].size(); ++j)
-							result.push_back(grade_[i][j]);
-				break;
-				case REL_EQ:
-		      	for (unsigned j = 0; j < grade_[grade].size(); ++j)
-							result.push_back(grade_[grade][j]);
-				break;
-				case REL_GTEQ:
-      		for (unsigned i = grade; i < 9; ++i)
-		      	for (unsigned j = 0; j < grade_[i].size(); ++j)
-							result.push_back(grade_[i][j]);
-				break;
-				case REL_GT:
-      		for (unsigned i = grade+1; i < 9; ++i)
-		      	for (unsigned j = 0; j < grade_[i].size(); ++j)
-							result.push_back(grade_[i][j]);
-				break;
-      }
-
-      if (index < result.size())
-        final_index = result[index]+1;
-      else
-        final_index = 0;
-    }
-    else if (strokes)
-    {
-      --strokes;
-      --index;
-      switch(strokes_rel)
-      {
-      	case REL_LESS:
-      		for (unsigned i = 0; i < strokes; ++i)
-		      	for (unsigned j = 0; j < strokes_[i].size(); ++j)
-							result.push_back(strokes_[i][j]);
-				break;
-				case REL_LESSEQ:
-      		for (unsigned i = 0; i <= strokes; ++i)
-		      	for (unsigned j = 0; j < strokes_[i].size(); ++j)
-							result.push_back(strokes_[i][j]);
-				break;
-				case REL_EQ:
-		      	for (unsigned j = 0; j < strokes_[strokes].size(); ++j)
-							result.push_back(strokes_[strokes][j]);
-				break;
-				case REL_GTEQ:
-      		for (unsigned i = strokes; i < 25; ++i)
-		      	for (unsigned j = 0; j < strokes_[i].size(); ++j)
-							result.push_back(strokes_[i][j]);
-				break;
-				case REL_GT:
-      		for (unsigned i = strokes+1; i < 25; ++i)
-		      	for (unsigned j = 0; j < strokes_[i].size(); ++j)
-							result.push_back(strokes_[i][j]);
-				break;
-      }
-
-      if (index < result.size())
-        final_index = result[index]+1;
-      else
-        final_index = 0;
-    }
+    --index;
+    if (index < query_result_.size())
+      final_index = query_result_[index]+1;
     else
-      final_index = index;
+      final_index = 0;
   }
   else
-    final_index = index;
+    final_index = index - 1;
 
   return final_index;
+}
+
+void XMLParser::QueryResult (unsigned grade_min, unsigned grade_max,
+                             unsigned strokes_min, unsigned strokes_max)
+{
+  // if the any number of the range has changed, generates the
+  // query result vector again.
+  if (grade_min != q_grade_min || grade_max != q_grade_max ||
+      strokes_min != q_grade_min || strokes_max != q_strokes_max)
+  {
+    q_grade_min = grade_min, q_grade_max = grade_max;
+    q_strokes_min = strokes_min, q_strokes_max = strokes_max;
+    query_result_.clear();
+    --grade_min;
+    --strokes_min;
+    for (unsigned i = grade_min; i < grade_max; ++i)
+      for (unsigned j = strokes_min; j < strokes_max; ++j)
+        for (unsigned k = 0; k < grade_[i].size(); ++k)
+        {
+          unsigned l = 0;
+          for (; l < strokes_[j].size() &&
+               strokes_[j][l] != grade_[i][k]; ++l);
+
+          if (l < strokes_[j].size())
+            query_result_.push_back(grade_[i][k]);
+        }
+  }
 }
 
 XMLParser::~XMLParser ()

@@ -80,16 +80,18 @@ SubScreenHandler::SubScreenHandler()
  *  \param screens_handler Already created and initialized screens handler
  */
 void SubScreenHandler::Init (SubScreenMode::mode screen_mode,
+                             GameMode::mode game_mode,
                              ScreensHandler* screens_handler)
 {
-  SetMode (screen_mode, screens_handler);
+  SetMode (screen_mode, game_mode, screens_handler);
 }
 
 /// \param screen_mode Mode of the screen
-void SubScreenHandler::SwitchMode (SubScreenMode::mode screen_mode)
+void SubScreenHandler::SwitchMode (SubScreenMode::mode screen_mode,
+                                   GameMode::mode game_mode)
 {
   ClearMembers ();
-  SetMode (screen_mode, screens_handler_);
+  SetMode (screen_mode, game_mode, screens_handler_);
 }
 
 /**
@@ -97,9 +99,11 @@ void SubScreenHandler::SwitchMode (SubScreenMode::mode screen_mode)
  *  \param screens_handler Already created and initialized screens handler
  */
 void SubScreenHandler::SetMode (SubScreenMode::mode screen_mode,
+                                GameMode::mode game_mode,
                                 ScreensHandler* screens_handler)
 {
   screen_mode_ = screen_mode;
+  game_mode_ = game_mode;
   screens_handler_ = screens_handler;
 
   if (screen_mode_ == SubScreenMode::CARDS)
@@ -176,8 +180,59 @@ void SubScreenHandler::SetMode (SubScreenMode::mode screen_mode,
     box3_->floats(true);
     box4_->floats(true);
   }
+  else if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES)
+  {
+    mode_title_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, CAPTION_FONT, 14,
+         48, 12);
+    caption_grade_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, CAPTION_FONT, 10,
+         30, 67);
+    caption_strokes_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, CAPTION_FONT, 10,
+         25, 97);
+    grade_min_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, CAPTION_FONT, 10,
+         113, 68);
+    grade_max_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, CAPTION_FONT, 10,
+         190, 68);
+    strokes_min_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, CAPTION_FONT, 10,
+         107, 97);
+    strokes_max_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, CAPTION_FONT, 10,
+         185, 97);
+
+    mode_title_->floats(true);
+    caption_grade_->floats(true);
+    caption_strokes_->floats(true);
+    grade_min_->floats(true);
+    grade_max_->floats(true);
+    strokes_min_->floats(true);
+    strokes_max_->floats(true);
+
+    mode_title_->text("Options");
+    caption_grade_->text("Grade");
+    caption_strokes_->text("Strokes");
+  }
 
   DrawBgImage();
+  Graphics::SetColors();
+
+  if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES)
+  {
+    mode_title_->Print();
+    caption_grade_->Print();
+    caption_strokes_->Print();
+  }
 }
 
 void SubScreenHandler::PrintCard (const Card& card)
@@ -198,7 +253,7 @@ void SubScreenHandler::PrintBoards (int score, int answers)
   if (screen_mode_ == SubScreenMode::KANJI_CHOOSE ||
       screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
   {
-    dmaCopy(Graphics::GetSubBitmapPtr(screen_mode_),
+    dmaCopy(Graphics::GetSubBitmapPtr(screen_mode_, game_mode_),
             bgGetGfxPtr(bgid_), 256*33);
     char* score_text = new char [MAX_SCORE_TEXT_LENGTH];
     sprintf(score_text, "Score: %i",score);
@@ -216,6 +271,29 @@ void SubScreenHandler::PrintBoards (int score, int answers)
   }
 }
 
+void SubScreenHandler::PrintOptions(unsigned grade_min, unsigned grade_max,
+                                    unsigned strokes_min, unsigned strokes_max)
+{
+  if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES)
+  {
+    char s [3];
+    sprintf(s, "%i", grade_min);
+    grade_min_->text(s);
+    sprintf(s, "%i", grade_max);
+    grade_max_->text(s);
+    sprintf(s, "%2i", strokes_min);
+    strokes_min_->text(s);
+    sprintf(s, "%2i", strokes_max);
+    strokes_max_->text(s);
+
+    Graphics::PrintBitmapRegion(106,68, 106,68, 102, 50, SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::GetSubBitmapPtr(screen_mode_, game_mode_), RGB15(18,18,28), bgid_, Screen::SUB);
+    grade_min_->Print();
+    grade_max_->Print();
+    strokes_min_->Print();
+    strokes_max_->Print();
+  }
+}
+
 void SubScreenHandler::PrintTick (int position)
 {
   int x_pos = 0, y_pos = 0;
@@ -225,7 +303,7 @@ void SubScreenHandler::PrintTick (int position)
     x_pos = KC_TICK_CROSS_X , y_pos = y_position(position);
 
   Graphics::PrintBitmapRegion(x_pos, y_pos, 0, 192, 20, 20, 256, 213,
-                              Graphics::GetSubBitmapPtr(screen_mode_),
+                              Graphics::GetSubBitmapPtr(screen_mode_, game_mode_),
                               RGB15(18,18,28), bgid_, Screen::SUB);
 }
 
@@ -238,7 +316,7 @@ void SubScreenHandler::PrintCross (int position)
     x_pos = KC_TICK_CROSS_X , y_pos = y_position(position);
 
   Graphics::PrintBitmapRegion(x_pos, y_pos, 20, 192, 20, 20, 256, 213,
-                              Graphics::GetSubBitmapPtr(screen_mode_),
+                              Graphics::GetSubBitmapPtr(screen_mode_, game_mode_),
                               RGB15(18,18,28), bgid_, Screen::SUB);
 }
 
@@ -273,9 +351,9 @@ void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
 
 void SubScreenHandler::DrawBgImage ()
 {
-    dmaCopy(Graphics::GetSubBitmapPtr(screen_mode_),
+    dmaCopy(Graphics::GetSubBitmapPtr(screen_mode_, game_mode_),
             bgGetGfxPtr(bgid_), 256*256);
-    dmaCopy(Graphics::GetSubPalPtr(screen_mode_), BG_PALETTE_SUB, 256*2);
+    dmaCopy(Graphics::GetSubPalPtr(screen_mode_, game_mode_), BG_PALETTE_SUB, 256*2);
 }
 
 void SubScreenHandler::Fill (unsigned short color)
@@ -308,6 +386,16 @@ void SubScreenHandler::ClearMembers ()
       screens_handler_->tbh()->DestroyTextBox(box2_);
       screens_handler_->tbh()->DestroyTextBox(box3_);
       screens_handler_->tbh()->DestroyTextBox(box4_);
+    }
+    else if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES)
+    {
+      screens_handler_->tbh()->DestroyTextBox(mode_title_);
+      screens_handler_->tbh()->DestroyTextBox(caption_grade_);
+      screens_handler_->tbh()->DestroyTextBox(caption_strokes_);
+      screens_handler_->tbh()->DestroyTextBox(grade_min_);
+      screens_handler_->tbh()->DestroyTextBox(grade_max_);
+      screens_handler_->tbh()->DestroyTextBox(strokes_min_);
+      screens_handler_->tbh()->DestroyTextBox(strokes_max_);
     }
   }
 }

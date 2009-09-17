@@ -72,7 +72,8 @@ namespace Types
       KANJI_CHOOSE,               ///< Screen showing 4 kanjis to choose and
                                   /// the score and accuracy percentage
       VERTICAL_TEXTBOXES_CHOOSE,  ///< Vertical textboxes
-      MAIN_MENU                   ///< Main menu
+      MAIN_MENU,                  ///< Main menu
+      OPTIONS_GRADE_STROKES       ///< Grade and strokes select options mode
     };
   }
 
@@ -94,6 +95,7 @@ namespace GameMode
   /// Game modes
   enum mode
   {
+    NONE,
     KANJI,
     KANJI_QUIZ,
     VOCABULARY,

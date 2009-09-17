@@ -22,8 +22,8 @@
 
 #include "types.h"
 
-static Types::Font CAPTION_FONT = Types::VERA_FONT;
-static Types::Font NORMAL_FONT = Types::MONA_FONT;
+static const Types::Font CAPTION_FONT = Types::VERA_FONT;
+static const Types::Font NORMAL_FONT = Types::MONA_FONT;
 
 // Kanji mode definitions
 static const int KM_CAPTION_SIZE = 8;
@@ -118,6 +118,24 @@ static const int TICK_CROSS_Y_3 = 97;
 static const int TICK_CROSS_Y_4 = 126;
 static const int KC_TICK_CROSS_X = 10;
 static const int KC_TICK_CROSS_Y = 103;
+
+static const int TP_LEFT_BOTTOM_IMAGE_X1 = 5;
+static const int TP_LEFT_BOTTOM_IMAGE_X2 = 39;
+static const int TP_LEFT_BOTTOM_IMAGE_Y1 = 152;
+static const int TP_LEFT_BOTTOM_IMAGE_Y2 = 187;
+
+static const int TP_RIGHT_BOTTOM_IMAGE_X1 = 210;
+static const int TP_RIGHT_BOTTOM_IMAGE_X2 = 250;
+static const int TP_RIGHT_BOTTOM_IMAGE_Y1 = 146;
+static const int TP_RIGHT_BOTTOM_IMAGE_Y2 = 187;
+
+static const int TP_CARD1_X1 = 36;
+static const int TP_CARD1_X2 = 102;
+static const int TP_CARD2_X1 = 156;
+static const int TP_CARD2_X2 = 224;
+static const int TP_CARD_Y1 = 40;
+static const int TP_CARD_Y2 = 146;
+static const int TP_CARD_MIDDLE_Y = 90;
 
 static const int MAX_CARD_NUMBER_TEXT_LENGTH = 40;
 static const int MAX_SCORE_TEXT_LENGTH = 40;
