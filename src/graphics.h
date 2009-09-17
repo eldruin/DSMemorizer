@@ -62,7 +62,18 @@ namespace Graphics
                           int region_height, int bmp_width, int bmp_height,
                           const unsigned int* bitmap,
                           unsigned short key_color, int bgid,
-                          Types::Screen::selector screen);
+                          Types::Screen::selector screen,
+                          bool use_key_color = true);
+
+  /// Redraw a region of a background
+  void RedrawBgRegion (int x, int y, int region_width, int region_height,
+                       Types::MainScreenMode::mode screen_mode,
+                       GameMode::mode game_mode, int bgid);
+
+  /// Redraw a region of a background
+  void RedrawBgRegion (int x, int y, int region_width, int region_height,
+                       Types::SubScreenMode::mode screen_mode,
+                       GameMode::mode game_mode, int bgid);
 
   /// Print a bitmap in a background
   void PrintBitmap (int x, int y, int width, int height,
@@ -88,12 +99,12 @@ namespace Graphics
   const unsigned short* GetPalPtr (Types::MainScreenMode::mode screen_mode);
   /// Get the direction of the background bitmap for the screen mode for the
   /// sub screen.
-  const unsigned int* GetSubBitmapPtr (Types::SubScreenMode::mode screen_mode,
-                                       GameMode::mode game_mode);
+  const unsigned int* GetBitmapPtr (Types::SubScreenMode::mode screen_mode,
+                                    GameMode::mode game_mode);
   /// Get the direction of the background palette for the screen mode for the
   /// sub screen.
-  const unsigned short* GetSubPalPtr (Types::SubScreenMode::mode screen_mode,
-                                      GameMode::mode game_mode);
+  const unsigned short* GetPalPtr (Types::SubScreenMode::mode screen_mode,
+                                   GameMode::mode game_mode);
 }
 
 #endif // GRAPHICS_H_

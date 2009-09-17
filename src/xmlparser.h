@@ -79,7 +79,10 @@ private:
   /// grades and strokes range
   std::vector<int> query_result_;
 
-  unsigned q_grade_min, q_grade_max, q_strokes_min, q_strokes_max;
+  unsigned q_grade_min_,    ///< Minimum grade of the actual query
+           q_grade_max_,    ///< Maximum grade of the actual query
+           q_strokes_min_,  ///< Minimum strokes of the actual query
+           q_strokes_max_;  ///< Maximum strokes of the actual query
 
 	/// Temporal reading buffer size
   static const int BUFFER_SIZE = 512;

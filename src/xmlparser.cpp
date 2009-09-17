@@ -30,8 +30,9 @@
 #include <cstring>
 #include <cstdlib> // for atoi
 
-
 #include "utf8.h"
+
+#include "definitions.h"
 #include "card.h"
 #include "xmlparser.h"
 
@@ -48,7 +49,7 @@ void XMLParser::Init(const string& file_path)
   {
     if (file_path == file_path_)
       // If the file is already opened just reset the cursor
-      fseek(file_, 0, SEEK_SET);
+      fseek(file_, 0L, SEEK_SET);
     else
     {
       fclose(file_);
@@ -85,11 +86,11 @@ void XMLParser::Init(const string& file_path)
             file_format_ = XML_VOCABULARY;
           if (file_format_ == XML_KANJI)
           {
-            grade_ = new std::vector<int> [9];
-            strokes_ = new std::vector<int> [25];
+            grade_ = new std::vector<int> [MAX_GRADE];
+            strokes_ = new std::vector<int> [MAX_STROKES];
+            q_grade_min_ = q_grade_max_ = q_strokes_min_ = q_strokes_max_ = 0;
           }
           GenerateIndexes();
-          q_grade_min = q_grade_max = q_strokes_min = q_strokes_max = 0;
         }
         // else bad file error
       }
@@ -143,7 +144,8 @@ int XMLParser::QueryResultSize (unsigned grade_min, unsigned grade_max,
   return query_result_.size();
 }
 
-string XMLParser::attribute_value(const char* name, const char* buffer, int& position)
+string XMLParser::attribute_value(const char* name, const char* buffer,
+                                  int& position)
 {
   string result;
   if (find(name, buffer, position))
@@ -168,7 +170,7 @@ string XMLParser::attribute_value(const char* name, const char* buffer, int& pos
 void XMLParser::GenerateIndexes()
 {
   char buff [BUFFER_SIZE];
-  fseek(file_, 0, SEEK_SET);
+  fseek(file_, 0L, SEEK_SET);
   fgets(buff, BUFFER_SIZE, file_);
   fgets(buff, BUFFER_SIZE, file_);
   for (int i = 0; i < package_records_ && !feof(file_); ++i)
@@ -204,7 +206,7 @@ unsigned XMLParser::GetIndex(unsigned index, unsigned grade_min,
       final_index = 0;
   }
   else
-    final_index = index - 1;
+    final_index = index;
 
   return final_index;
 }
@@ -214,11 +216,11 @@ void XMLParser::QueryResult (unsigned grade_min, unsigned grade_max,
 {
   // if the any number of the range has changed, generates the
   // query result vector again.
-  if (grade_min != q_grade_min || grade_max != q_grade_max ||
-      strokes_min != q_grade_min || strokes_max != q_strokes_max)
+  if (grade_min != q_grade_min_ || grade_max != q_grade_max_ ||
+      strokes_min != q_strokes_min_ || strokes_max != q_strokes_max_)
   {
-    q_grade_min = grade_min, q_grade_max = grade_max;
-    q_strokes_min = strokes_min, q_strokes_max = strokes_max;
+    q_grade_min_ = grade_min, q_grade_max_ = grade_max;
+    q_strokes_min_ = strokes_min, q_strokes_max_ = strokes_max;
     query_result_.clear();
     --grade_min;
     --strokes_min;

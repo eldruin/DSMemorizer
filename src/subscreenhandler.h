@@ -87,12 +87,18 @@ private:
           *box3_,             ///< Box 3
           *box4_,             ///< Box 4
           *mode_title_,       ///< Mode title
-          *caption_grade_,
-          *caption_strokes_,
-          *grade_min_,
-          *grade_max_,
-          *strokes_min_,
-          *strokes_max_;
+          *caption_grade_,    ///< Options grade text
+          *caption_strokes_,  ///< Options strokes text
+          *grade_min_,        ///< Options minimum grade box
+          *grade_max_,        ///< Options maximum grade box
+          *strokes_min_,      ///< Options minimum strokes box
+          *strokes_max_;      ///< Options maximum strokes box
+
+  unsigned prev_grade_min_,   ///< Previous grade minimum
+           prev_grade_max_,   ///< Previous grade maximum
+           prev_strokes_min_, ///< Previous strokes minimum
+           prev_strokes_max_; ///< Previous strokes maximum
+
   /// Game mode
   GameMode::mode game_mode_;
   /// Background id

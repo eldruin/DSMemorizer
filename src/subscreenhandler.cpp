@@ -184,32 +184,32 @@ void SubScreenHandler::SetMode (SubScreenMode::mode screen_mode,
   {
     mode_title_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, 14,
-         48, 12);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGS_TITLE_FONT_SIZE,
+         OGS_TITLE_X, OGS_TITLE_Y);
     caption_grade_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, 10,
-         30, 67);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGS_CAPTION_FONT_SIZE,
+         OGS_CAPTION_GRADE_X, OGS_CAPTION_GRADE_Y);
     caption_strokes_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, 10,
-         25, 97);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGS_CAPTION_FONT_SIZE,
+         OGS_CAPTION_STROKES_X, OGS_CAPTION_STROKES_Y);
     grade_min_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, 10,
-         113, 68);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGS_BOX_FONT_SIZE,
+         OGS_GRADE_MIN_X, OGS_GRADE_MIN_Y);
     grade_max_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, 10,
-         190, 68);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGS_BOX_FONT_SIZE,
+         OGS_GRADE_MAX_X, OGS_GRADE_MAX_Y);
     strokes_min_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, 10,
-         107, 97);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGS_BOX_FONT_SIZE,
+         OGS_STROKES_MIN_X, OGS_STROKES_MIN_Y);
     strokes_max_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, 10,
-         185, 97);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGS_BOX_FONT_SIZE,
+         OGS_STROKES_MAX_X, OGS_STROKES_MAX_Y);
 
     mode_title_->floats(true);
     caption_grade_->floats(true);
@@ -222,6 +222,9 @@ void SubScreenHandler::SetMode (SubScreenMode::mode screen_mode,
     mode_title_->text("Options");
     caption_grade_->text("Grade");
     caption_strokes_->text("Strokes");
+
+    prev_grade_min_ = prev_grade_max_ =
+      prev_strokes_min_ = prev_strokes_max_ = 0;
   }
 
   DrawBgImage();
@@ -253,7 +256,7 @@ void SubScreenHandler::PrintBoards (int score, int answers)
   if (screen_mode_ == SubScreenMode::KANJI_CHOOSE ||
       screen_mode_ == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
   {
-    dmaCopy(Graphics::GetSubBitmapPtr(screen_mode_, game_mode_),
+    dmaCopy(Graphics::GetBitmapPtr(screen_mode_, game_mode_),
             bgGetGfxPtr(bgid_), 256*33);
     char* score_text = new char [MAX_SCORE_TEXT_LENGTH];
     sprintf(score_text, "Score: %i",score);
@@ -277,20 +280,54 @@ void SubScreenHandler::PrintOptions(unsigned grade_min, unsigned grade_max,
   if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES)
   {
     char s [3];
-    sprintf(s, "%i", grade_min);
-    grade_min_->text(s);
-    sprintf(s, "%i", grade_max);
-    grade_max_->text(s);
-    sprintf(s, "%2i", strokes_min);
-    strokes_min_->text(s);
-    sprintf(s, "%2i", strokes_max);
-    strokes_max_->text(s);
-
-    Graphics::PrintBitmapRegion(106,68, 106,68, 102, 50, SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::GetSubBitmapPtr(screen_mode_, game_mode_), RGB15(18,18,28), bgid_, Screen::SUB);
-    grade_min_->Print();
-    grade_max_->Print();
-    strokes_min_->Print();
-    strokes_max_->Print();
+    if (prev_grade_min_ != grade_min)
+    {
+      sprintf(s, "%i", grade_min);
+      grade_min_->text(s);
+      Graphics::RedrawBgRegion((OGS_GRADE_MIN_X + 1) & 0xFC ,
+                               (OGS_GRADE_MIN_Y + 1) & 0xFC,
+                               OGS_BOX_FONT_SIZE * 3 + 4,
+                               (OGS_BOX_FONT_SIZE * 3 >> 1) + 4,
+                               screen_mode_, game_mode_, bgid_);
+      grade_min_->Print();
+      prev_grade_min_ = grade_min;
+    }
+    if (prev_grade_max_ != grade_max)
+    {
+      sprintf(s, "%i", grade_max);
+      grade_max_->text(s);
+      Graphics::RedrawBgRegion((OGS_GRADE_MAX_X + 1) & 0xFC,
+                               (OGS_GRADE_MAX_Y + 1) & 0xFC,
+                               OGS_BOX_FONT_SIZE * 3 + 4,
+                               (OGS_BOX_FONT_SIZE * 3 >> 1) + 4,
+                               screen_mode_, game_mode_, bgid_);
+      grade_max_->Print();
+      prev_grade_max_ = grade_max;
+    }
+    if (prev_strokes_min_ != strokes_min)
+    {
+      sprintf(s, "%2i", strokes_min);
+      strokes_min_->text(s);
+      Graphics::RedrawBgRegion(OGS_STROKES_MIN_X & 0xFC,
+                               OGS_STROKES_MIN_Y & 0xFC,
+                               OGS_BOX_FONT_SIZE * 3 + 4,
+                               (OGS_BOX_FONT_SIZE * 3 >> 1) + 4,
+                               screen_mode_, game_mode_, bgid_);
+      strokes_min_->Print();
+      prev_strokes_min_ = strokes_min;
+    }
+    if (prev_strokes_max_ != strokes_max)
+    {
+      sprintf(s, "%2i", strokes_max);
+      strokes_max_->text(s);
+      Graphics::RedrawBgRegion((OGS_STROKES_MAX_X + 1) & 0xFC,
+                               (OGS_STROKES_MAX_Y + 1) & 0xFC,
+                               OGS_BOX_FONT_SIZE * 3 + 4,
+                               (OGS_BOX_FONT_SIZE * 3 >> 1) + 4,
+                               screen_mode_, game_mode_, bgid_);
+      strokes_max_->Print();
+      prev_strokes_max_ = strokes_max;
+    }
   }
 }
 
@@ -303,7 +340,7 @@ void SubScreenHandler::PrintTick (int position)
     x_pos = KC_TICK_CROSS_X , y_pos = y_position(position);
 
   Graphics::PrintBitmapRegion(x_pos, y_pos, 0, 192, 20, 20, 256, 213,
-                              Graphics::GetSubBitmapPtr(screen_mode_, game_mode_),
+                              Graphics::GetBitmapPtr(screen_mode_, game_mode_),
                               RGB15(18,18,28), bgid_, Screen::SUB);
 }
 
@@ -316,7 +353,7 @@ void SubScreenHandler::PrintCross (int position)
     x_pos = KC_TICK_CROSS_X , y_pos = y_position(position);
 
   Graphics::PrintBitmapRegion(x_pos, y_pos, 20, 192, 20, 20, 256, 213,
-                              Graphics::GetSubBitmapPtr(screen_mode_, game_mode_),
+                              Graphics::GetBitmapPtr(screen_mode_, game_mode_),
                               RGB15(18,18,28), bgid_, Screen::SUB);
 }
 
@@ -351,9 +388,9 @@ void SubScreenHandler::PrintScreen (std::string kanji1, std::string kanji2,
 
 void SubScreenHandler::DrawBgImage ()
 {
-    dmaCopy(Graphics::GetSubBitmapPtr(screen_mode_, game_mode_),
+    dmaCopy(Graphics::GetBitmapPtr(screen_mode_, game_mode_),
             bgGetGfxPtr(bgid_), 256*256);
-    dmaCopy(Graphics::GetSubPalPtr(screen_mode_, game_mode_), BG_PALETTE_SUB, 256*2);
+    dmaCopy(Graphics::GetPalPtr(screen_mode_, game_mode_), BG_PALETTE_SUB, 256*2);
 }
 
 void SubScreenHandler::Fill (unsigned short color)

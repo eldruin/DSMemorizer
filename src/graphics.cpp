@@ -237,12 +237,15 @@ void Graphics::PrintBitmapRegion (int dst_x, int dst_y, int region_x,
                                   const unsigned int* bitmap,
                                   unsigned short key_color,
                                   int bgid,
-                                  Screen::selector screen)
+                                  Screen::selector screen,
+                                  bool use_key_color)
 {
   u16* video_buffer = bgGetGfxPtr(bgid);
   // Find the key color index in the palette not to be printed when found
   // in the bitmap.
-  int key_color_index = FindColor (key_color, screen);
+  int key_color_index = 0;
+  if (use_key_color)
+    key_color_index = FindColor (key_color, screen);
 
   for (int image_y = 0; image_y < region_height; ++image_y)
   {
@@ -268,7 +271,7 @@ void Graphics::PrintBitmapRegion (int dst_x, int dst_y, int region_x,
         ( (bitmap [(pixel_index_inverted >> 2)] &
           (0xFF000000 >> ((pixel_index_inverted%4)<<3))
         ) >> ((3-pixel_index_inverted%4) << 3 ));
-      if (pixel0 == key_color_index) print_pixel0 = false;
+      if (use_key_color && pixel0 == key_color_index) print_pixel0 = false;
 
       ++pixel_index_inverted;
 
@@ -277,7 +280,7 @@ void Graphics::PrintBitmapRegion (int dst_x, int dst_y, int region_x,
           (0xFF000000 >> ((pixel_index_inverted%4)<<3))
         ) >> ((3-pixel_index_inverted%4) << 3 ));
 
-      if (pixel1 == key_color_index) print_pixel1 = false;
+      if (use_key_color && pixel1 == key_color_index) print_pixel1 = false;
 
       int video_index = (image_y + dst_y)*128 + (image_x + dst_x)/2;
 
@@ -293,6 +296,7 @@ void Graphics::PrintBitmapRegion (int dst_x, int dst_y, int region_x,
     }
   }
 }
+
 /**
  *  Function to print a 256-color bitmap of a font glyph converting colors.
  *  \param x Upper left corner x coordinate where to print the bitmap.
@@ -353,6 +357,30 @@ void Graphics::PrintBitmap (int x, int y, int width, int height,
   }
 }
 
+void Graphics::RedrawBgRegion (int x, int y,
+                               int region_width, int region_height,
+                               MainScreenMode::mode screen_mode,
+                               GameMode::mode game_mode,
+                               int bgid)
+{
+  Graphics::PrintBitmapRegion(x, y, x, y, region_width, region_height,
+                              SCREEN_WIDTH, SCREEN_HEIGHT,
+                              GetBitmapPtr(screen_mode),
+                              RGB15(0,0,0), bgid, Screen::MAIN, false);
+}
+
+void Graphics::RedrawBgRegion (int x, int y,
+                               int region_width, int region_height,
+                               SubScreenMode::mode screen_mode,
+                               GameMode::mode game_mode,
+                               int bgid)
+{
+  Graphics::PrintBitmapRegion(x, y, x, y, region_width, region_height,
+                              SCREEN_WIDTH, SCREEN_HEIGHT,
+                              GetBitmapPtr(screen_mode, game_mode),
+                              RGB15(0,0,0), bgid, Screen::SUB, false);
+}
+
 void Graphics::Fill (unsigned short color, Screen::selector screen)
 {
   if (screen == Screen::MAIN)
@@ -409,8 +437,8 @@ const unsigned short* Graphics::GetPalPtr (MainScreenMode::mode screen_mode)
   return NULL;
 }
 
-const unsigned int* Graphics::GetSubBitmapPtr (SubScreenMode::mode screen_mode,
-                                               GameMode::mode game_mode)
+const unsigned int* Graphics::GetBitmapPtr (SubScreenMode::mode screen_mode,
+                                            GameMode::mode game_mode)
 {
   if (screen_mode == SubScreenMode::CARDS)
   {
@@ -431,8 +459,8 @@ const unsigned int* Graphics::GetSubBitmapPtr (SubScreenMode::mode screen_mode,
   return NULL;
 }
 
-const unsigned short* Graphics::GetSubPalPtr (SubScreenMode::mode screen_mode,
-                                              GameMode::mode game_mode)
+const unsigned short* Graphics::GetPalPtr (SubScreenMode::mode screen_mode,
+                                           GameMode::mode game_mode)
 {
   if (screen_mode == SubScreenMode::CARDS)
   {
