@@ -54,9 +54,13 @@ private:
   /// Shows a word and its reading and asks for the kanji version.
   void VocabularyQuizMode ();
 
-  /// Set the options of grade and strokes
+  /// Set the options of grade, strokes and romaji conversion
   void SetOptions(unsigned& grade_min, unsigned& grade_max,
                   unsigned& strokes_min, unsigned& strokes_max);
+  /// Set the option of the romaji conversion
+  void SetOptions ();
+  /// Romaji conversion option
+  bool romaji_conversion;
 
   /// Sound handler
   SoundHandler sound_handler_;

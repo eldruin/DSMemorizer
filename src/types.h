@@ -67,13 +67,15 @@ namespace Types
     /// Mode
     enum mode
     {
-      CARDS,                      ///< Screen showing the card number and two
-                                  /// cards to navigate.
-      KANJI_CHOOSE,               ///< Screen showing 4 kanjis to choose and
-                                  /// the score and accuracy percentage
-      VERTICAL_TEXTBOXES_CHOOSE,  ///< Vertical textboxes
-      MAIN_MENU,                  ///< Main menu
-      OPTIONS_GRADE_STROKES       ///< Grade and strokes select options mode
+      CARDS,                        ///< Screen showing the card number and two
+                                    /// cards to navigate.
+      KANJI_CHOOSE,                 ///< Screen showing 4 kanjis to choose and
+                                    /// the score and accuracy percentage
+      VERTICAL_TEXTBOXES_CHOOSE,    ///< Vertical textboxes
+      MAIN_MENU,                    ///< Main menu
+      OPTIONS_GRADE_STROKES_ROMAJI, ///< Grade, strokes and romaji select
+                                    /// options mode
+      OPTIONS_ROMAJI                ///< Romaji conversion option mode
     };
   }
 

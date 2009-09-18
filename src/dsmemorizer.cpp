@@ -41,6 +41,7 @@ using namespace Types;
 
 void DSMemorizer::Init ()
 {
+  romaji_conversion = false;
   sound_handler_.Init();
   sound_handler_.PlayEffect(SoundHandler::THEME);
   screens_handler_.Init();
@@ -205,7 +206,7 @@ void DSMemorizer::KanjiMode ()
         c = xmlparser_.card(card, grade_min, grade_max,
                             strokes_min, strokes_max);
         sub_screen_handler_.PrintCard(c);
-        main_screen_handler_.PrintCard(c, false);
+        main_screen_handler_.PrintCard(c, romaji_conversion);
         previous_card = card;
       }
       main_screen_handler_.Scroll(0,sy);
@@ -254,7 +255,7 @@ void DSMemorizer::KanjiQuizMode ()
   Card c;
   c = xmlparser_.card (card, grade_min, grade_max,
                        strokes_min, strokes_max);
-  main_screen_handler_.PrintCard(c);
+  main_screen_handler_.PrintCard(c, romaji_conversion);
 
   sub_screen_handler_.PrintScreen(
           xmlparser_.card(selected_card[0], grade_min, grade_max,
@@ -298,7 +299,7 @@ void DSMemorizer::KanjiQuizMode ()
 
         c = xmlparser_.card (card, grade_min, grade_max,
                              strokes_min, strokes_max);
-        main_screen_handler_.PrintCard(c);
+        main_screen_handler_.PrintCard(c, romaji_conversion);
 
         sub_screen_handler_.PrintScreen(
                 xmlparser_.card(selected_card[0], grade_min, grade_max,
@@ -327,18 +328,19 @@ void DSMemorizer::KanjiQuizMode ()
         sub_screen_handler_.SwitchMode (SubScreenMode::KANJI_CHOOSE,
                                         GameMode::KANJI_QUIZ);
         card = rand()%xmlparser_.QueryResultSize(grade_min, grade_max,
-                                               strokes_min, strokes_max) + 1;
-  // Correct kanji position [1-4]
-  correct = randomize_positions (card,
-                                     xmlparser_.QueryResultSize(grade_min, grade_max,
-                                               strokes_min, strokes_max),
-                                     selected_card[0], selected_card[1],
-                                     selected_card[2], selected_card[3]);
-  Card c;
-  c = xmlparser_.card(card, grade_min, grade_max, strokes_min, strokes_max);
-  main_screen_handler_.PrintCard(c);
+                                                 strokes_min, strokes_max) + 1;
+        // Correct kanji position [1-4]
+        correct = randomize_positions (card,
+                                       xmlparser_.QueryResultSize(grade_min,
+                                          grade_max, strokes_min, strokes_max),
+                                       selected_card[0], selected_card[1],
+                                       selected_card[2], selected_card[3]);
+        Card c;
+        c = xmlparser_.card(card, grade_min, grade_max,
+                            strokes_min, strokes_max);
+        main_screen_handler_.PrintCard(c, romaji_conversion);
 
-  sub_screen_handler_.PrintScreen(
+        sub_screen_handler_.PrintScreen(
           xmlparser_.card(selected_card[0], grade_min, grade_max,
                           strokes_min, strokes_max).symbol(),
           xmlparser_.card(selected_card[1], grade_min, grade_max,
@@ -406,7 +408,7 @@ void DSMemorizer::KanjiQuizMode ()
                                        selected_card[0], selected_card[1],
                                        selected_card[2], selected_card[3]);
         c = xmlparser_.card(card, grade_min, grade_max, strokes_min, strokes_max);
-        main_screen_handler_.PrintCard(c);
+        main_screen_handler_.PrintCard(c, romaji_conversion);
 
         sub_screen_handler_.PrintScreen(
           xmlparser_.card(selected_card[0], grade_min, grade_max,
@@ -455,7 +457,8 @@ void DSMemorizer::VocabularyMode ()
 
      keys = keysDown();
 
-      if ((keys & KEY_LEFT) || (keys & KEY_RIGHT) || (keys & KEY_A))
+      if ((keys & KEY_LEFT) || (keys & KEY_RIGHT) || (keys & KEY_A) ||
+          (keys & KEY_X) || (keys & KEY_Y))
         sound_handler_.PlayEffect(SoundHandler::ACTION);
 
       if (keysHeld() & KEY_UP) sy--;
@@ -467,17 +470,37 @@ void DSMemorizer::VocabularyMode ()
           ++card;
       if (keys & KEY_X)
         card = rand()%xmlparser_.package_records() + 1;
+      if (keys & KEY_Y)
+      {
+        SetOptions();
+        sub_screen_handler_.SwitchMode (SubScreenMode::CARDS,
+                                        GameMode::VOCABULARY);
+      }
 
-      if (touch.px > 5 && touch.px < 39 && touch.py > 152 && touch.py < 187)
+      if (touch.px > TP_LEFT_BOTTOM_IMAGE_X1 &&
+          touch.px < TP_LEFT_BOTTOM_IMAGE_X2 &&
+          touch.py > TP_LEFT_BOTTOM_IMAGE_Y1 &&
+          touch.py < TP_LEFT_BOTTOM_IMAGE_Y2)
         done = true;
 
-      // WARNING: This is related to the image displayed in the sub screen and
-      // needs to be changed if the image changes
-      if (touch.px > 36 && touch.px < 102 && touch.py > 40 && touch.py < 146)
+      if (touch.px > TP_RIGHT_BOTTOM_IMAGE_X1 &&
+          touch.px < TP_RIGHT_BOTTOM_IMAGE_X2 &&
+          touch.py > TP_RIGHT_BOTTOM_IMAGE_Y1 &&
+          touch.py < TP_RIGHT_BOTTOM_IMAGE_Y2)
+      {
+        SetOptions();
+        sub_screen_handler_.SwitchMode (SubScreenMode::CARDS,
+                                        GameMode::VOCABULARY);
+      }
+
+      if (touch.px > TP_CARD1_X1 && touch.px < TP_CARD1_X2 &&
+          touch.py > TP_CARD_Y1 && touch.py < TP_CARD_Y2)
         card--;
-      if (touch.px > 156 && touch.px < 224 && touch.py > 40 && touch.py < 90)
+      if (touch.px > TP_CARD2_X1 && touch.px < TP_CARD2_X2 &&
+          touch.py > TP_CARD_Y1 && touch.py < TP_CARD_MIDDLE_Y)
         card++;
-      if (touch.px > 156 && touch.px < 224 && touch.py > 90 && touch.py < 146)
+      if (touch.px > TP_CARD2_X1 && touch.px < TP_CARD2_X2 &&
+          touch.py > TP_CARD_MIDDLE_Y && touch.py < TP_CARD_Y2)
         card = rand()%xmlparser_.package_records() + 1;
 
       if (card < 1) card = 1;
@@ -495,7 +518,7 @@ void DSMemorizer::VocabularyMode ()
         c = xmlparser_.card(card);
         sub_screen_handler_.PrintCard(c);
         main_screen_handler_.Scroll (0, sy);
-        main_screen_handler_.PrintCard(c);
+        main_screen_handler_.PrintCard(c, romaji_conversion);
         previous_card = card;
       }
       main_screen_handler_.Scroll (0,sy);
@@ -536,7 +559,7 @@ void DSMemorizer::VocabularyQuizMode ()
                                      selected_card[2], selected_card[3]);
   Card c;
   c = xmlparser_.card(card_number);
-  main_screen_handler_.PrintCard(c);
+  main_screen_handler_.PrintCard(c, romaji_conversion);
 
   sub_screen_handler_.PrintScreen(xmlparser_.card(selected_card[0]).symbol(),
                                   xmlparser_.card(selected_card[1]).symbol(),
@@ -554,21 +577,66 @@ void DSMemorizer::VocabularyQuizMode ()
 
       keys = keysDown();
 
-      if ((keys & KEY_LEFT) || (keys & KEY_RIGHT) || (keys & KEY_A))
+      if ((keys & KEY_LEFT) || (keys & KEY_RIGHT) || (keys & KEY_A) ||
+          (keys & KEY_X) || (keys & KEY_Y))
         sound_handler_.PlayEffect(SoundHandler::ACTION);
 
       if (keysHeld() & KEY_UP) sy--;
       if (keysHeld() & KEY_DOWN) sy++;
-      if (touch.px > 5 && touch.px < 39 && touch.py > 152 && touch.py < 187)
+      if (keys & KEY_Y)
+      {
+        SetOptions();
+        sub_screen_handler_.SwitchMode (SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE,
+                                        GameMode::VOCABULARY_QUIZ);
+        sub_screen_handler_.PrintScreen(
+          xmlparser_.card(selected_card[0]).symbol(),
+          xmlparser_.card(selected_card[1]).symbol(),
+          xmlparser_.card(selected_card[2]).symbol(),
+          xmlparser_.card(selected_card[3]).symbol(),
+          score, answers);
+      }
+
+      if (touch.px > TP_LEFT_BOTTOM_IMAGE_X1 &&
+          touch.px < TP_LEFT_BOTTOM_IMAGE_X2 &&
+          touch.py > TP_LEFT_BOTTOM_IMAGE_Y1 &&
+          touch.py < TP_LEFT_BOTTOM_IMAGE_Y2)
         done = true;
 
-      if (touch.px > 33 && touch.px < 228 && touch.py > 44 && touch.py < 54)
+      if (touch.px > TP_RIGHT_BOTTOM_IMAGE_X1 &&
+          touch.px < TP_RIGHT_BOTTOM_IMAGE_X2 &&
+          touch.py > TP_RIGHT_BOTTOM_IMAGE_Y1 &&
+          touch.py < TP_RIGHT_BOTTOM_IMAGE_Y2)
+      {
+        SetOptions();
+        sub_screen_handler_.SwitchMode (SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE,
+                                        GameMode::VOCABULARY_QUIZ);
+        sub_screen_handler_.PrintScreen(
+          xmlparser_.card(selected_card[0]).symbol(),
+          xmlparser_.card(selected_card[1]).symbol(),
+          xmlparser_.card(selected_card[2]).symbol(),
+          xmlparser_.card(selected_card[3]).symbol(),
+          score, answers);
+      }
+
+      if (touch.px > VTBC_BOX1_X &&
+          touch.px < (SCREEN_WIDTH - VTBC_BOX1_X) &&
+          touch.py > VTBC_BOX1_Y &&
+          touch.py < (VTBC_BOX1_Y + (VTBC_NORMAL_SIZE * 3 >> 1)))
         selected_kanji = 1;
-      if (touch.px > 33 && touch.px < 228 && touch.py > 73 && touch.py < 83)
+      if (touch.px > VTBC_BOX2_X &&
+          touch.px < (SCREEN_WIDTH - VTBC_BOX2_X) &&
+          touch.py > VTBC_BOX2_Y &&
+          touch.py < (VTBC_BOX2_Y + (VTBC_NORMAL_SIZE * 3 >> 1)))
         selected_kanji = 2;
-      if (touch.px > 33 && touch.px < 228 && touch.py > 102 && touch.py < 112)
+      if (touch.px > VTBC_BOX3_X &&
+          touch.px < (SCREEN_WIDTH - VTBC_BOX3_X) &&
+          touch.py > VTBC_BOX3_Y &&
+          touch.py < (VTBC_BOX3_Y + (VTBC_NORMAL_SIZE * 3 >> 1)))
         selected_kanji = 3;
-      if (touch.px > 33 && touch.px < 228 && touch.py > 131 && touch.py < 141)
+      if (touch.px > VTBC_BOX4_X &&
+          touch.px < (SCREEN_WIDTH - VTBC_BOX4_X) &&
+          touch.py > VTBC_BOX4_Y &&
+          touch.py < (VTBC_BOX4_Y + (VTBC_NORMAL_SIZE * 3 >> 1)))
         selected_kanji = 4;
 
       if (sy < 0) sy = 0;
@@ -604,7 +672,7 @@ void DSMemorizer::VocabularyQuizMode ()
                                        selected_card[0], selected_card[1],
                                        selected_card[2], selected_card[3]);
         c = xmlparser_.card(card_number);
-        main_screen_handler_.PrintCard(c);
+        main_screen_handler_.PrintCard(c, romaji_conversion);
 
         sub_screen_handler_.PrintScreen(
           xmlparser_.card(selected_card[0]).symbol(),
@@ -623,11 +691,12 @@ void DSMemorizer::VocabularyQuizMode ()
 void DSMemorizer::SetOptions (unsigned& grade_min, unsigned& grade_max,
                               unsigned& strokes_min, unsigned& strokes_max)
 {
-  sub_screen_handler_.SwitchMode (SubScreenMode::OPTIONS_GRADE_STROKES,
+  sub_screen_handler_.SwitchMode (SubScreenMode::OPTIONS_GRADE_STROKES_ROMAJI,
                                   GameMode::NONE);
   Graphics::SetColors();
   unsigned prev_grade_min, prev_grade_max, prev_strokes_min, prev_strokes_max;
   prev_grade_min = prev_grade_max = prev_strokes_min = prev_strokes_max = 0;
+  bool prev_romaji_conversion = false;
 
   int keys = 0;
   touchPosition touch;
@@ -648,31 +717,36 @@ void DSMemorizer::SetOptions (unsigned& grade_min, unsigned& grade_max,
         touch.py < TP_RIGHT_BOTTOM_IMAGE_Y2)
       done = true;
 
-    if (touch.px > TP_OGS_MINUS1_X1 && touch.px < TP_OGS_MINUS1_X2 &&
-        touch.py > TP_OGS_GRADE_Y1 && touch.py < TP_OGS_GRADE_Y2)
+    if (touch.px > TP_OGSR_MINUS1_X1 && touch.px < TP_OGSR_MINUS1_X2 &&
+        touch.py > TP_OGSR_GRADE_Y1 && touch.py < TP_OGSR_GRADE_Y2)
       --grade_min;
-    if (touch.px > TP_OGS_PLUS1_X1 && touch.px < TP_OGS_PLUS1_X2 &&
-        touch.py > TP_OGS_GRADE_Y1 && touch.py < TP_OGS_GRADE_Y2)
+    if (touch.px > TP_OGSR_PLUS1_X1 && touch.px < TP_OGSR_PLUS1_X2 &&
+        touch.py > TP_OGSR_GRADE_Y1 && touch.py < TP_OGSR_GRADE_Y2)
       ++grade_min;
-    if (touch.px > TP_OGS_MINUS2_X1 && touch.px < TP_OGS_MINUS2_X2 &&
-        touch.py > TP_OGS_GRADE_Y1 && touch.py < TP_OGS_GRADE_Y2)
+    if (touch.px > TP_OGSR_MINUS2_X1 && touch.px < TP_OGSR_MINUS2_X2 &&
+        touch.py > TP_OGSR_GRADE_Y1 && touch.py < TP_OGSR_GRADE_Y2)
       --grade_max;
-    if (touch.px > TP_OGS_PLUS2_X1 && touch.px < TP_OGS_PLUS2_X2 &&
-        touch.py > TP_OGS_GRADE_Y1 && touch.py < TP_OGS_GRADE_Y2)
+    if (touch.px > TP_OGSR_PLUS2_X1 && touch.px < TP_OGSR_PLUS2_X2 &&
+        touch.py > TP_OGSR_GRADE_Y1 && touch.py < TP_OGSR_GRADE_Y2)
       ++grade_max;
 
-    if (touch.px > TP_OGS_MINUS1_X1 && touch.px < TP_OGS_MINUS1_X2 &&
-        touch.py > TP_OGS_STROKES_Y1 && touch.py < TP_OGS_STROKES_Y2)
+    if (touch.px > TP_OGSR_MINUS1_X1 && touch.px < TP_OGSR_MINUS1_X2 &&
+        touch.py > TP_OGSR_STROKES_Y1 && touch.py < TP_OGSR_STROKES_Y2)
       --strokes_min;
-    if (touch.px > TP_OGS_PLUS1_X1 && touch.px < TP_OGS_PLUS1_X2 &&
-        touch.py > TP_OGS_STROKES_Y1 && touch.py < TP_OGS_STROKES_Y2)
+    if (touch.px > TP_OGSR_PLUS1_X1 && touch.px < TP_OGSR_PLUS1_X2 &&
+        touch.py > TP_OGSR_STROKES_Y1 && touch.py < TP_OGSR_STROKES_Y2)
       ++strokes_min;
-    if (touch.px > TP_OGS_MINUS2_X1 && touch.px < TP_OGS_MINUS2_X2 &&
-        touch.py > TP_OGS_STROKES_Y1 && touch.py < TP_OGS_STROKES_Y2)
+    if (touch.px > TP_OGSR_MINUS2_X1 && touch.px < TP_OGSR_MINUS2_X2 &&
+        touch.py > TP_OGSR_STROKES_Y1 && touch.py < TP_OGSR_STROKES_Y2)
       --strokes_max;
-    if (touch.px > TP_OGS_PLUS2_X1 && touch.px < TP_OGS_PLUS2_X2 &&
-        touch.py > TP_OGS_STROKES_Y1 && touch.py < TP_OGS_STROKES_Y2)
+    if (touch.px > TP_OGSR_PLUS2_X1 && touch.px < TP_OGSR_PLUS2_X2 &&
+        touch.py > TP_OGSR_STROKES_Y1 && touch.py < TP_OGSR_STROKES_Y2)
       ++strokes_max;
+    if (touch.px > TP_OGSR_ROMAJI_CHECKBOX_X1 &&
+        touch.px < TP_OGSR_ROMAJI_CHECKBOX_X2 &&
+        touch.py > TP_OGSR_ROMAJI_CHECKBOX_Y1 &&
+        touch.py < TP_OGSR_ROMAJI_CHECKBOX_Y2)
+      romaji_conversion = !romaji_conversion;
 
     if (grade_min < MIN_GRADE) grade_min = MIN_GRADE;
     if (grade_min > MAX_GRADE) grade_min = MAX_GRADE;
@@ -684,14 +758,17 @@ void DSMemorizer::SetOptions (unsigned& grade_min, unsigned& grade_max,
     if (strokes_max < MIN_STROKES) strokes_max = MIN_STROKES;
 
     if (prev_grade_min != grade_min || prev_grade_max != grade_max ||
-        prev_strokes_min != strokes_min || prev_strokes_max != strokes_max)
+        prev_strokes_min != strokes_min || prev_strokes_max != strokes_max ||
+        prev_romaji_conversion != romaji_conversion)
     {
       sound_handler_.PlayEffect(SoundHandler::ACTION);
       sub_screen_handler_.PrintOptions(grade_min, grade_max,
-                                       strokes_min, strokes_max);
+                                       strokes_min, strokes_max,
+                                       romaji_conversion);
 
       prev_grade_min = grade_min, prev_grade_max = grade_max;
       prev_strokes_min = strokes_min, prev_strokes_max = strokes_max;
+      prev_romaji_conversion = romaji_conversion;
       swiWaitForVBlank();
       swiWaitForVBlank();
     }
@@ -699,3 +776,50 @@ void DSMemorizer::SetOptions (unsigned& grade_min, unsigned& grade_max,
   }
   sound_handler_.PlayEffect(SoundHandler::ACTION);
 }
+
+void DSMemorizer::SetOptions ()
+{
+  sub_screen_handler_.SwitchMode (SubScreenMode::OPTIONS_ROMAJI,
+                                  GameMode::NONE);
+  Graphics::SetColors();
+  bool prev_romaji_conversion = false;
+
+  int keys = 0;
+  touchPosition touch;
+
+  // Loop
+  bool done = false;
+  while(!(keys & KEY_B) && !done)
+  {
+    scanKeys();
+
+    touchRead(&touch);
+
+    keys = keysDown();
+
+    if (touch.px > TP_RIGHT_BOTTOM_IMAGE_X1 &&
+        touch.px < TP_RIGHT_BOTTOM_IMAGE_X2 &&
+        touch.py > TP_RIGHT_BOTTOM_IMAGE_Y1 &&
+        touch.py < TP_RIGHT_BOTTOM_IMAGE_Y2)
+      done = true;
+
+    if (touch.px > TP_OR_ROMAJI_CHECKBOX_X1 &&
+        touch.px < TP_OR_ROMAJI_CHECKBOX_X2 &&
+        touch.py > TP_OR_ROMAJI_CHECKBOX_Y1 &&
+        touch.py < TP_OR_ROMAJI_CHECKBOX_Y2)
+      romaji_conversion = !romaji_conversion;
+
+    if (prev_romaji_conversion != romaji_conversion)
+    {
+      sound_handler_.PlayEffect(SoundHandler::ACTION);
+      sub_screen_handler_.PrintOptions(romaji_conversion);
+
+      prev_romaji_conversion = romaji_conversion;
+      swiWaitForVBlank();
+      swiWaitForVBlank();
+    }
+    swiWaitForVBlank();
+  }
+  sound_handler_.PlayEffect(SoundHandler::ACTION);
+}
+

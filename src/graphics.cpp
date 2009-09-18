@@ -24,12 +24,12 @@
 #include "kanji_bg.h"
 #include "goi_bg.h"
 #include "splash_main_bg.h"
-#include "cards_sub_bg.h"
 #include "cards_options_sub_bg.h"
 #include "kanji_choose_options_sub_bg.h"
-#include "vertical_textboxes_choose_bg.h"
+#include "vertical_textboxes_choose_options_bg.h"
 #include "main_menu_bg.h"
-#include "options_grade_strokes_bg.h"
+#include "options_grade_strokes_romaji_sub_bg.h"
+#include "options_romaji_sub_bg.h"
 
 using namespace Types;
 using namespace Graphics;
@@ -56,6 +56,15 @@ inline u8 blue_color (u16 color)
 {
   return (color & bmask) >> 10;
 }
+
+/// Black color palette index in the main screen
+u16 black_color_main;
+/// Gray color palette index in the main screen
+u16 gray_color_main;
+/// Black color palette index in the sub screen
+u16 black_color_sub;
+/// Gray color palette index in the sub screen
+u16 gray_color_sub;
 
 /// Converts a color in [0-255] range to the black, grey and white
 /// palette indexes
@@ -404,10 +413,10 @@ unsigned short Graphics::FindColor (unsigned short color,
 
 void Graphics::SetColors ()
 {
-  Graphics::black_color_main = FindColor (RGB15(0,0,0), Screen::MAIN);
-  Graphics::gray_color_main = FindColor (RGB15(15,15,15), Screen::MAIN);
-  Graphics::black_color_sub = FindColor (RGB15(0,0,0), Screen::SUB);
-  Graphics::gray_color_sub = FindColor (RGB15(15,15,15), Screen::SUB);
+  black_color_main = FindColor (RGB15(0,0,0), Screen::MAIN);
+  gray_color_main = FindColor (RGB15(15,15,15), Screen::MAIN);
+  black_color_sub = FindColor (RGB15(0,0,0), Screen::SUB);
+  gray_color_sub = FindColor (RGB15(15,15,15), Screen::SUB);
 }
 
 const unsigned int* Graphics::GetBitmapPtr (MainScreenMode::mode screen_mode)
@@ -442,20 +451,17 @@ const unsigned int* Graphics::GetBitmapPtr (SubScreenMode::mode screen_mode,
                                             GameMode::mode game_mode)
 {
   if (screen_mode == SubScreenMode::CARDS)
-  {
-    if (game_mode == GameMode::KANJI)
-      return cards_options_sub_bgBitmap;
-    if (game_mode == GameMode::VOCABULARY)
-      return cards_sub_bgBitmap;
-  }
+    return cards_options_sub_bgBitmap;
   if (screen_mode == SubScreenMode::KANJI_CHOOSE)
     return kanji_choose_options_sub_bgBitmap;
   if (screen_mode == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
-    return vertical_textboxes_choose_bgBitmap;
+    return vertical_textboxes_choose_options_bgBitmap;
   if (screen_mode == SubScreenMode::MAIN_MENU)
     return main_menu_bgBitmap;
-  if (screen_mode == SubScreenMode::OPTIONS_GRADE_STROKES)
-    return options_grade_strokes_bgBitmap;
+  if (screen_mode == SubScreenMode::OPTIONS_GRADE_STROKES_ROMAJI)
+    return options_grade_strokes_romaji_sub_bgBitmap;
+  if (screen_mode == SubScreenMode::OPTIONS_ROMAJI)
+    return options_romaji_sub_bgBitmap;
 
   return NULL;
 }
@@ -464,20 +470,17 @@ const unsigned short* Graphics::GetPalPtr (SubScreenMode::mode screen_mode,
                                            GameMode::mode game_mode)
 {
   if (screen_mode == SubScreenMode::CARDS)
-  {
-    if (game_mode == GameMode::KANJI)
-      return cards_options_sub_bgPal;
-    if (game_mode == GameMode::VOCABULARY)
-      return cards_sub_bgPal;
-  }
+    return cards_options_sub_bgPal;
   if (screen_mode == SubScreenMode::KANJI_CHOOSE)
     return kanji_choose_options_sub_bgPal;
   if (screen_mode == SubScreenMode::VERTICAL_TEXTBOXES_CHOOSE)
-    return vertical_textboxes_choose_bgPal;
+    return vertical_textboxes_choose_options_bgPal;
   if (screen_mode == SubScreenMode::MAIN_MENU)
     return main_menu_bgPal;
-  if (screen_mode == SubScreenMode::OPTIONS_GRADE_STROKES)
-    return options_grade_strokes_bgPal;
+  if (screen_mode == SubScreenMode::OPTIONS_GRADE_STROKES_ROMAJI)
+    return options_grade_strokes_romaji_sub_bgPal;
+  if (screen_mode == SubScreenMode::OPTIONS_ROMAJI)
+    return options_romaji_sub_bgPal;
 
   return NULL;
 }

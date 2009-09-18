@@ -53,9 +53,12 @@ public:
   void PrintScreen (std::string kanji1, std::string kanji2,
                     std::string kanji3, std::string kanji4,
                     int score, int answers);
-  /// Print the number of grades and strokes
+  /// Print the number of grades, strokes and romaji conversion
   void PrintOptions(unsigned grade_min, unsigned grade_max,
-                    unsigned strokes_min, unsigned strokes_max);
+                    unsigned strokes_min, unsigned strokes_max,
+                    bool romaji_conversion);
+  /// Print the romaji conversion
+  void PrintOptions (bool romaji_conversion);
   /// Shows the background image of the screen in the current mode
   void DrawBgImage ();
   /// Fill the screen with a color
@@ -89,15 +92,18 @@ private:
           *mode_title_,       ///< Mode title
           *caption_grade_,    ///< Options grade text
           *caption_strokes_,  ///< Options strokes text
+          *caption_romaji_,   ///< Options romaji conversion text
           *grade_min_,        ///< Options minimum grade box
           *grade_max_,        ///< Options maximum grade box
           *strokes_min_,      ///< Options minimum strokes box
-          *strokes_max_;      ///< Options maximum strokes box
+          *strokes_max_,      ///< Options maximum strokes box
+          *romaji_checkbox_;  ///< Options romaji conversion checkbox
 
   unsigned prev_grade_min_,   ///< Previous grade minimum
            prev_grade_max_,   ///< Previous grade maximum
            prev_strokes_min_, ///< Previous strokes minimum
            prev_strokes_max_; ///< Previous strokes maximum
+  bool     romaji_conversion_;///< Romaji conversion
 
   /// Game mode
   GameMode::mode game_mode_;

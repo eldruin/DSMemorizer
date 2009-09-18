@@ -183,61 +183,103 @@ void SubScreenHandler::SetMode (SubScreenMode::mode screen_mode,
     box3_->floats(true);
     box4_->floats(true);
   }
-  else if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES)
+  else if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES_ROMAJI)
   {
     mode_title_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, OGS_TITLE_FONT_SIZE,
-         OGS_TITLE_X, OGS_TITLE_Y);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGSR_TITLE_FONT_SIZE,
+         OGSR_TITLE_X, OGSR_TITLE_Y);
     caption_grade_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, OGS_CAPTION_FONT_SIZE,
-         OGS_CAPTION_GRADE_X, OGS_CAPTION_GRADE_Y);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGSR_CAPTION_FONT_SIZE,
+         OGSR_CAPTION_GRADE_X, OGSR_CAPTION_GRADE_Y);
     caption_strokes_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, OGS_CAPTION_FONT_SIZE,
-         OGS_CAPTION_STROKES_X, OGS_CAPTION_STROKES_Y);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGSR_CAPTION_FONT_SIZE,
+         OGSR_CAPTION_STROKES_X, OGSR_CAPTION_STROKES_Y);
+    caption_romaji_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, CAPTION_FONT, OGSR_CAPTION_FONT_SIZE,
+         OGSR_CAPTION_ROMAJI_X, OGSR_CAPTION_ROMAJI_Y);
     grade_min_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, OGS_BOX_FONT_SIZE,
-         OGS_GRADE_MIN_X, OGS_GRADE_MIN_Y);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGSR_BOX_FONT_SIZE,
+         OGSR_GRADE_MIN_X, OGSR_GRADE_MIN_Y);
     grade_max_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, OGS_BOX_FONT_SIZE,
-         OGS_GRADE_MAX_X, OGS_GRADE_MAX_Y);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGSR_BOX_FONT_SIZE,
+         OGSR_GRADE_MAX_X, OGSR_GRADE_MAX_Y);
     strokes_min_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, OGS_BOX_FONT_SIZE,
-         OGS_STROKES_MIN_X, OGS_STROKES_MIN_Y);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGSR_BOX_FONT_SIZE,
+         OGSR_STROKES_MIN_X, OGSR_STROKES_MIN_Y);
     strokes_max_ =
       screens_handler_->tbh()->NewTextBox
-        (Screen::SUB, bgid_, CAPTION_FONT, OGS_BOX_FONT_SIZE,
-         OGS_STROKES_MAX_X, OGS_STROKES_MAX_Y);
+        (Screen::SUB, bgid_, CAPTION_FONT, OGSR_BOX_FONT_SIZE,
+         OGSR_STROKES_MAX_X, OGSR_STROKES_MAX_Y);
+    romaji_checkbox_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, CAPTION_FONT, OGSR_BOX_FONT_SIZE,
+         OGSR_ROMAJI_CHECKBOX_X, OGSR_ROMAJI_CHECKBOX_Y);
 
     mode_title_->floats(true);
     caption_grade_->floats(true);
     caption_strokes_->floats(true);
+    caption_romaji_->floats(true);
     grade_min_->floats(true);
     grade_max_->floats(true);
     strokes_min_->floats(true);
     strokes_max_->floats(true);
+    romaji_checkbox_->floats(true);
 
     mode_title_->text("Options");
     caption_grade_->text("Grade");
     caption_strokes_->text("Strokes");
+    caption_romaji_->text("Romaji");
 
     prev_grade_min_ = prev_grade_max_ =
       prev_strokes_min_ = prev_strokes_max_ = 0;
+    romaji_conversion_ = false;
+  }
+  else if (screen_mode_ == SubScreenMode::OPTIONS_ROMAJI)
+  {
+    mode_title_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, CAPTION_FONT, OR_TITLE_FONT_SIZE,
+         OR_TITLE_X, OR_TITLE_Y);
+    caption_romaji_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, CAPTION_FONT, OR_CAPTION_FONT_SIZE,
+         OR_CAPTION_ROMAJI_X, OR_CAPTION_ROMAJI_Y);
+    romaji_checkbox_ =
+      screens_handler_->tbh()->NewTextBox
+        (Screen::SUB, bgid_, CAPTION_FONT, OR_BOX_FONT_SIZE,
+         OR_ROMAJI_CHECKBOX_X, OR_ROMAJI_CHECKBOX_Y);
+
+    mode_title_->floats(true);
+    caption_romaji_->floats(true);
+    romaji_checkbox_->floats(true);
+
+    mode_title_->text("Options");
+    caption_romaji_->text("Romaji");
+
+    romaji_conversion_ = false;
   }
 
   DrawBgImage();
   Graphics::SetColors();
 
-  if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES)
+  if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES_ROMAJI)
   {
     mode_title_->Print();
     caption_grade_->Print();
     caption_strokes_->Print();
+    caption_romaji_->Print();
+  }
+  else if (screen_mode_ == SubScreenMode::OPTIONS_ROMAJI)
+  {
+    mode_title_->Print();
+    caption_romaji_->Print();
   }
 }
 
@@ -278,19 +320,20 @@ void SubScreenHandler::PrintBoards (int score, int answers)
 }
 
 void SubScreenHandler::PrintOptions(unsigned grade_min, unsigned grade_max,
-                                    unsigned strokes_min, unsigned strokes_max)
+                                    unsigned strokes_min, unsigned strokes_max,
+                                    bool romaji_conversion)
 {
-  if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES)
+  if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES_ROMAJI)
   {
     char s [3];
     if (prev_grade_min_ != grade_min)
     {
       sprintf(s, "%i", grade_min);
       grade_min_->text(s);
-      Graphics::RedrawBgRegion((OGS_GRADE_MIN_X + 1) & 0xFC ,
-                               (OGS_GRADE_MIN_Y + 1) & 0xFC,
-                               OGS_BOX_FONT_SIZE * 3 + 4,
-                               (OGS_BOX_FONT_SIZE * 3 >> 1) + 4,
+      Graphics::RedrawBgRegion((OGSR_GRADE_MIN_X + 1) & 0xFC ,
+                               (OGSR_GRADE_MIN_Y + 1) & 0xFC,
+                               OGSR_BOX_FONT_SIZE * 3 + 4,
+                               (OGSR_BOX_FONT_SIZE * 3 >> 1) + 4,
                                screen_mode_, game_mode_, bgid_);
       grade_min_->Print();
       prev_grade_min_ = grade_min;
@@ -299,10 +342,10 @@ void SubScreenHandler::PrintOptions(unsigned grade_min, unsigned grade_max,
     {
       sprintf(s, "%i", grade_max);
       grade_max_->text(s);
-      Graphics::RedrawBgRegion((OGS_GRADE_MAX_X + 1) & 0xFC,
-                               (OGS_GRADE_MAX_Y + 1) & 0xFC,
-                               OGS_BOX_FONT_SIZE * 3 + 4,
-                               (OGS_BOX_FONT_SIZE * 3 >> 1) + 4,
+      Graphics::RedrawBgRegion((OGSR_GRADE_MAX_X + 1) & 0xFC,
+                               (OGSR_GRADE_MAX_Y + 1) & 0xFC,
+                               OGSR_BOX_FONT_SIZE * 3 + 4,
+                               (OGSR_BOX_FONT_SIZE * 3 >> 1) + 4,
                                screen_mode_, game_mode_, bgid_);
       grade_max_->Print();
       prev_grade_max_ = grade_max;
@@ -311,10 +354,10 @@ void SubScreenHandler::PrintOptions(unsigned grade_min, unsigned grade_max,
     {
       sprintf(s, "%2i", strokes_min);
       strokes_min_->text(s);
-      Graphics::RedrawBgRegion(OGS_STROKES_MIN_X & 0xFC,
-                               OGS_STROKES_MIN_Y & 0xFC,
-                               OGS_BOX_FONT_SIZE * 3 + 4,
-                               (OGS_BOX_FONT_SIZE * 3 >> 1) + 4,
+      Graphics::RedrawBgRegion(OGSR_STROKES_MIN_X & 0xFC,
+                               OGSR_STROKES_MIN_Y & 0xFC,
+                               OGSR_BOX_FONT_SIZE * 3 + 4,
+                               (OGSR_BOX_FONT_SIZE * 3 >> 1) + 4,
                                screen_mode_, game_mode_, bgid_);
       strokes_min_->Print();
       prev_strokes_min_ = strokes_min;
@@ -323,13 +366,52 @@ void SubScreenHandler::PrintOptions(unsigned grade_min, unsigned grade_max,
     {
       sprintf(s, "%2i", strokes_max);
       strokes_max_->text(s);
-      Graphics::RedrawBgRegion((OGS_STROKES_MAX_X + 1) & 0xFC,
-                               (OGS_STROKES_MAX_Y + 1) & 0xFC,
-                               OGS_BOX_FONT_SIZE * 3 + 4,
-                               (OGS_BOX_FONT_SIZE * 3 >> 1) + 4,
+      Graphics::RedrawBgRegion((OGSR_STROKES_MAX_X + 1) & 0xFC,
+                               (OGSR_STROKES_MAX_Y + 1) & 0xFC,
+                               OGSR_BOX_FONT_SIZE * 3 + 4,
+                               (OGSR_BOX_FONT_SIZE * 3 >> 1) + 4,
                                screen_mode_, game_mode_, bgid_);
       strokes_max_->Print();
       prev_strokes_max_ = strokes_max;
+    }
+    if (romaji_conversion_ != romaji_conversion)
+    {
+      char s[2];
+      if (romaji_conversion)
+        s[0] = 'X', s[1] = '\0';
+      else
+        s[0] = '\0';
+      romaji_checkbox_->text(s);
+      Graphics::RedrawBgRegion((OGSR_ROMAJI_CHECKBOX_X + 1) & 0xFC,
+                               (OGSR_ROMAJI_CHECKBOX_Y + 1) & 0xFC,
+                               OGSR_BOX_FONT_SIZE * 3 + 4,
+                               (OGSR_BOX_FONT_SIZE * 3 >> 1) + 4,
+                               screen_mode_, game_mode_, bgid_);
+      romaji_checkbox_->Print();
+      romaji_conversion_ = romaji_conversion;
+    }
+  }
+}
+
+void SubScreenHandler::PrintOptions (bool romaji_conversion)
+{
+  if (screen_mode_ == SubScreenMode::OPTIONS_ROMAJI)
+  {
+    if (romaji_conversion_ != romaji_conversion)
+    {
+      char s[2];
+      if (romaji_conversion)
+        s[0] = 'X', s[1] = '\0';
+      else
+        s[0] = '\0';
+      romaji_checkbox_->text(s);
+      Graphics::RedrawBgRegion((OR_ROMAJI_CHECKBOX_X + 1) & 0xFC,
+                               (OR_ROMAJI_CHECKBOX_Y + 1) & 0xFC,
+                               OR_BOX_FONT_SIZE * 3 + 4,
+                               (OR_BOX_FONT_SIZE * 3 >> 1) + 4,
+                               screen_mode_, game_mode_, bgid_);
+      romaji_checkbox_->Print();
+      romaji_conversion_ = romaji_conversion;
     }
   }
 }
@@ -427,15 +509,23 @@ void SubScreenHandler::ClearMembers ()
       screens_handler_->tbh()->DestroyTextBox(box3_);
       screens_handler_->tbh()->DestroyTextBox(box4_);
     }
-    else if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES)
+    else if (screen_mode_ == SubScreenMode::OPTIONS_GRADE_STROKES_ROMAJI)
     {
       screens_handler_->tbh()->DestroyTextBox(mode_title_);
       screens_handler_->tbh()->DestroyTextBox(caption_grade_);
       screens_handler_->tbh()->DestroyTextBox(caption_strokes_);
+      screens_handler_->tbh()->DestroyTextBox(caption_romaji_);
       screens_handler_->tbh()->DestroyTextBox(grade_min_);
       screens_handler_->tbh()->DestroyTextBox(grade_max_);
       screens_handler_->tbh()->DestroyTextBox(strokes_min_);
       screens_handler_->tbh()->DestroyTextBox(strokes_max_);
+      screens_handler_->tbh()->DestroyTextBox(romaji_checkbox_);
+    }
+    else if (screen_mode_ == SubScreenMode::OPTIONS_ROMAJI)
+    {
+      screens_handler_->tbh()->DestroyTextBox(mode_title_);
+      screens_handler_->tbh()->DestroyTextBox(caption_romaji_);
+      screens_handler_->tbh()->DestroyTextBox(romaji_checkbox_);
     }
   }
 }

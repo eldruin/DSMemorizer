@@ -343,27 +343,27 @@ string TextBox::ConvertToRomaji (string str)
   	{	// Little yo
   		switch(prev_utf8c-prev_kana_base)
   		{
-  			case 12: romaji += "kyo ";
+  			case 12: romaji += "kyo";
   			break;
-  			case 22: romaji += "sho ";
+  			case 22: romaji += "sho";
   			break;
-  			case 23: romaji += "jo ";
+  			case 23: romaji += "jo";
   			break;
-  			case 32: romaji += "cho ";
+  			case 32: romaji += "cho";
   			break;
-  			case 33: romaji += "jo ";
+  			case 33: romaji += "jo";
   			break;
-  			case 42: romaji += "nyo ";
+  			case 42: romaji += "nyo";
   			break;
-  			case 49: romaji += "hyo ";
+  			case 49: romaji += "hyo";
   			break;
-  			case 50: romaji += "byo ";
+  			case 50: romaji += "byo";
   			break;
-  			case 51: romaji += "pyo ";
+  			case 51: romaji += "pyo";
   			break;
-  			case 62: romaji += "myo ";
+  			case 62: romaji += "myo";
   			break;
-  			case 73: romaji += "ryo ";
+  			case 73: romaji += "ryo";
   			break;
   			default: romaji += no_spaces(
   								string(kana_table+((prev_utf8c-prev_kana_base)*3), 3)) +

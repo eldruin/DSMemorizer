@@ -234,20 +234,20 @@ void MainScreenHandler::PrintCard (const Card& card, bool convert_to_romaji)
       box1text = card.translation();
       box2text = card.reading();
       box3text = card.reading2();
-      convert_to_romaji2 = convert_to_romaji3 = true;
+      convert_to_romaji2 = convert_to_romaji3 = convert_to_romaji;
     }
     else if (game_mode_ == GameMode::VOCABULARY)
     {
       box1text = card.symbol();
       box2text = card.reading();
       box3text = card.translation();
-      convert_to_romaji2 = true;
+      convert_to_romaji2 = convert_to_romaji;
     }
     else if (game_mode_ == GameMode::VOCABULARY_QUIZ)
     {
       box1text = card.translation();
       box2text = card.reading();
-      convert_to_romaji2 = true;
+      convert_to_romaji2 = convert_to_romaji;
     }
 
     if (boxes_number_ >= 1)
