@@ -67,13 +67,25 @@ void DSMemorizer::Init ()
 
       keys = keysHeld();
 
-      if (touch.px > 23 && touch.px < 81 && touch.py > 25 && touch.py < 83)
+      if (touch.px > TP_MAIN_MENU_BUTTON1_X1 &&
+          touch.px < TP_MAIN_MENU_BUTTON1_X2 &&
+          touch.py > TP_MAIN_MENU_BUTTON1_Y1 &&
+          touch.py < TP_MAIN_MENU_BUTTON1_Y2)
         selected_button = 1;
-      if (touch.px > 99 && touch.px < 158 && touch.py > 25 && touch.py < 83)
+      if (touch.px > TP_MAIN_MENU_BUTTON2_X1 &&
+          touch.px < TP_MAIN_MENU_BUTTON2_X2 &&
+          touch.py > TP_MAIN_MENU_BUTTON2_Y1 &&
+          touch.py < TP_MAIN_MENU_BUTTON2_Y2)
         selected_button = 2;
-      if (touch.px > 174 && touch.px < 233 && touch.py > 25 && touch.py < 83)
+      if (touch.px > TP_MAIN_MENU_BUTTON3_X1 &&
+          touch.px < TP_MAIN_MENU_BUTTON3_X2 &&
+          touch.py > TP_MAIN_MENU_BUTTON3_Y1 &&
+          touch.py < TP_MAIN_MENU_BUTTON3_Y2)
         selected_button = 3;
-      if (touch.px > 23 && touch.px < 81 && touch.py > 97 && touch.py < 156)
+      if (touch.px > TP_MAIN_MENU_BUTTON4_X1 &&
+          touch.px < TP_MAIN_MENU_BUTTON4_X2 &&
+          touch.py > TP_MAIN_MENU_BUTTON4_Y1 &&
+          touch.py < TP_MAIN_MENU_BUTTON4_Y2)
         selected_button = 4;
 
       if (sy < 0) sy = 0;

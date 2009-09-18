@@ -152,6 +152,23 @@ static const int OR_CAPTION_ROMAJI_Y = 67;
 static const int OR_ROMAJI_CHECKBOX_X = 113;
 static const int OR_ROMAJI_CHECKBOX_Y = 68;
 
+static const int TP_MAIN_MENU_BUTTON1_X1 = 23;
+static const int TP_MAIN_MENU_BUTTON1_X2 = 81;
+static const int TP_MAIN_MENU_BUTTON1_Y1 = 25;
+static const int TP_MAIN_MENU_BUTTON1_Y2 = 83;
+static const int TP_MAIN_MENU_BUTTON2_X1 = 99;
+static const int TP_MAIN_MENU_BUTTON2_X2 = 158;
+static const int TP_MAIN_MENU_BUTTON2_Y1 = 25;
+static const int TP_MAIN_MENU_BUTTON2_Y2 = 83;
+static const int TP_MAIN_MENU_BUTTON3_X1 = 174;
+static const int TP_MAIN_MENU_BUTTON3_X2 = 233;
+static const int TP_MAIN_MENU_BUTTON3_Y1 = 25;
+static const int TP_MAIN_MENU_BUTTON3_Y2 = 83;
+static const int TP_MAIN_MENU_BUTTON4_X1 = 23;
+static const int TP_MAIN_MENU_BUTTON4_X2 = 81;
+static const int TP_MAIN_MENU_BUTTON4_Y1 = 97;
+static const int TP_MAIN_MENU_BUTTON4_Y2 = 156;
+
 static const int TP_LEFT_BOTTOM_IMAGE_X1 = 5;
 static const int TP_LEFT_BOTTOM_IMAGE_X2 = 39;
 static const int TP_LEFT_BOTTOM_IMAGE_Y1 = 152;
