@@ -34,29 +34,28 @@
 using namespace Types;
 using namespace Graphics;
 
+/// Red color bit mask
 static const u16 rmask = BIT(0) | BIT(1) | BIT(2) | BIT(3) | BIT(4);
+/// Green color bit mask
 static const u16 gmask = BIT(5) | BIT(6) | BIT(7) | BIT(8) | BIT(9);
+/// Blue color bit mask
 static const u16 bmask = BIT(10) | BIT(11) | BIT(12) | BIT(13) | BIT(14);
 
+/// Get the red component of the color
 inline u8 red_color (u16 color)
 {
   return (color & rmask);
 }
-
+/// Get the green component of the color
 inline u8 green_color (u16 color)
 {
   return (color & gmask) >> 5;
 }
-
+/// Get the blue component of the color
 inline u8 blue_color (u16 color)
 {
   return (color & bmask) >> 10;
 }
-
-u16 black_color_main;
-u16 gray_color_main;
-u16 black_color_sub;
-u16 gray_color_sub;
 
 /// Converts a color in [0-255] range to the black, grey and white
 /// palette indexes
@@ -229,6 +228,8 @@ void Graphics::PrintBitmap (int x, int y, int width, int height,
  *  \param key_color Masking color.
  *  \param bgid Background id where to print.
  *  \param screen Screen where to print in
+ *  \param use_key_color Whether not to print when the given key color is found
+ *         or not.
  */
 void Graphics::PrintBitmapRegion (int dst_x, int dst_y, int region_x,
                                   int region_y, int region_width,
@@ -403,10 +404,10 @@ unsigned short Graphics::FindColor (unsigned short color,
 
 void Graphics::SetColors ()
 {
-  black_color_main = FindColor (RGB15(0,0,0), Screen::MAIN);
-  gray_color_main = FindColor (RGB15(15,15,15), Screen::MAIN);
-  black_color_sub = FindColor (RGB15(0,0,0), Screen::SUB);
-  gray_color_sub = FindColor (RGB15(15,15,15), Screen::SUB);
+  Graphics::black_color_main = FindColor (RGB15(0,0,0), Screen::MAIN);
+  Graphics::gray_color_main = FindColor (RGB15(15,15,15), Screen::MAIN);
+  Graphics::black_color_sub = FindColor (RGB15(0,0,0), Screen::SUB);
+  Graphics::gray_color_sub = FindColor (RGB15(15,15,15), Screen::SUB);
 }
 
 const unsigned int* Graphics::GetBitmapPtr (MainScreenMode::mode screen_mode)

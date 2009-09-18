@@ -39,12 +39,13 @@ public:
 
 	/// Get the number of records in the package
 	int package_records () const;
-
+  /// Get the number of kanjis with the given grade and strokes restriction
 	int QueryResultSize (unsigned grade_min, unsigned grade_max,
                        unsigned strokes_min, unsigned strokes_max);
 
   ~XMLParser ();
 private:
+  /// XML format types
   enum mode
   {
     XML_KANJI,

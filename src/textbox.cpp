@@ -215,6 +215,7 @@ void TextBox::Print ()
   }
 }
 
+/// Kana to romaji conversion table
 const char* kana_table =
 							"a  a  i  i  u  u  e  e  o  o  ka ga ki gi ku gu "
 					    "ke ge ko go sa za shiji su zu se ze so zo ta da "
@@ -223,6 +224,7 @@ const char* kana_table =
 							"me mo ya ya yu yu yo yo ra ri ru re ro wa wa wi "
 							"we wo n  ";
 
+/// Take out spaces of a string
 inline string no_spaces(const string& str)
 {
 	string no_spaces_str;

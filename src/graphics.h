@@ -105,6 +105,15 @@ namespace Graphics
   /// sub screen.
   const unsigned short* GetPalPtr (Types::SubScreenMode::mode screen_mode,
                                    GameMode::mode game_mode);
+
+  /// Black color palette index in the main screen
+  static u16 black_color_main;
+  /// Gray color palette index in the main screen
+  static u16 gray_color_main;
+  /// Black color palette index in the sub screen
+  static u16 black_color_sub;
+  /// Gray color palette index in the sub screen
+  static u16 gray_color_sub;
 }
 
 #endif // GRAPHICS_H_

@@ -1,4 +1,3 @@
-/// \file definitions.h Definitions of positions and static constant numeric stuff.
 /* Copyright 2009 Diego Barrios Romero
  *
  * This file is part of DSMemorizer.

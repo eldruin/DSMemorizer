@@ -77,6 +77,7 @@ SubScreenHandler::SubScreenHandler()
 
 /**
  *  \param screen_mode Mode of the screen
+ *  \param game_mode Game mode
  *  \param screens_handler Already created and initialized screens handler
  */
 void SubScreenHandler::Init (SubScreenMode::mode screen_mode,
@@ -87,6 +88,7 @@ void SubScreenHandler::Init (SubScreenMode::mode screen_mode,
 }
 
 /// \param screen_mode Mode of the screen
+/// \param game_mode Game mode
 void SubScreenHandler::SwitchMode (SubScreenMode::mode screen_mode,
                                    GameMode::mode game_mode)
 {
@@ -96,6 +98,7 @@ void SubScreenHandler::SwitchMode (SubScreenMode::mode screen_mode,
 
 /**
  *  \param screen_mode Mode of the screen
+ *  \param game_mode Game mode
  *  \param screens_handler Already created and initialized screens handler
  */
 void SubScreenHandler::SetMode (SubScreenMode::mode screen_mode,
