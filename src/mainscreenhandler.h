@@ -47,7 +47,7 @@ public:
   void Captions (std::string box1, std::string box2, std::string box3);
 
   /// Print a card
-  void PrintCard (const Card& card);
+  void PrintCard (const Card& card, bool convert_to_romaji = false);
   /// Scrolls the screen
   void Scroll (int sx, int sy);
   /// Shows the next invisible box

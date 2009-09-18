@@ -72,7 +72,7 @@ public:
   /// Set the position and dimensions of a TextBox
   void SetProperties (int x, int y, int width, int height);
   /// Set the text
-  void text (const std::string& str);
+  void text (const std::string& str, bool convert_to_romaji = false);
   /// Set whether the text box floats or not \sa floats_
   void floats (bool f);
   /// Set whether the text box is independent or not \sa independent_
@@ -112,6 +112,8 @@ private:
 
   Types::Screen::selector screen_; ///< Screen where the text box is
   int bgid_;                       ///< Background id
+  /// Convert kana string to romaji
+  std::string ConvertToRomaji (std::string str);
 };
 
 #endif // TEXTBOX_H_

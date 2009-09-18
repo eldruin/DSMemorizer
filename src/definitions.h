@@ -29,29 +29,29 @@ static const Types::Font NORMAL_FONT = Types::MONA_FONT;
 static const int KM_CAPTION_SIZE = 8;
 static const int KM_NORMAL_SIZE = 10;
 static const int KM_KANJI_SIZE = 30;
-static const int KM_CAPTION_KANJI_X = 15;
+static const int KM_CAPTION_KANJI_X = 20;
 static const int KM_CAPTION_KANJI_Y = 5;
 static const int KM_KANJI_X = 12;
 static const int KM_KANJI_Y = 23;
 static const int KM_CAPTION_ON_READING_X = 70;
 static const int KM_CAPTION_ON_READING_Y = 5;
-static const int KM_ON_READING_X = 70;
+static const int KM_ON_READING_X = 85;
 static const int KM_ON_READING_Y = 23;
 static const int KM_CAPTION_KUN_READING_X = 70;
 static const int KM_CAPTION_KUN_READING_Y = 43;
-static const int KM_KUN_READING_X = 70;
+static const int KM_KUN_READING_X = 85;
 static const int KM_KUN_READING_Y = 60;
 static const int KM_CAPTION_TRANSLATION_X = 10;
 static const int KM_CAPTION_TRANSLATION_Y = 80;
-static const int KM_TRANSLATION_X = 10;
+static const int KM_TRANSLATION_X = 25;
 static const int KM_TRANSLATION_Y = 97;
 static const int KM_CAPTION_EXAMPLE_X = 10;
 static const int KM_CAPTION_EXAMPLE_Y = 117;
-static const int KM_EXAMPLE_KANJI_X = 10;
+static const int KM_EXAMPLE_KANJI_X = 25;
 static const int KM_EXAMPLE_KANJI_Y = 134;
-static const int KM_EXAMPLE_READING_X = 10;
+static const int KM_EXAMPLE_READING_X = 25;
 static const int KM_EXAMPLE_READING_Y = 154;
-static const int KM_EXAMPLE_TRANSLATION_X = 10;
+static const int KM_EXAMPLE_TRANSLATION_X = 25;
 static const int KM_EXAMPLE_TRANSLATION_Y = 174;
 
 // Vertical TextBoxes Definitions
@@ -72,7 +72,7 @@ static const int VTB_BOX3_Y = 107;
 
 // Cards subscreen mode definitions
 static const int CARDS_TEXT_SIZE = 8;
-static const int CARDS_TEXT_X = 70; 
+static const int CARDS_TEXT_X = 70;
 static const int CARDS_TEXT_Y = 8;
 
 // Kanji choose subscreen mode definitions

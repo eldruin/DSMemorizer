@@ -195,18 +195,18 @@ void MainScreenHandler::SetMode (MainScreenMode::mode screen_mode,
   Graphics::SetColors();
 }
 
-void MainScreenHandler::PrintCard (const Card& card)
+void MainScreenHandler::PrintCard (const Card& card, bool convert_to_romaji)
 {
   DrawBgImage ();
   ResetTextBoxesPositions ();
  	if (screen_mode_ == MainScreenMode::KANJI)
   {
     kanji_->text(card.symbol());
-    on_reading_->text(card.reading());
-    kun_reading_->text(card.reading2());
+    on_reading_->text(card.reading(), convert_to_romaji);
+    kun_reading_->text(card.reading2(), convert_to_romaji);
     translation_->text(card.translation());
     example_kanji_->text(card.example_symbol());
-    example_reading_->text(card.example_reading());
+    example_reading_->text(card.example_reading(), convert_to_romaji);
     example_translation_->text(card.example_translation());
 
     // Make all but the kanji and its caption invisible.
@@ -226,33 +226,38 @@ void MainScreenHandler::PrintCard (const Card& card)
   else if (screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES ||
            screen_mode_ == MainScreenMode::VERTICAL_TEXTBOXES_VISIBLE)
   {
+    bool convert_to_romaji1, convert_to_romaji2, convert_to_romaji3;
+    convert_to_romaji1 = convert_to_romaji2 = convert_to_romaji3 = false;
     std::string box1text, box2text, box3text;
     if (game_mode_ == GameMode::KANJI_QUIZ)
     {
       box1text = card.translation();
       box2text = card.reading();
       box3text = card.reading2();
+      convert_to_romaji2 = convert_to_romaji3 = true;
     }
     else if (game_mode_ == GameMode::VOCABULARY)
     {
       box1text = card.symbol();
       box2text = card.reading();
       box3text = card.translation();
+      convert_to_romaji2 = true;
     }
     else if (game_mode_ == GameMode::VOCABULARY_QUIZ)
     {
       box1text = card.translation();
       box2text = card.reading();
+      convert_to_romaji2 = true;
     }
 
     if (boxes_number_ >= 1)
     {
-      box1_->text(box1text);
+      box1_->text(box1text, convert_to_romaji1);
       if (boxes_number_ >= 2)
       {
-        box2_->text(box2text);
+        box2_->text(box2text, convert_to_romaji2);
         if (boxes_number_ >= 3)
-          box3_->text(box3text);
+          box3_->text(box3text, convert_to_romaji3);
       }
     }
 

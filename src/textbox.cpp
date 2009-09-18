@@ -123,9 +123,12 @@ void TextBox::SetProperties (int x, int y, int width, int height)
   height_ = (height==0) ? ((size_*3)>>1) : height;
 }
 
-void TextBox::text (const std::string& str)
+void TextBox::text (const std::string& str, bool convert_to_romaji)
 {
-  text_ = str;
+  if (convert_to_romaji)
+    text_ = ConvertToRomaji(str);
+  else
+    text_ = str;
 }
 
 void TextBox::Move (int x, int y)
@@ -212,4 +215,174 @@ void TextBox::Print ()
   }
 }
 
+const char* kana_table =
+							"a  a  i  i  u  u  e  e  o  o  ka ga ki gi ku gu "
+					    "ke ge ko go sa za shiji su zu se ze so zo ta da "
+							"chiji tsutsutzute de to do na ni nu ne no ha ba "
+							"pa hi bi pi fu bu pu he be pe ho bo po ma mi mu "
+							"me mo ya ya yu yu yo yo ra ri ru re ro wa wa wi "
+							"we wo n  ";
 
+inline string no_spaces(const string& str)
+{
+	string no_spaces_str;
+	for (size_t i = 0; i < str.size(); ++i)
+		if (str[i] != ' ')
+			no_spaces_str.push_back(str[i]);
+
+	return no_spaces_str;
+}
+
+string TextBox::ConvertToRomaji (string str)
+{
+	string romaji;
+	string::iterator it = str.begin();
+	uint32_t prev_utf8c = 0;
+	uint32_t utf8c = 0;
+	uint32_t kana_base = 0;
+	uint32_t prev_kana_base = 0;
+  while (it != str.end())
+  {
+  	if (prev_utf8c)
+  	{
+  		if (prev_kana_base)
+	  		romaji += no_spaces(string(kana_table+((prev_utf8c-prev_kana_base)*3), 3));
+	  	else
+	  		utf8::unchecked::utf32to8(&prev_utf8c, &prev_utf8c + 1, back_inserter(romaji));
+	  }
+  	prev_utf8c = utf8c;
+  	prev_kana_base = kana_base;
+
+    utf8c = utf8::unchecked::next(it);
+    if (utf8c > 12352 && utf8c < 12436)
+    {
+    	// Hiragana
+    	kana_base = 12353;
+    }
+    else if (utf8c > 12448 && utf8c < 12535)
+    {
+    	// Katakana
+    	kana_base = 12449;
+    }
+    else
+    	kana_base = 0;
+
+    if (kana_base && prev_utf8c == (prev_kana_base + 34))
+    {	// Little tsu
+    	romaji += no_spaces(string(kana_table+((utf8c-kana_base)*3), 1) +
+    											string(kana_table+((utf8c-kana_base)*3), 3));
+    	prev_utf8c = utf8c = 0;
+    }
+    else if (kana_base && utf8c == (kana_base + 66))
+  	{	// Little ya
+  		switch(prev_utf8c-prev_kana_base)
+  		{
+  			case 12: romaji += "kya";
+  			break;
+  			case 22: romaji += "sha";
+  			break;
+  			case 23: romaji += "ja";
+  			break;
+  			case 32: romaji += "cha";
+  			break;
+  			case 33: romaji += "ja";
+  			break;
+  			case 42: romaji += "nya";
+  			break;
+  			case 49: romaji += "hya";
+  			break;
+  			case 50: romaji += "bya";
+  			break;
+  			case 51: romaji += "pya";
+  			break;
+  			case 62: romaji += "mya";
+  			break;
+  			case 73: romaji += "rya";
+  			break;
+  			default: romaji += no_spaces(
+  								string(kana_table+((prev_utf8c-prev_kana_base)*3), 3)) +
+  								no_spaces(string(kana_table+((utf8c-kana_base)*3), 3));
+  		}
+  		prev_utf8c = utf8c = 0;
+  	}
+  	else if (kana_base && utf8c == (kana_base + 68))
+  	{	// Little yu
+  		switch(prev_utf8c-prev_kana_base)
+  		{
+  			case 12: romaji += "kyu";
+  			break;
+  			case 22: romaji += "shu";
+  			break;
+  			case 23: romaji += "ju";
+  			break;
+  			case 32: romaji += "chu";
+  			break;
+  			case 33: romaji += "ju";
+  			break;
+  			case 42: romaji += "nyu";
+  			break;
+  			case 49: romaji += "hyu";
+  			break;
+  			case 50: romaji += "byu";
+  			break;
+  			case 51: romaji += "pyu";
+  			break;
+  			case 62: romaji += "myu";
+  			break;
+  			case 73: romaji += "ryu";
+  			break;
+  			default: romaji += no_spaces(
+  								string(kana_table+((prev_utf8c-prev_kana_base)*3), 3)) +
+  								no_spaces(string(kana_table+((utf8c-kana_base)*3), 3));
+  		}
+  		prev_utf8c = utf8c = 0;
+  	}
+  	else if (kana_base && utf8c == (kana_base + 70))
+  	{	// Little yo
+  		switch(prev_utf8c-prev_kana_base)
+  		{
+  			case 12: romaji += "kyo ";
+  			break;
+  			case 22: romaji += "sho ";
+  			break;
+  			case 23: romaji += "jo ";
+  			break;
+  			case 32: romaji += "cho ";
+  			break;
+  			case 33: romaji += "jo ";
+  			break;
+  			case 42: romaji += "nyo ";
+  			break;
+  			case 49: romaji += "hyo ";
+  			break;
+  			case 50: romaji += "byo ";
+  			break;
+  			case 51: romaji += "pyo ";
+  			break;
+  			case 62: romaji += "myo ";
+  			break;
+  			case 73: romaji += "ryo ";
+  			break;
+  			default: romaji += no_spaces(
+  								string(kana_table+((prev_utf8c-prev_kana_base)*3), 3)) +
+  								no_spaces(string(kana_table+((utf8c-kana_base)*3), 3));
+  		}
+  		prev_utf8c = utf8c = 0;
+  	}
+  }
+  if (prev_utf8c)
+  {
+  	if (prev_kana_base)
+	  	romaji += no_spaces(string(kana_table+((prev_utf8c-prev_kana_base)*3), 3));
+	  else
+	  	utf8::unchecked::utf32to8(&prev_utf8c, &prev_utf8c + 1, back_inserter(romaji));
+	}
+  if (utf8c)
+  {
+  	if (kana_base)
+	  	romaji += no_spaces(string(kana_table+((utf8c-kana_base)*3), 3));
+	  else
+	  	utf8::unchecked::utf32to8(&utf8c, &utf8c + 1, back_inserter(romaji));
+	}
+  return romaji;
+}

@@ -205,7 +205,7 @@ void DSMemorizer::KanjiMode ()
         c = xmlparser_.card(card, grade_min, grade_max,
                             strokes_min, strokes_max);
         sub_screen_handler_.PrintCard(c);
-        main_screen_handler_.PrintCard(c);
+        main_screen_handler_.PrintCard(c, false);
         previous_card = card;
       }
       main_screen_handler_.Scroll(0,sy);
