@@ -57,6 +57,9 @@ inline u8 blue_color (u16 color)
   return (color & bmask) >> 10;
 }
 
+/// Transparent color not to print it
+static const u16 TRANSPARENT_COLOR = 32768;
+
 /// Black color palette index in the main screen
 u16 black_color_main;
 /// Gray color palette index in the main screen
@@ -76,7 +79,7 @@ inline u16 convert_color(u8 incolor, Screen::selector screen)
 	else if (incolor > 128)
 		outcolor = (screen == Screen::MAIN) ? gray_color_main : gray_color_sub;
 	else
-		outcolor = Color::TRANSPARENT;
+		outcolor = TRANSPARENT_COLOR;
 	return outcolor;
 }
 
@@ -332,9 +335,9 @@ void Graphics::PrintBitmap (int x, int y, int width, int height,
     {
       bool print_pixel0 = true, print_pixel1 = true;
       u16 pixel0 = convert_color(bitmap[index], screen);
-      print_pixel0 = (pixel0 != Color::TRANSPARENT);
+      print_pixel0 = (pixel0 != TRANSPARENT_COLOR);
       u16 pixel1 = convert_color(bitmap[index+1], screen);
-      print_pixel1 = (pixel1 != Color::TRANSPARENT);
+      print_pixel1 = (pixel1 != TRANSPARENT_COLOR);
       int video_index = ((y + image_y) <<7) +
                          ((x + image_x) >> 1);
 
@@ -356,7 +359,7 @@ void Graphics::PrintBitmap (int x, int y, int width, int height,
       // for the last pixel in the row if the glyph width is odd
       int index = image_y * width + image_x;
       u16 pixel = convert_color(bitmap[index], screen);
-      print_pixel = (pixel != Color::TRANSPARENT);
+      print_pixel = (pixel != TRANSPARENT_COLOR);
       int video_index = ((y + image_y) <<7) +
                          ((x + image_x) >> 1);
       if (print_pixel)

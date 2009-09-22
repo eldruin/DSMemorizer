@@ -39,7 +39,7 @@ void TextBox::Init (Types::Screen::selector screen,
   size_ = size;
   x_ = x;
   y_ = y;
-  width_ = (width==0) ? SCREEN_WIDTH - x - 10 : width;
+  width_ = (width==0) ? SCREEN_WIDTH - x - 20 : width;
   height_ = (height==0) ? ((size_*3)>>1) : height;
   mutable_height_ = (height == 0);
   floats_ = independent_ = false;
