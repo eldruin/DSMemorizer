@@ -1,8 +1,13 @@
 <?xml version="1.0"?>
-<package name="Vocabulario" records="5" format="DSMemorizer-vocabulary-1.0" license="Creative Commons Reconocimiento-No comercial-Compartir bajo la misma licencia 3.0 Unported"/>
+<package name="Vocabulario" records="10" format="DSMemorizer-vocabulary-1.0" license="Creative Commons Reconocimiento-No comercial-Compartir bajo la misma licencia 3.0 Unported"/>
   <card symbol="火山" reading="かざん" translation="Volcán" />
   <card symbol="今日" reading="きょう" translation="Hoy" />
   <card symbol="明日" reading="あした" translation="Mañana" />
   <card symbol="日本人" reading="にほんじん" translation="Japonés (persona)" />
   <card symbol="出口" reading="でぐち" translation="Salida" />
+  <card symbol="映画" reading="えいが" translation="Película" />
+  <card symbol="映画館" reading="えいがかん" translation="Cine" />
+  <card symbol="学生" reading="がくせい" translation="Estudiante" />
+  <card symbol="先生" reading="せんせい" translation="Maestro, profesor" />
+  <card symbol="面白い" reading="おもしろい" translation="Interesante" />
 </package>
