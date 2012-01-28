@@ -24,6 +24,7 @@ DSMemorizer has several possible game modes. They are explained in
 [GameModes](http://gitorious.org/dsmemorizer/pages/GameModes) page.
 ## License
 Copyright (C) 2009 Diego Barrios Romero
+
 DSMemorizer is free software under the terms of the GNU General Public
 License as published by the Free Software Foundation, either version
 3 of the License, or (at your option) any later version. A copy of
